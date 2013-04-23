@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
+<link rel="stylesheet" type="text/css" href="{% static "aula/ejecutando.css" %}" />
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h1> Tareas ejecutando</h1>
+{% if tareas %}
+    {% for tarea in tareas %}
+        <ul>
+        <li><h2>{{tarea}}</h2></li>
+        </ul>
+    {% endfor %}
+{% endif %}
+
+{% if computadoras %}
+<h1> Computadoras</h1>
+
+    {% for key,value in ejecutado.items %}
+    <div class="computadora">
+        {{key}}<br />
+        {% for each in value %}
+            {{each}}<br />
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+{% endif %}
+
+
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+</div>
+{% endblock %}
+
+
+

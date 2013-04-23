@@ -1,0 +1,30 @@
+NameVirtualHost botnet:80
+<virtualhost botnet:80>
+
+ServerName botnet
+#DocumentRoot /var/www/webproyecto
+#<Directory /var/www/webproyecto>
+#Order allow,deny
+#Allow from all
+#</Directory>
+WSGIDaemonProcess botnet.djangoserver processes=2 threads=15 display-name=%{GROUP}
+WSGIProcessGroup botnet.djangoserver
+WSGIScriptAlias / /opt/botnet/botnet.wsgi
+Alias /media /opt/botnet/botnet/media/
+<Directory /opt/botnet/botnet/media/>
+Order deny,allow
+Allow from all
+</Directory>
+
+Alias /static /opt/botnet/botnet/static/
+<Directory /opt/botnet/botnet/static/>
+Order deny,allow
+Allow from all
+</Directory>
+
+
+LogLevel debug
+ErrorLog /tmp/botnet.log
+CustomLog /tmp/botnet.log combined 
+
+</virtualhost>
