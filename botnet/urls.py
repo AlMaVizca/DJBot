@@ -7,8 +7,6 @@ admin.autodiscover()
 urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
-
-
     url(r'^ejecutar/(?P<listaDeTareas>[\[,\],\',\w,\s]*)',
         'botnet.aula.views.ejecutar'),
     url(r'^prender/(?P<listaDeSalas>[\[,\],\',\w,\s]*)',

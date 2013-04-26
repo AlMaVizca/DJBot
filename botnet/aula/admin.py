@@ -1,8 +1,11 @@
-from botnet.aula.models import Aula, Computadora, Tarea
+from botnet.aula.models import Aula, Computadora, Tarea, Configuracion
 from django.contrib import admin
 from botnet.aula.forms import FormularioTareas, FormularioAula,\
     FormularioComputadora
 from django.http import HttpResponseRedirect
+from botnet import fabfile
+from botnet.settings import PATH
+
 
 
 ###Aulas
@@ -50,5 +53,19 @@ class TareaAdmin(admin.ModelAdmin):
     ejecutar_tarea.short_description = "Ejecutar la tarea seleccionada"
 
 
+###Configuraciones
+class ConfiguracionesAdmin(admin.ModelAdmin):
+    actions = ['generar_claves']
+    list_display = ('nombre', 'valor')
+
+    def generar_claves(self, request, queryset):
+        archivo_por_defecto = PATH + '/clave'
+        fabfile.generar_clave(archivo_por_defecto)
+        clave = Configuracion(nombre="clave-privada", valor=PATH + '/clave')
+        clave.save()
+
+    generar_claves.short_description = "GenerarClaves ssh-todavia no funciona-"
+
 admin.site.register(Aula, AulaAdmin)
 admin.site.register(Tarea, TareaAdmin)
+admin.site.register(Configuracion, ConfiguracionesAdmin)

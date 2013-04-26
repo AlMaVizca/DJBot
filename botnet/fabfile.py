@@ -1,5 +1,6 @@
 from fabric.api import *
 from StringIO import StringIO
+from aula.models import Configuracion
 import sys
 ARCHIVO = '/tmp/temporal'
 
@@ -13,8 +14,8 @@ def ejecutar(tarea, computadoras):
 
 @task
 def ejecutar_clientes(instruccion):
-    env.user = 'root'
-    env.key_filename = '/opt/botnet/id_rsa'
+    env.user = Configuracion.objects.get(nombre="usuario").valor
+    env.key_filename = Configuracion.objects.get(nombre="clave-privada").valor
     output = StringIO()
     error = StringIO()
     sys.stdout = output
@@ -31,3 +32,8 @@ def ejecutar_clientes(instruccion):
     except:
         archivo.write("esto falla")
     archivo.close()
+
+
+@task
+def generar_clave(nombre_archivo):
+    local("ssh-keygen -f " + nombre_archivo)
