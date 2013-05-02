@@ -72,9 +72,9 @@ def prender(request, listaDeSalas):
         compus = []
         for each in computadoras.values():
             compus = each['nombre']
-            unAula.maquinaIntermediaria
+            unAula.maquina_intermediaria
             fabfile.ejecutar('etherwake -i ' + unAula.interfaz + ' ' +
-            each['mac'], [unAula.maquinaIntermediaria])
+            each['mac'], [unAula.maquina_intermediaria])
     return HttpResponse(compus)
 
 
