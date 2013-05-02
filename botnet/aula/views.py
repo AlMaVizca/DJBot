@@ -59,6 +59,8 @@ def ejecutar_tareas(tareas, computadoras):
     for unaTarea in tareas:
         instrucciones = Tarea.objects.filter(nombre=unaTarea)
         receta = instrucciones.values()[0]['instrucciones'].split('\n')
+        if instrucciones.values()[0]['archivo'] == '':
+            print "esto va con archivo"
         for each in receta:
             fabfile.ejecutar(each, computadoras)
 

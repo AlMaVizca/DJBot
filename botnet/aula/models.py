@@ -1,10 +1,17 @@
 from django.db import models
 from botnet.settings import MEDIA_ROOT
 
+TIPO_ARCHIVO = (
+    ('Script', 'script'),
+    ('Jmeter', 'jmeter'),
+)
+
 
 class Tarea(models.Model):
     nombre = models.CharField(primary_key=True, max_length=50)
     instrucciones = models.CharField(max_length=400)
+    tipo_archivo = models.CharField(max_length=50, blank=True,
+        choices=TIPO_ARCHIVO)
     archivo = models.FileField(upload_to=MEDIA_ROOT, max_length=100,
         blank=True)
     dividir_archivo = models.BooleanField(default=False)
