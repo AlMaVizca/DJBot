@@ -5,7 +5,8 @@ from botnet.settings import MEDIA_ROOT
 class Tarea(models.Model):
     nombre = models.CharField(primary_key=True, max_length=50)
     instrucciones = models.CharField(max_length=400)
-    archivo = models.FileField(upload_to=MEDIA_ROOT, max_length=100)
+    archivo = models.FileField(upload_to=MEDIA_ROOT, max_length=100,
+        blank=True)
     dividir_archivo = models.BooleanField(default=False)
     ##Algun Archivo
 
@@ -23,8 +24,9 @@ class Aula(models.Model):
     mascara = models.IntegerField()
 
     def cantidad_computadoras(self):
-        computadoras = Computadora.objects.filter(aula=self.nombre)
-        return len(computadoras)
+        cantidad = Computadora.objects.filter(aula=self.nombre).count()
+        print cantidad
+        return cantidad
 
     def __unicode__(self):
         return self.nombre
@@ -48,3 +50,6 @@ class Configuracion(models.Model):
 
     def __unicode__(self):
         return self.nombre
+
+    class Meta:
+        verbose_name_plural = "Configuraciones"

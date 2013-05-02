@@ -24,11 +24,10 @@ class FormularioTareas(forms.ModelForm):
 
 
 class FormularioAula(forms.ModelForm):
-    maquinaIntermediaria = forms.IPAddressField(label='Maquina Intermediaria',
+    maquina_intermediaria = forms.IPAddressField(label='Maquina Intermediaria',
         validators=[validate_ipv4_address])
     red = forms.IPAddressField(validators=[validate_ipv4_address])
 
 
 class FormularioComputadora(forms.ModelForm):
     ip = forms.IPAddressField(label='ip', validators=[validate_ipv4_address])
-
