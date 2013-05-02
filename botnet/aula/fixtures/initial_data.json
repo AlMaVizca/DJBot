@@ -1,0 +1,57 @@
+[
+    {
+    "model": "aula.aula",
+    "pk": "Prueba",
+    "fields": {
+        "interfaz": "eth0",
+        "usuario": "root",
+        "maquina_intermediaria": "163.10.10.87",
+        "red": "163.10.10.64",
+        "mascara": "24"
+         }
+    },
+    {
+    "model": "aula.computadora",
+    "pk": 1,
+    "fields": {
+        "aula": "Prueba",
+        "nombre": "botnet1",
+        "mac": "asddasdas",
+        "ip": "192.168.7.2"
+        }
+    },
+    {
+    "model": "aula.computadora",
+    "pk": 2,
+    "fields": {
+        "aula": "Prueba",
+        "nombre": "botnet2",
+        "mac": "asddqwdas",
+        "ip": "192.168.7.3"
+        }
+    },
+    {
+    "model": "aula.configuracion",
+    "pk": 1,
+    "fields": {
+        "nombre": "usuario",
+        "valor": "root"
+        }
+    },
+    {
+    "model": "aula.configuracion",
+    "pk": 2,
+    "fields": {
+        "nombre": "clave-privada",
+        "valor": "/home/avizcaino/Desarrollo/djbot/botnet/clave"
+        }
+    },
+    {
+    "model": "aula.tarea",
+    "pk": 1,
+    "fields": {
+        "nombre": "Prueba",
+        "instrucciones": "date"
+        }
+    }
+]
