@@ -6,9 +6,16 @@ ARCHIVO = '/tmp/temporal'
 
 
 @task
-def ejecutar(tarea, computadoras):
+def configurar_entorno():
     env.reject_unknown_hosts = False
     env.disable_known_hosts = True
+    env.user = Configuracion.objects.get(nombre="usuario").valor
+    env.key_filename = Configuracion.objects.get(nombre="clave-privada").valor
+
+
+@task
+def ejecutar(tarea, computadoras):
+    configurar_entorno()
     execute(ejecutar_clientes, instruccion=tarea, hosts=computadoras)
 
 
@@ -37,3 +44,30 @@ def ejecutar_clientes(instruccion):
 @task
 def generar_clave(nombre_archivo):
     local("ssh-keygen -f " + nombre_archivo)
+
+
+@task
+def enviar(archivo, computadoras):
+    configurar_entorno()
+    execute(enviar_archivos, archivos=archivo, hosts=computadoras)
+
+
+@task
+def enviar_archivos(archivos):
+    put(archivos, '/tmp/', mirror_local_mode=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

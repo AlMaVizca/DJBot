@@ -9,6 +9,8 @@ from botnet.aula.models import Computadora, Tarea, Aula
 import subprocess
 from botnet import fabfile
 import re
+import os
+import time
 
 
 @login_required
@@ -59,8 +61,20 @@ def ejecutar_tareas(tareas, computadoras):
     for unaTarea in tareas:
         instrucciones = Tarea.objects.filter(nombre=unaTarea)
         receta = instrucciones.values()[0]['instrucciones'].split('\n')
-        if instrucciones.values()[0]['archivo'] == '':
-            print "esto va con archivo"
+        if os.path.isfile(instrucciones.values()[0]['archivo']):
+            if instrucciones.values()[0]['dividir_archivo']:
+                archivo = open(instrucciones.values()[0]['archivo'], 'r')
+                lineas = archivo.readlines()
+                cantidad = len(lineas) / len(computadoras)
+                indice = 1
+                for each in range(1, len(computadoras) + 1):
+                    fabfile.enviar(lineas[indice:indice + cantidad - 1],
+                        computadoras)
+                    indice += cantidad
+            else:
+                fabfile.enviar(instrucciones.values()[0]['archivo'],
+                    computadoras)
+
         for each in receta:
             fabfile.ejecutar(each, computadoras)
 
