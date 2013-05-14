@@ -1,11 +1,10 @@
 from botnet.aula.models import Aula, Computadora, Tarea, Configuracion
 from django.contrib import admin
 from botnet.aula.forms import FormularioTareas, FormularioAula,\
-    FormularioComputadora
-from django.http import HttpResponseRedirect
+    FormularioComputadora, FormularioListaTareas
+from django.shortcuts import redirect
 from botnet import fabfile
 from botnet.settings import PATH
-
 
 
 ###Aulas
@@ -30,7 +29,7 @@ class AulaAdmin(admin.ModelAdmin):
             lista_salas += seleccionado[index] + ','
             index += 1
         lista_salas += seleccionado[index]
-        return HttpResponseRedirect("/prender/%s" % lista_salas)
+        return redirect("prender", listDeSalas=lista_salas)
 
     prender_sala.short_description = "Prender las maquinas de la sala"
 
@@ -48,7 +47,10 @@ class TareaAdmin(admin.ModelAdmin):
             lista_tareas += seleccionado[index] + ','
             index += 1
         lista_tareas += seleccionado[index]
-        return HttpResponseRedirect("/ejecutar/%s" % lista_tareas)
+        formulario = FormularioListaTareas()
+        formulario.tareas = lista_tareas
+
+        return redirect("ejecutar", listaDeTareas=lista_tareas)
 
     ejecutar_tarea.short_description = "Ejecutar la tarea seleccionada"
 
