@@ -1,9 +1,11 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_static %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css"
- href="{% static "admin/css/dashboard.css" %}" />
-
+{% block extrastyle %}{{ block.super }}
+ <link rel="stylesheet" type="text/css"
+     href="{% static "admin/css/dashboard.css" %}" />
+<link rel="stylesheet" type="text/css"
+    href="{% static "aula/estilos.css" %}" />
 {% endblock %}
 
 {% block content %}
@@ -14,20 +16,24 @@
 {% if tareas %}
     {% for tarea in tareas %}
         <ul>
-        <li><h2>{{tarea}}</h2></li>
+        <li><h2>{{ tarea.nombre }}</h2></li>
+        <div class="instrucciones" >
+        {{ tarea.instrucciones }}
+        <div>
         </ul>
     {% endfor %}
 {% else %}
     <h2> No se selecciono ninguna tarea</h2>
 {% endif %}
 
-
+<div id="formulario">
 <form action="/ejecutando/" method="post">
 {% csrf_token %}
 {{ formulario.as_p }}
 
 <input type="submit" value="Submit" />
 </form>
+</div>
 
 
 </div>
