@@ -4,6 +4,10 @@ from django.core.validators import validate_ipv4_address
 import re
 
 
+class FormularioListaTareas(forms.Form):
+    tareas = forms.CharField(max_length=300)
+
+
 class FormularioEjecutar(forms.Form):
     salas = Aula.objects.all()
     opciones = [(each, each) for each in salas]
