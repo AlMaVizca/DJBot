@@ -1,5 +1,5 @@
 import os, sys
-sys.path.append('/opt/botnet/')
+sys.path.append('<botnet>')
 os.environ['DJANGO_SETTINGS_MODULE'] = 'botnet.settings'
 import django.core.handlers.wsgi
 _application = django.core.handlers.wsgi.WSGIHandler()
