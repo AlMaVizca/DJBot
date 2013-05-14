@@ -96,6 +96,7 @@ INSTALLED_APPS = (
     'django_admin_bootstrapped',
     'django.contrib.admin',
     'botnet.aula',
+    'django_rq',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -125,4 +126,14 @@ LOGGING = {
             'propagate': True,
         },
     }
+}
+
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'PASSWORD': 'somepassword',
+    },
 }
