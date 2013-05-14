@@ -47,6 +47,22 @@
         }
     },
     {
+    "model": "aula.configuracion",
+    "pk": 3,
+    "fields": {
+        "nombre": "temporal",
+        "valor": "/tmp"
+        }
+    },
+    {
+    "model": "aula.configuracion",
+    "pk": 4,
+    "fields": {
+        "nombre": "secuencia",
+        "valor": "file"
+        }
+    },
+    {
     "model": "aula.tarea",
     "pk": 1,
     "fields": {
