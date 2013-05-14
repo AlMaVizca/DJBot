@@ -49,13 +49,19 @@ def generar_clave(nombre_archivo):
 @task
 def enviar(archivo, computadoras):
     configurar_entorno()
-    execute(enviar_archivos, archivos=archivo, hosts=computadoras)
+    print archivo, computadoras
+    execute(enviar_archivos, archivos=archivo, hosts=[computadoras])
 
 
 @task
 def enviar_archivos(archivos):
-    put(archivos, '/tmp/', mirror_local_mode=True)
+    put(archivos, '/tmp/archivo', mirror_local_mode=True)
 
+
+@task
+def cortar(cantidad, archivo, path):
+    comando = "split -d -nl/" + str(cantidad) + " " + archivo + " " + path
+    local(comando)
 
 
 
