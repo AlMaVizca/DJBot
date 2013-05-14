@@ -1,32 +1,27 @@
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_protect
-from django.core.context_processors import csrf
-from django.template import Context
+from botnet.aula.models import Computadora, Tarea
+from django.template import RequestContext
 from django.shortcuts import render_to_response
 from botnet.aula.forms import FormularioEjecutar
-from botnet.aula.models import Computadora, Tarea, Aula
-import subprocess
-from botnet import fabfile
-import re
-import os
-import time
+from botnet.aula.funciones import *
 
 
 @login_required
 def ejecutar(request, listaDeTareas):
     tareas = listaDeTareas.split(',')
+    lista = []
+    for each in tareas:
+        lista.append(Tarea.objects.get(nombre=each))
     ejecutarFormulario = FormularioEjecutar(initial={'tareas': listaDeTareas})
-    contexto = Context({
-        'tareas': tareas,
+    contexto = RequestContext(request, {
+        'tareas': lista,
         'formulario': ejecutarFormulario,
         })
-    contexto.update(csrf(request))
     return render_to_response('botnet/ejecutar.html', contexto)
 
 
 @login_required
-@csrf_protect
 def ejecutando(request):
     if request.method == 'POST':
         formulario = FormularioEjecutar(request.POST)
@@ -50,35 +45,6 @@ def ejecutando(request):
             return HttpResponse('<h1>Estas haciendo las cosas bien?</h1>')
 
 
-def escribir_ips(computadoras):
-    compu = []
-    for each in computadoras.values():
-        compu.append(each['ip'])
-    return compu
-
-
-def ejecutar_tareas(tareas, computadoras):
-    for unaTarea in tareas:
-        instrucciones = Tarea.objects.filter(nombre=unaTarea)
-        receta = instrucciones.values()[0]['instrucciones'].split('\n')
-        if os.path.isfile(instrucciones.values()[0]['archivo']):
-            if instrucciones.values()[0]['dividir_archivo']:
-                archivo = open(instrucciones.values()[0]['archivo'], 'r')
-                lineas = archivo.readlines()
-                cantidad = len(lineas) / len(computadoras)
-                indice = 1
-                for each in range(1, len(computadoras) + 1):
-                    fabfile.enviar(lineas[indice:indice + cantidad - 1],
-                        computadoras)
-                    indice += cantidad
-            else:
-                fabfile.enviar(instrucciones.values()[0]['archivo'],
-                    computadoras)
-
-        for each in receta:
-            fabfile.ejecutar(each, computadoras)
-
-
 @login_required
 def prender(request, listaDeSalas):
     salas = listaDeSalas.split(',')
@@ -94,36 +60,9 @@ def prender(request, listaDeSalas):
     return HttpResponse(compus)
 
 
-def borrar_archivo():
-    subprocess.call(['rm', fabfile.ARCHIVO])
 
 
-def obtener_ip(patron, linea):
-    string = re.match(patron, linea).group(0)
-    return re.sub("(\[)([0-9.]*)(\])", "\g<2>", string)
 
 
-def obtener_salida(linea):
-    salida = re.split("(: )", linea)
-    try:
-        tipo = re.search('run|out', salida[0]).group(0)
-    except:
-        tipo = 'out'
-    return tipo, salida[2]
 
 
-def salida_computadora():
-    archivo = open(fabfile.ARCHIVO, 'r')
-    computadoras = {}
-    patronIp = re.compile("\[([0-9.]*)\]")
-    for each in archivo.readlines():
-        if re.match(patronIp, each):
-            ip = obtener_ip(patronIp, each)
-            tipo, salida = obtener_salida(each)
-            try:
-                computadoras[ip].append(tipo + ':' + salida)
-            except:
-                computadoras[ip] = [tipo + ':' + salida]
-
-    archivo.close()
-    return computadoras
