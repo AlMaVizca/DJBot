@@ -1,8 +1,12 @@
 {% extends "admin/base_site.html" %}
 {% load i18n admin_static %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}" />
-<link rel="stylesheet" type="text/css" href="{% static "aula/ejecutando.css" %}" />
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css"
+    href="{% static "admin/css/dashboard.css" %}" />
+<link rel="stylesheet" type="text/css"
+    href="{% static "aula/estilos.css" %}" />
 {% endblock %}
 
 {% block content %}
