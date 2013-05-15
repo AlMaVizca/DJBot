@@ -42,13 +42,6 @@ def obtener_ip(patron, linea):
     return re.sub("(\[)([0-9.]*)(\])", "\g<2>", string)
 
 
-def escribir_ips(computadoras):
-    compu = []
-    for each in computadoras.values():
-        compu.append(each['ip'])
-    return compu
-
-
 def ejecutar_tareas(tareas, computadoras):
     for unaTarea in tareas:
         instrucciones = Tarea.objects.filter(nombre=unaTarea)
