@@ -5,14 +5,15 @@ import re
 
 
 class FormularioListaTareas(forms.Form):
-    tareas = forms.CharField(max_length=300)
+    lista_tareas = Tarea.objects.all()
+    opciones = [(each, each) for each in lista_tareas]
+    tareas = forms.MultipleChoiceField(choices=opciones)
 
 
-class FormularioEjecutar(forms.Form):
+class FormularioAulas(forms.Form):
     salas = Aula.objects.all()
     opciones = [(each, each) for each in salas]
-    aulas = forms.ChoiceField(choices=opciones)
-    tareas = forms.CharField(widget=forms.HiddenInput())
+    aulas = forms.MultipleChoiceField(choices=opciones)
 
 
 class FormularioTareas(forms.ModelForm):
