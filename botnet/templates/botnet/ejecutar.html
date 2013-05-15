@@ -11,24 +11,16 @@
 {% block content %}
 <div id="content-main">
 
+<div id="formulario">
+<form action="." method="post">
+{% csrf_token %}
 
 <h1> Tareas a ejecutar</h1>
-{% if tareas %}
-    {% for tarea in tareas %}
-        <ul>
-        <li><h2>{{ tarea.nombre }}</h2></li>
-        <div class="instrucciones" >
-        {{ tarea.instrucciones }}
-        <div>
-        </ul>
-    {% endfor %}
-{% else %}
-    <h2> No se selecciono ninguna tarea</h2>
-{% endif %}
+<p>Seleccione las tareas que desea ejecutar</p>
+{{ tareas.as_p }}
 
-<div id="formulario">
-<form action="/ejecutando/" method="post">
-{% csrf_token %}
+<h1> Aulas </h1>
+<p>Seleccione las aulas en las que quiere ejecutar las tareas</p>
 {{ formulario.as_p }}
 
 <input type="submit" value="Submit" />
