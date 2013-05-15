@@ -50,7 +50,7 @@ class TareaAdmin(admin.ModelAdmin):
         formulario = FormularioListaTareas()
         formulario.tareas = lista_tareas
 
-        return redirect("ejecutar", listaDeTareas=lista_tareas)
+        return redirect("ejecutar", lista_de_tareas=lista_tareas)
 
     ejecutar_tarea.short_description = "Ejecutar la tarea seleccionada"
 
