@@ -4,7 +4,6 @@ from botnet import fabfile
 import re
 import subprocess
 import os
-import django_rq
 
 
 def salida_computadora():
@@ -61,7 +60,6 @@ def ejecutar_tareas(tareas, computadoras):
             else:
                 fabfile.enviar(instrucciones.values()[0]['archivo'],
                     computadoras)
-
         for each in receta:
             fabfile.ejecutar(each, computadoras)
 
