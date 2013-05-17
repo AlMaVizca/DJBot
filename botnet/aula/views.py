@@ -4,6 +4,7 @@ from botnet.aula.models import Computadora
 from django.shortcuts import render
 from botnet.aula.forms import FormularioAulas, FormularioListaTareas
 from botnet.aula.funciones import *
+import django_rq
 
 
 @login_required
@@ -16,12 +17,11 @@ def ejecutar(request, lista_de_tareas=None):
         ips = [compu.ip for each in valores['aulas']
             for compu in Computadora.objects.filter(aula=each)]
         borrar_archivo()
-        ejecutar_tareas(valores['tareas'], ips)
-        ejecutado = salida_computadora()
+        django_rq.enqueue(ejecutar_tareas, tareas=valores['tareas'],
+            computadoras=ips)
         contexto = {'tareas': valores['tareas'],
-            'aula': valores['aulas'][0],
+            'aula': valores['aulas'],
             'computadoras': ips,
-            'ejecutado': ejecutado,
             }
         return render(request, 'botnet/ejecutando.html', contexto)
     tareas = lista_de_tareas.split(',')
@@ -32,7 +32,6 @@ def ejecutar(request, lista_de_tareas=None):
         'formulario': FormularioAulas(),
     }
     return render(request, 'botnet/ejecutar.html', contexto)
-
 
 
 @login_required
