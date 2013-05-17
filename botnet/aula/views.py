@@ -11,8 +11,8 @@ def ejecutar(request, lista_de_tareas=None):
     form_aula = FormularioAulas(request.POST or None)
     form_tareas = FormularioListaTareas(request.POST or None)
     if form_aula.is_valid() and form_tareas.is_valid():
-        valores = form_aula.cleaned_data
-        valores = dict(form_tareas.cleaned_data.items() + valores.items())
+        valores = dict(form_tareas.cleaned_data.items() +
+                form_aula.cleaned_data.items())
         ips = [compu.ip for each in valores['aulas']
             for compu in Computadora.objects.filter(aula=each)]
         borrar_archivo()
@@ -33,15 +33,6 @@ def ejecutar(request, lista_de_tareas=None):
     }
     return render(request, 'botnet/ejecutar.html', contexto)
 
-
-@login_required
-def ejecutando(request):
-    if request.method == 'POST':
-        formulario = FormularioEjecutar(request.POST)
-        if formulario.is_valid():
-            return render_to_response('botnet/ejecutando.html', contexto)
-    else:
-            return HttpResponse('<h1>Estas haciendo las cosas bien?</h1>')
 
 
 @login_required
