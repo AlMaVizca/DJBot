@@ -21,16 +21,9 @@
     {% endfor %}
 {% endif %}
 
-{% if computadoras %}
-<h1> Computadoras</h1>
-
-    {% for key,value in ejecutado.items %}
-    <div class="computadora">
-        {{key}}<br />
-        {% for each in value %}
-            {{each}}<br />
-        {% endfor %}
-    </div>
+{% if aula %}
+    {% for unAula in aula %}
+            {{unAula}}
     {% endfor %}
 
 {% endif %}
