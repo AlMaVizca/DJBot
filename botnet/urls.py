@@ -12,6 +12,5 @@ urlpatterns = patterns('',
     url(r'^ejecutar/', 'botnet.aula.views.ejecutar', name="ejecutar"),
     url(r'^prender/(?P<listaDeSalas>[\[,\],\',\w,\s]*)',
         'botnet.aula.views.prender', name="prender"),
-    url(r'^ejecutando/$', 'botnet.aula.views.ejecutando', name="ejecutado"),
     url(r'^django-rq/', include('django_rq.urls')),
 )
