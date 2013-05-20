@@ -6,10 +6,15 @@
     float: left;
 }
 
+
 .instrucciones{
     width:250px;
     padding:10px;
     border:3px solid gray;
     margin:10px;
     float: left;
+}
+
+#formulario{
+    position: relative;
 }
