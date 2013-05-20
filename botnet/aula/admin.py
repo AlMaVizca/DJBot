@@ -5,6 +5,10 @@ from botnet.aula.forms import FormularioTareas, FormularioAula,\
 from django.shortcuts import redirect
 from botnet import fabfile
 from botnet.settings import PATH
+from django.contrib.sites.models import Site
+from django.contrib.auth.models import Group
+from django.conf.urls.defaults import patterns
+from django.conf.urls import url
 
 
 ###Aulas
@@ -68,6 +72,9 @@ class ConfiguracionesAdmin(admin.ModelAdmin):
 
     generar_claves.short_description = "GenerarClaves ssh-todavia no funciona-"
 
+
 admin.site.register(Aula, AulaAdmin)
 admin.site.register(Tarea, TareaAdmin)
 admin.site.register(Configuracion, ConfiguracionesAdmin)
+admin.site.unregister(Site)
+admin.site.unregister(Group)
