@@ -17,14 +17,20 @@ def ejecutar(request, lista_de_tareas=None):
         ips = [compu.ip for each in valores['aulas']
             for compu in Computadora.objects.filter(aula=each)]
         borrar_archivo()
-        django_rq.enqueue(ejecutar_tareas, tareas=valores['tareas'],
-            computadoras=ips)
+        try:
+            django_rq.enqueue(ejecutar_tareas, tareas=valores['tareas'],
+                computadoras=ips)
+        except:
+            return HttpResponse("<h1>Estas ejecutando redis??</h1>")
         contexto = {'tareas': valores['tareas'],
             'aula': valores['aulas'],
             'computadoras': ips,
             }
         return render(request, 'botnet/ejecutando.html', contexto)
-    tareas = lista_de_tareas.split(',')
+    try:
+        tareas = lista_de_tareas.split(',')
+    except:
+        tareas = None
     formularioTareas = FormularioListaTareas(
     initial={'tareas': tareas})
     contexto = {
