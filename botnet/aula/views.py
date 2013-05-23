@@ -41,8 +41,9 @@ def ejecutar(request, lista_de_tareas=None):
 
 
 @login_required
-def prender(request, listaDeSalas):
-    salas = listaDeSalas.split(',')
+def prender(request, lista_de_salas):
+    pass
+    salas = lista_de_salas.split(',')
     for nombreAula in salas:
         computadoras = Computadora.objects.filter(aula=nombreAula)
         unAula = Aula.objects.get(nombre=nombreAula)
@@ -55,9 +56,12 @@ def prender(request, listaDeSalas):
     return HttpResponse(compus)
 
 
-
-
-
-
-
-
+@login_required
+def mostrar_resultados(request, lista_de_salas=None):
+    form_aula = FormularioAulas(request.POST or None)
+    compus = None
+    if form_aula.is_valid():
+        valores = dict(form_aula.cleaned_data.items())
+        compus = mostrar_aula(valores['aulas'])
+    return render(request, 'botnet/mostrar_resultados.html',
+            {'formulario': FormularioAulas(), 'computadoras': compus})
