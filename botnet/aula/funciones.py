@@ -1,26 +1,35 @@
 # -*- coding: utf-8 -*-
-from botnet.aula.models import Tarea, Configuracion
+from botnet.aula.models import Aula, Tarea, Configuracion
 from botnet import fabfile
 import re
 import subprocess
 import os
+import ipaddress
 
 
-def salida_computadora():
+def mostrar_aula(aula):
     archivo = open(fabfile.ARCHIVO, 'r')
     computadoras = {}
-    patronIp = re.compile("\[([0-9.]*)\]")
-    for each in archivo.readlines():
-        if re.match(patronIp, each):
-            ip = obtener_ip(patronIp, each)
-            tipo, salida = obtener_salida(each)
-            try:
-                computadoras[ip].append(tipo + ':' + salida)
-            except:
-                computadoras[ip] = [tipo + ':' + salida]
-
-    archivo.close()
-    return computadoras
+    for each in aula:
+        un_aula = Aula.objects.get(nombre=each)
+        ip = ipaddress.IPv4Interface(un_aula.red + '/' + str(un_aula.mascara))
+        red = ip.network
+        patronIp = re.compile("\[([0-9.]*)\]")
+        for each in archivo.readlines():
+            if re.match(patronIp, each):
+                ip = obtener_ip(patronIp, each)
+                print red
+                print ipaddress.IPv4Interface(ip + '/' + str(un_aula.mascara))
+                #if (red ==
+                #    ipaddress.IPv4Interface(ip + '/' + str(un_aula.mascara))):
+                #    tipo, salida = obtener_salida(each)
+                #    print tipo, salida
+                #    try:
+                #        computadoras[ip].append(tipo + ':' + salida)
+                #    except:
+                #        computadoras[ip] = [tipo + ':' + salida]
+        archivo.close()
+        return computadoras
 
 
 def obtener_salida(linea):
