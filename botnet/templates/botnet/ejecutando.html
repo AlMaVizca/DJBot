@@ -1,4 +1,4 @@
-{% extends "admin/base_site.html" %}
+{% extends "admin/index.html" %}
 {% load i18n admin_static %}
 
 {% block extrastyle %}
@@ -34,6 +34,7 @@
 
 {% block sidebar %}
 <div id="content-related">
+<a href="{% url mostrar_resultados %}"> Mostrar resultados </a>
 </div>
 {% endblock %}
 
