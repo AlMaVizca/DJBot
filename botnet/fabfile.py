@@ -21,8 +21,6 @@ def ejecutar(tarea, computadoras):
 
 @task
 def ejecutar_clientes(instruccion):
-    env.user = Configuracion.objects.get(nombre="usuario").valor
-    env.key_filename = Configuracion.objects.get(nombre="clave-privada").valor
     output = StringIO()
     error = StringIO()
     sys.stdout = output
@@ -49,7 +47,6 @@ def generar_clave(nombre_archivo):
 @task
 def enviar(archivo, computadoras):
     configurar_entorno()
-    print archivo, computadoras
     execute(enviar_archivos, archivos=archivo, hosts=[computadoras])
 
 
