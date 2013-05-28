@@ -4,7 +4,7 @@ from django.conf.urls import patterns, include, url
 admin.autodiscover()
 
 urlpatterns = patterns('',
-
+    url(r'^$', 'botnet.aula.views.indice', name="indice"),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^ejecutar/', 'botnet.aula.views.ejecutar', name="ejecutar"),
     url(r'^ejecutar/(?P<lista_de_tareas>[\[,\],\',\w,\s]*)',
@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     url(r'^prender/(?P<listaDeSalas>[\[,\],\',\w,\s]*)',
         'botnet.aula.views.prender', name="prender"),
     url(r'^django-rq/', include('django_rq.urls')),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', name="login"),
 )

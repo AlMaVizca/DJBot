@@ -8,6 +8,11 @@ import django_rq
 
 
 @login_required
+def indice(request):
+    return render(request, 'botnet/index.html')
+
+
+@login_required
 def ejecutar(request, lista_de_tareas=None):
     form_aula = FormularioAulas(request.POST or None)
     form_tareas = FormularioListaTareas(request.POST or None)
