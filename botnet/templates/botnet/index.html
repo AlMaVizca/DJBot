@@ -4,7 +4,7 @@
 
 
 {% block extrahead %}{{ block.super }}
-     {% dajaxice_js_import %}
+    {% dajaxice_js_import %}
     <script type="text/javascript" src="/static/interaccion.js"></script>
 {% endblock %}
 
@@ -20,10 +20,10 @@
     <ul class="nav">
         <li>
         <button type="button" name="" value="" class="css3button"
-        onclick="Dajaxice.botnet.aula.prueba(otra);">Aulas</button>
+        onclick="Dajaxice.botnet.aula.obtener_aulas(aulas);">Aulas</button>
         </li><li>
         <button type="button" name="" value="" class="css3button"
-        onclick="Dajaxice.aula.sayhello(my_js_callback);">Tareas</button>
+        onclick="Dajaxice.botnet.aula.prueba(aulas);">Tareas</button>
         </li><li>
         <button type="button" name="" value="" class="css3button"
         onclick="Dajaxice.aula.sayhello(my_js_callback);">Ejecutar</button>
@@ -40,6 +40,8 @@
 {% block content %}
 
 <div id="content-main">
-Esta herramienta se desarrollo para probar servidores web
+<p>Esta herramienta se desarrollo para probar servidores web</p>
+<p>pero es una herramienta de proposito general.</p>
+
 </div>
 {% endblock %}

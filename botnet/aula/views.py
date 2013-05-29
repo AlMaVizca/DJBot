@@ -13,18 +13,6 @@ def indice(request):
 
 
 @login_required
-def aulas(request):
-    cantidad = Aula.objects.count()
-    return render(request, 'botnet/index.html')
-
-
-@login_required
-def tareas(request):
-    cantidad = Aula.objects.count()
-    return render(request, 'botnet/index.html')
-
-
-@login_required
 def ejecutar(request, lista_de_tareas=None):
     form_aula = FormularioAulas(request.POST or None)
     form_tareas = FormularioListaTareas(request.POST or None)

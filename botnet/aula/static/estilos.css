@@ -23,37 +23,46 @@
     float: left;
 }
 
+.aulas hidden{
+    border:1em solid gray;
+    width: 30em;
+    float:left;
+    position:relative;
+    margin: 1em;
+    text-align: center;
+    }
+
 #formulario{
     position: relative;
 }
 
 button.css3button {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
-	color: #ffffff;
-	padding: 10px 20px;
-	background: -moz-linear-gradient(
-		top,
-		#ffffff 0%,
-		#787270);
-	background: -webkit-gradient(
-		linear, left top, left bottom,
-		from(#ffffff),
-		to(#787270));
-	-moz-border-radius: 6px;
-	-webkit-border-radius: 6px;
-	border-radius: 6px;
-	border: 1px solid #857f79;
-	-moz-box-shadow:
-		0px 1px 3px rgba(158,150,158,0.5),
-		inset 0px -1px 0px rgba(84,83,84,0.7);
-	-webkit-box-shadow:
-		0px 1px 3px rgba(158,150,158,0.5),
-		inset 0px -1px 0px rgba(84,83,84,0.7);
-	box-shadow:
-		0px 1px 3px rgba(158,150,158,0.5),
-		inset 0px -1px 0px rgba(84,83,84,0.7);
-	text-shadow:
-		0px -1px 1px rgba(255,255,255,0.2),
-		0px 1px 0px rgba(255,255,255,0.3);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        color: #ffffff;
+        padding: 10px 20px;
+        background: -moz-linear-gradient(
+            top,
+            #ffffff 0%,
+            #787270);
+        background: -webkit-gradient(
+        linear, left top, left bottom,
+        from(#ffffff),
+            to(#787270));
+        -moz-border-radius: 6px;
+        -webkit-border-radius: 6px;
+        border-radius: 6px;
+        border: 1px solid #857f79;
+        -moz-box-shadow:
+            0px 1px 3px rgba(158,150,158,0.5),
+            inset 0px -1px 0px rgba(84,83,84,0.7);
+        -webkit-box-shadow:
+            0px 1px 3px rgba(158,150,158,0.5),
+            inset 0px -1px 0px rgba(84,83,84,0.7);
+        box-shadow:
+            0px 1px 3px rgba(158,150,158,0.5),
+            inset 0px -1px 0px rgba(84,83,84,0.7);
+        text-shadow:
+            0px -1px 1px rgba(255,255,255,0.2),
+            0px 1px 0px rgba(255,255,255,0.3);
 }
