@@ -1,10 +1,27 @@
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from botnet.aula.models import Computadora
+from botnet.aula.models import Computadora, Aula
 from django.shortcuts import render
 from botnet.aula.forms import FormularioAulas, FormularioListaTareas
 from botnet.aula.funciones import *
 import django_rq
+
+
+@login_required
+def indice(request):
+    return render(request, 'botnet/index.html')
+
+
+@login_required
+def aulas(request):
+    cantidad = Aula.objects.count()
+    return render(request, 'botnet/index.html')
+
+
+@login_required
+def tareas(request):
+    cantidad = Aula.objects.count()
+    return render(request, 'botnet/index.html')
 
 
 @login_required

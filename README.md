@@ -10,6 +10,3 @@ Controlador de maquinas remotas.
 * django-rq
 * ipaddress
 * Redis
-
-
-#

@@ -7,11 +7,8 @@ from botnet import fabfile
 from botnet.settings import PATH
 from django.contrib.sites.models import Site
 from django.contrib.auth.models import Group
-from django.conf.urls.defaults import patterns
-from django.conf.urls import url
 
 
-###Aulas
 class ComputadorasNuevas(admin.TabularInline):
     model = Computadora
     extra = 1

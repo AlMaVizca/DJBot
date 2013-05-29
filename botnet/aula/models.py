@@ -32,7 +32,6 @@ class Aula(models.Model):
 
     def cantidad_computadoras(self):
         cantidad = Computadora.objects.filter(aula=self.nombre).count()
-        print cantidad
         return cantidad
 
     def __unicode__(self):

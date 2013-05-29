@@ -1,0 +1,46 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+
+
+{% block extrahead %}{{ block.super }}
+    <script type="text/javascript" src="/static/interaccion.js"></script>
+{% endblock %}
+
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css"
+    href="{% static "aula/estilos.css" %}" />
+{% endblock %}
+
+{% block navbar %}
+<div class="navbar">
+    <div class="navbar-inner">
+    <ul class="nav">
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"
+            onclick="aulas()"> Aulas </a>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"
+            onclick="tareas()"> Tareas </a>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"
+            onclick="tareas()"> Ejecutar </a>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"
+            onclick="tareas()"> Mostrar resultados</a>
+        </li>
+    </ul>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+Esta herramienta se desarrollo para probar servidores web
+</div>
+{% endblock %}
