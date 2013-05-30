@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.utils import simplejson
 from dajaxice.decorators import dajaxice_register
-from botnet.aula.models import Aula, Tareas
+from botnet.aula.models import Aula, Tarea
 from django.contrib.auth.decorators import login_required
 
 
