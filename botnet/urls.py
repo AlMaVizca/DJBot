@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.conf.urls import patterns, include, url
-
 admin.autodiscover()
+
+from dajaxice.core import dajaxice_autodiscover, dajaxice_config
+dajaxice_autodiscover()
+
 
 urlpatterns = patterns('',
     url(r'^$', 'botnet.aula.views.indice', name="indice"),
@@ -17,4 +20,5 @@ urlpatterns = patterns('',
         'botnet.aula.views.prender', name="prender"),
     url(r'^django-rq/', include('django_rq.urls')),
     url(r'^accounts/login/$', 'django.contrib.auth.views.login', name="login"),
+    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )

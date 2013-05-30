@@ -1,8 +1,10 @@
 {% extends "admin/base_site.html" %}
+{% load dajaxice_templatetags %}
 {% load i18n admin_static %}
 
 
 {% block extrahead %}{{ block.super }}
+     {% dajaxice_js_import %}
     <script type="text/javascript" src="/static/interaccion.js"></script>
 {% endblock %}
 
@@ -16,21 +18,18 @@
 <div class="navbar">
     <div class="navbar-inner">
     <ul class="nav">
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#"
-            onclick="aulas()"> Aulas </a>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#"
-            onclick="tareas()"> Tareas </a>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#"
-            onclick="tareas()"> Ejecutar </a>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#"
-            onclick="tareas()"> Mostrar resultados</a>
+        <li>
+        <button type="button" name="" value="" class="css3button"
+        onclick="Dajaxice.botnet.aula.prueba(otra);">Aulas</button>
+        </li><li>
+        <button type="button" name="" value="" class="css3button"
+        onclick="Dajaxice.aula.sayhello(my_js_callback);">Tareas</button>
+        </li><li>
+        <button type="button" name="" value="" class="css3button"
+        onclick="Dajaxice.aula.sayhello(my_js_callback);">Ejecutar</button>
+        </li><li>
+        <button type="button" name="" value="" class="css3button"
+        onclick="Dajaxice.aula.sayhello(my_js_callback);">Mostrar Resultado</button>
         </li>
     </ul>
     </div>
