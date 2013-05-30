@@ -11,6 +11,7 @@ function titulo(una_descripcion){
     descripcion = document.createElement( 'p');
     texto = document.createTextNode(una_descripcion);
     descripcion.appendChild(texto);
+    principal.appendChild(descripcion);
     return principal
     }
 
@@ -23,11 +24,21 @@ function aulas(datos){
         un_aula.appendChild(escribir_nombre);
         un_aula.appendChild(document.createTextNode('Red:' + datos[clave].red));
         un_aula.appendChild(document.createTextNode('/'+datos[clave].mascara));
-        un_aula.className = 'aulas';
+        un_aula.className = 'acciones';
         aula.appendChild(un_aula);
         }
 }
 
-function tareas(data){
+function tareas(datos){
     aula = titulo('Lista de Tareas:');
+    for (var clave in datos){
+        var un_aula = document.createElement( 'div' );
+        escribir_nombre = document.createElement( 'h1' );
+        escribir_nombre.appendChild(document.createTextNode(clave));
+        un_aula.appendChild(escribir_nombre);
+        un_aula.appendChild( document.createTextNode('Instrucciones:' +
+            datos[clave].instrucciones));
+        un_aula.className = 'acciones';
+        aula.appendChild(un_aula);
+        }
 }

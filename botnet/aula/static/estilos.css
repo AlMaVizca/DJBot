@@ -1,11 +1,3 @@
-.acciones{
-    border:3px solid gray;
-    position: relative;
-    float: left;
-    margin: 15px;
-    padding: 5px;
-    }
-
 .computadora{
     width:250px;
     padding:10px;
@@ -23,7 +15,7 @@
     float: left;
 }
 
-.aulas hidden{
+.acciones{
     border:1em solid gray;
     width: 30em;
     float:left;
