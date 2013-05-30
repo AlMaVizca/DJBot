@@ -3,6 +3,8 @@ from django.utils import simplejson
 from dajaxice.decorators import dajaxice_register
 from botnet.aula.models import Aula, Tarea
 from django.contrib.auth.decorators import login_required
+from botnet.aula.forms import FormularioListaTareas, FormularioAulas
+from django.core import serializers
 
 
 @login_required
@@ -24,5 +26,23 @@ def obtener_aulas(request):
 @login_required
 @dajaxice_register
 def obtener_tareas(request):
+    consulta_tareas = Tarea.objects.all()
+    datos = {}
+    nombres = []
+    for each in consulta_tareas:
+        nombres.append(each.nombre)
+        datos[each.nombre] = {
+            'nombre': each.nombre,
+            'instrucciones': each.instrucciones,
+            }
+    return simplejson.dumps(datos)
 
-    return simplejson.dumps({'a': 'dsasd'})
+
+@login_required
+@dajaxice_register
+def obtener_ejecutar(request):
+    formulario_tareas = FormularioListaTareas()
+    formulario_aulas = FormularioAulas()
+    datos = serializers.serialize('json', formulario_aulas)
+    print datos
+    return simplejson.dumps(datos)
