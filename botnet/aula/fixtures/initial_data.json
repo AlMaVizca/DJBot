@@ -1,7 +1,7 @@
 [
     {
     "model": "aula.aula",
-    "pk": "Prueba",
+    "pk": "PruebaAula",
     "fields": {
         "interfaz": "eth0",
         "usuario": "root",
@@ -14,7 +14,7 @@
     "model": "aula.computadora",
     "pk": 1,
     "fields": {
-        "aula": "Prueba",
+        "aula": "PruebaAula",
         "nombre": "botnet1",
         "mac": "asddasdas",
         "ip": "192.168.7.2"
@@ -24,7 +24,7 @@
     "model": "aula.computadora",
     "pk": 2,
     "fields": {
-        "aula": "Prueba",
+        "aula": "PruebaAula",
         "nombre": "botnet2",
         "mac": "asddqwdas",
         "ip": "192.168.7.3"
@@ -66,7 +66,7 @@
     "model": "aula.tarea",
     "pk": 1,
     "fields": {
-        "nombre": "Prueba",
+        "nombre": "PruebaTarea",
         "instrucciones": "date"
         }
     }

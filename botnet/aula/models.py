@@ -30,6 +30,9 @@ class Aula(models.Model):
     red = models.IPAddressField()
     mascara = models.IntegerField()
 
+    def obtener_red(self):
+        return (self.red + '/' + str(self.mascara))
+
     def cantidad_computadoras(self):
         cantidad = Computadora.objects.filter(aula=self.nombre).count()
         return cantidad
@@ -38,6 +41,7 @@ class Aula(models.Model):
         return self.nombre
 
     cantidad_computadoras.short_description = 'Cantidad de computadoras'
+    obtener_red.short_description = 'Red'
 
 
 class Computadora(models.Model):

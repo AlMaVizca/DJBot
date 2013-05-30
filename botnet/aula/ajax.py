@@ -40,9 +40,10 @@ def obtener_tareas(request):
 
 @login_required
 @dajaxice_register
-def obtener_ejecutar(request):
+def obtener_formulario(request):
+    consulta_tareas = Tarea.objects.all()
+    consulta_aulas = Aula.objects.all()
     formulario_tareas = FormularioListaTareas()
     formulario_aulas = FormularioAulas()
-    datos = serializers.serialize('json', formulario_aulas)
-    print datos
+    datos = {'tareas': formulario_tareas, 'aulas': formulario_aulas}
     return simplejson.dumps(datos)

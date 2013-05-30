@@ -14,29 +14,6 @@
     href="{% static "aula/estilos.css" %}" />
 {% endblock %}
 
-{% block navbar %}
-<div class="navbar">
-    <div class="navbar-inner">
-    <ul class="nav">
-        <li>
-        <button type="button" name="" value="" class="css3button"
-        onclick="Dajaxice.botnet.aula.obtener_aulas(aulas);">Aulas</button>
-        </li><li>
-        <button type="button" name="" value="" class="css3button"
-        onclick="Dajaxice.botnet.aula.obtener_tareas(tareas);">Tareas</button>
-        </li><li>
-        <button type="button" name="" value="" class="css3button"
-        onclick="Dajaxice.botnet.aula.obtener_ejecutar(aulas);">Ejecutar</button>
-        </li><li>
-        <button type="button" name="" value="" class="css3button"
-        onclick="Dajaxice.aula.sayhello(my_js_callback);">Mostrar Resultado</button>
-        </li>
-    </ul>
-    </div>
-</div>
-
-{% endblock %}
-
 {% block content %}
 
 <div id="content-main">

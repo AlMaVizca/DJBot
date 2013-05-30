@@ -9,18 +9,14 @@ import django_rq
 
 @login_required
 def indice(request):
-    return render(request, 'botnet/index.html')
-
-
-@login_required
-def ejecutar(request, lista_de_tareas=None):
     form_aula = FormularioAulas(request.POST or None)
     form_tareas = FormularioListaTareas(request.POST or None)
+    contexto = {}
     if form_aula.is_valid() and form_tareas.is_valid():
         valores = dict(form_tareas.cleaned_data.items() +
                 form_aula.cleaned_data.items())
         ips = [compu.ip for each in valores['aulas']
-            for compu in Computadora.objects.filter(aula=each)]
+        for compu in Computadora.objects.filter(aula=each)]
         borrar_archivo()
         try:
             django_rq.enqueue(ejecutar_tareas, tareas=valores['tareas'],
@@ -31,7 +27,12 @@ def ejecutar(request, lista_de_tareas=None):
             'aula': valores['aulas'],
             'computadoras': ips,
             }
-        return render(request, 'botnet/ejecutando.html', contexto)
+    return render(request, 'botnet/index.html', contexto)
+
+
+
+@login_required
+def ejecutar(request, lista_de_tareas=None):
     try:
         tareas = lista_de_tareas.split(',')
     except:

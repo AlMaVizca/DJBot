@@ -18,7 +18,7 @@ class ComputadorasNuevas(admin.TabularInline):
 class AulaAdmin(admin.ModelAdmin):
     inlines = [ComputadorasNuevas]
     actions = ['prender_sala']
-    list_display = ('nombre', 'cantidad_computadoras')
+    list_display = ('nombre', 'cantidad_computadoras', 'obtener_red')
     search_fields = ['nombre']
     form = FormularioAula
 
