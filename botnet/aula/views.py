@@ -9,12 +9,13 @@ import django_rq
 
 @login_required
 def indice(request):
-    form_aula = FormularioAulas(request.POST or None)
-    form_tareas = FormularioListaTareas(request.POST or None)
-    contexto = {}
-    if form_aula.is_valid() and form_tareas.is_valid():
-        valores = dict(form_tareas.cleaned_data.items() +
-                form_aula.cleaned_data.items())
+    formulario_aula = FormularioAulas(request.POST or None)
+    formulario_tareas = FormularioListaTareas(request.POST or None)
+    contexto = {'formulario_aula': formulario_aula,
+        'formulario_tarea': formulario_tareas}
+    if formulario_aula.is_valid() and formulario_tareas.is_valid():
+        valores = dict(formulario_tareas.cleaned_data.items() +
+                formulario_aula.cleaned_data.items())
         ips = [compu.ip for each in valores['aulas']
         for compu in Computadora.objects.filter(aula=each)]
         borrar_archivo()
@@ -23,12 +24,9 @@ def indice(request):
                 computadoras=ips)
         except:
             return HttpResponse("<h1>Estas ejecutando redis??</h1>")
-        contexto = {'tareas': valores['tareas'],
-            'aula': valores['aulas'],
-            'computadoras': ips,
-            }
+        contexto = {'aulas': valores['aulas'], 'tareas': valores['tareas'],
+            'formulario': FormularioAulas()}
     return render(request, 'botnet/index.html', contexto)
-
 
 
 @login_required

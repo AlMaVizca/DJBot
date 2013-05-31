@@ -16,7 +16,7 @@
 }
 
 .acciones{
-    border:1em solid gray;
+    border: 0.1em solid gray;
     width: 30em;
     float:left;
     position:relative;

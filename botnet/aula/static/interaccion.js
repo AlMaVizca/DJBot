@@ -29,8 +29,8 @@ function aulas(datos){
         }
 }
 
-function tareas(datos){
-    aula = titulo('Lista de Tareas:');
+function resultado(datos){
+    aula = titulo('Ejecuciones:');
     for (var clave in datos){
         var un_aula = document.createElement( 'div' );
         escribir_nombre = document.createElement( 'h1' );

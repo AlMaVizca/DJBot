@@ -17,8 +17,55 @@
 {% block content %}
 
 <div id="content-main">
+{%if aulas and tareas and formulario %}
+<p> Las siguientes tareas ser&aacute;n ejecutadas en las siguientes aulas:</p>
+
+<p> Aulas:</p>
+<ul>
+{% for each in aulas %}
+    <li>{{each}}</li>
+{% endfor %}
+</ul>
+<p> Tareas:</p>
+<ul>
+{% for each in tareas %}
+    <li>{{each}}</li>
+{% endfor %}
+</ul>
+
+<p>Consultar los resultados de la ejecuci&oacute;n:</p>
+<form action="." method="post">
+    {% csrf_token %}
+    {{ formulario.as_p }}
+    <input type="submit" onclick="Dajaxice.botnet.aula.obtener_resultado(my_callback)"
+        value="Consultar" />
+</form>
+
+{% endif %}
+
+
+
+
+{%if formulario_tarea and formulario_aula %}
 <p>Esta herramienta se desarrollo para probar servidores web</p>
 <p>pero es una herramienta de proposito general.</p>
+    <form action="." method="post">
+        {% csrf_token %}
+        <div class='acciones'>
+            {{ formulario_tarea.as_p }}
+            <div class='descripcion_tarea'>
+            </div>
+        </div>
+        <div class='acciones'>
+            {{ formulario_aula.as_p }}
+            <div class='descripcion_aula'>
+            </div>
+        </div>
+        <div id='enviar'>
+            <input type="submit" value="Ejecutar" />
+        </div>
+    </form>
+{% endif %}
 
 </div>
 {% endblock %}
