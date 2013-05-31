@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.utils import simplejson
 from dajaxice.decorators import dajaxice_register
-from botnet.aula.models import Aula
+from botnet.aula.models import Aula, Tareas
+from django.contrib.auth.decorators import login_required
 
 
+@login_required
 @dajaxice_register
 def obtener_aulas(request):
     consulta_aulas = Aula.objects.all()
@@ -19,6 +21,8 @@ def obtener_aulas(request):
     return simplejson.dumps(datos)
 
 
+@login_required
 @dajaxice_register
-def prueba(request):
+def obtener_tareas(request):
+
     return simplejson.dumps({'a': 'dsasd'})

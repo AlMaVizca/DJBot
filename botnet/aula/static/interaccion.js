@@ -1,27 +1,33 @@
-function limpiar_contenido(nombre_nodo){
-    nodo = document.getElementById(nombre_nodo);
+function limpiar_contenido(nodo){
     cantidad = nodo.childNodes.length
     for (var indice=0; indice<cantidad; indice++ ){
         nodo.removeChild(nodo.childNodes[0]);
     }
 }
 
-
-function aulas(data){
-    var aula=document.getElementById("content-main");
-    limpiar_contenido('content-main');
+function titulo(una_descripcion){
+    var principal=document.getElementById("content-main");
+    limpiar_contenido(principal);
     descripcion = document.createElement( 'p');
-    texto = document.createTextNode("A continuacion se presentan las aulas disponibles");
+    texto = document.createTextNode(una_descripcion);
     descripcion.appendChild(texto);
-    aula.appendChild(descripcion);
-    for (var key in data){
+    return principal
+    }
+
+function aulas(datos){
+    aula = titulo('Lista de aulas:');
+    for (var clave in datos){
         var un_aula = document.createElement( 'div' );
-        titulo = document.createElement( 'h1' );
-        titulo.appendChild(document.createTextNode(key));
-        un_aula.appendChild(titulo);
-        un_aula.appendChild(document.createTextNode('Red:' + data[key].red));
-        un_aula.appendChild(document.createTextNode('/'+data[key].mascara));
+        escribir_nombre = document.createElement( 'h1' );
+        escribir_nombre.appendChild(document.createTextNode(clave));
+        un_aula.appendChild(escribir_nombre);
+        un_aula.appendChild(document.createTextNode('Red:' + datos[clave].red));
+        un_aula.appendChild(document.createTextNode('/'+datos[clave].mascara));
         un_aula.className = 'aulas';
         aula.appendChild(un_aula);
         }
+}
+
+function tareas(data){
+    aula = titulo('Lista de Tareas:');
 }
