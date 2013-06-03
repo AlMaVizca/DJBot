@@ -36,3 +36,13 @@ class FormularioAula(forms.ModelForm):
 
 class FormularioComputadora(forms.ModelForm):
     ip = forms.IPAddressField(label='ip', validators=[validate_ipv4_address])
+
+
+class FormularioResultados(forms.Form):
+    opciones = (
+    ('todos', 'Todos'),
+    ('uno', 'Uno'),
+)
+    mostrar = forms.ChoiceField(choices=opciones)
+    ip = forms.IPAddressField(validators=[validate_ipv4_address],
+        required=False)

@@ -31,6 +31,7 @@ function aulas(datos){
 
 function resultado(datos){
     aula = titulo('Ejecuciones:');
+    alert(aula);
     for (var clave in datos){
         var un_aula = document.createElement( 'div' );
         escribir_nombre = document.createElement( 'h1' );

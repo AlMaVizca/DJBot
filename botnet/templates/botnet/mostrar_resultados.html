@@ -1,0 +1,43 @@
+{% extends "botnet/index.html" %}
+{% load i18n admin_static %}
+
+{% block content %}
+{%if formulario and mostrar %}
+
+<p>Consultar los resultados de la ejecuci&oacute;n:</p>
+<form action="." method="post">
+    {% csrf_token %}
+    <div class="acciones">
+    {{ formulario.as_p }}
+    <p> El campo ip es opcional y se usa solamente cuando se pide la maquina x
+    </p>
+    {{ mostrar.as_p }}
+    </div>
+    <p> Se supone que todas las computadoras tienen los mismos programas
+    instalados, por ende se ofrece visualizar todas, una o una al azar <p>
+
+
+    <input type="submit" value="Consultar" />
+</form>
+
+{% endif %}
+
+{% if computadoras %}
+    {%for computadora,resultado in computadoras.items %}
+        <div class="acciones">
+            <h2>{{computadora}}</h2>
+        {%for comando in resultado %}
+            <p>{{comando}}</p>
+        {% endfor %}
+        </div>
+
+    {% endfor %}
+{% endif %}
+
+
+
+{% endblock %}
+
+
+
+

@@ -1,8 +1,9 @@
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from botnet.aula.models import Computadora, Aula
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from botnet.aula.forms import FormularioAulas, FormularioListaTareas
+from botnet.aula.forms import FormularioResultados
 from botnet.aula.funciones import *
 import django_rq
 
@@ -24,8 +25,7 @@ def indice(request):
                 computadoras=ips)
         except:
             return HttpResponse("<h1>Estas ejecutando redis??</h1>")
-        contexto = {'aulas': valores['aulas'], 'tareas': valores['tareas'],
-            'formulario': FormularioAulas()}
+        return redirect('mostrar_resultados')
     return render(request, 'botnet/index.html', contexto)
 
 
@@ -63,9 +63,16 @@ def prender(request, lista_de_salas):
 @login_required
 def mostrar_resultados(request, lista_de_salas=None):
     form_aula = FormularioAulas(request.POST or None)
+    form_resultados = FormularioResultados(request.POST or None)
     compus = None
-    if form_aula.is_valid():
+    if form_aula.is_valid() and form_resultados.is_valid():
+        resultados = dict(form_resultados.cleaned_data.items())
         valores = dict(form_aula.cleaned_data.items())
-        compus = mostrar_aula(valores['aulas'])
+        if resultados['mostrar'] == 'todos':
+            compus = mostrar_aula(valores['aulas'])
+            print compus, "todos"
+        if resultados['mostrar'] == 'uno':
+            compus = mostrar_computadora(resultados['ip'], 32)
     return render(request, 'botnet/mostrar_resultados.html',
-            {'formulario': FormularioAulas(), 'computadoras': compus})
+            {'formulario': FormularioAulas(), 'computadoras': compus,
+            'mostrar': FormularioResultados()})

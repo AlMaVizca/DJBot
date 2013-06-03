@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from botnet.aula.models import Aula, Tarea, Configuracion
+from botnet.aula.models import Aula, Tarea, Configuracion, Computadora
 from botnet import fabfile
 import re
 import subprocess
@@ -7,29 +7,37 @@ import os
 import ipaddress
 
 
-def mostrar_aula(aula):
+def mostrar_computadora(ip, mascara):
     archivo = open(fabfile.ARCHIVO, 'r')
+    patronIp = re.compile("\[([0-9.]*)\]")
+    computadoras = {}
+    ip_buscada = ipaddress.IPv4Interface(unicode(ip) + '/' +
+            unicode(mascara))
+    for each in archivo.readlines():
+        if re.match(patronIp, each):
+            ip = unicode(obtener_ip(patronIp, each))
+            una_ip = ipaddress.IPv4Interface(ip + '/' +
+                    unicode(mascara))
+            if (ip_buscada == una_ip):
+                tipo, salida = obtener_salida(each)
+                try:
+                    computadoras[ip].append(tipo + ':' + salida)
+                except:
+                    computadoras[ip] = [tipo + ':' + salida]
+    archivo.close()
+    return computadoras
+
+
+def mostrar_aula(aula):
     computadoras = {}
     for each in aula:
         un_aula = Aula.objects.get(nombre=each)
-        ip = ipaddress.IPv4Interface(un_aula.red + '/' + str(un_aula.mascara))
-        red = ip.network
-        patronIp = re.compile("\[([0-9.]*)\]")
-        for each in archivo.readlines():
-            if re.match(patronIp, each):
-                ip = obtener_ip(patronIp, each)
-                print red
-                print ipaddress.IPv4Interface(ip + '/' + str(un_aula.mascara))
-                #if (red ==
-                #    ipaddress.IPv4Interface(ip + '/' + str(un_aula.mascara))):
-                #    tipo, salida = obtener_salida(each)
-                #    print tipo, salida
-                #    try:
-                #        computadoras[ip].append(tipo + ':' + salida)
-                #    except:
-                #        computadoras[ip] = [tipo + ':' + salida]
-        archivo.close()
-        return computadoras
+        sala = Computadora.objects.filter(aula=un_aula)
+        for each in sala:
+            una_computadora = mostrar_computadora(each.ip, un_aula.mascara)
+            print una_computadora
+            computadoras.update(una_computadora)
+    return computadoras
 
 
 def obtener_salida(linea):

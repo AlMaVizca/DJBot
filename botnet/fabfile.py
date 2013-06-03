@@ -20,6 +20,7 @@ def ejecutar(tarea, computadoras):
 
 
 @task
+@parallel
 def ejecutar_clientes(instruccion):
     output = StringIO()
     error = StringIO()

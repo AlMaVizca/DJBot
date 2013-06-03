@@ -41,5 +41,7 @@ def obtener_tareas(request):
 @login_required
 @dajaxice_register
 def obtener_resultado(request):
-    mostrar_aula()
-    return simplejson.dumps(datos)
+    formulario = FormularioAulas(request.POST or None)
+    if formulario.is_valid():
+        return simplejson.dumps({'datos': formulario.aula})
+    return simplejson.dumps({'datos': 'fallo'})
