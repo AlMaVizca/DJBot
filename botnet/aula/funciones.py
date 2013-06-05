@@ -35,7 +35,6 @@ def mostrar_aula(aula):
         sala = Computadora.objects.filter(aula=un_aula)
         for each in sala:
             una_computadora = mostrar_computadora(each.ip, un_aula.mascara)
-            print una_computadora
             computadoras.update(una_computadora)
     return computadoras
 

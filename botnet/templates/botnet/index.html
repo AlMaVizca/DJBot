@@ -1,10 +1,8 @@
 {% extends "admin/base_site.html" %}
-{% load dajaxice_templatetags %}
 {% load i18n admin_static %}
 
 
 {% block extrahead %}{{ block.super }}
-    {% dajaxice_js_import %}
     <script type="text/javascript" src="/static/interaccion.js"></script>
 {% endblock %}
 
@@ -19,8 +17,7 @@
 <div id="content-main">
 
 {%if formulario_tarea and formulario_aula %}
-<p>Esta herramienta se desarrollo para probar servidores web</p>
-<p>pero es una herramienta de proposito general.</p>
+<p>Esta herramienta permite ejecutar una lista de tareas en una seleccion de aulas.</p>
     <form action="." method="post">
         {% csrf_token %}
         <div class='acciones'>

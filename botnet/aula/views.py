@@ -70,7 +70,6 @@ def mostrar_resultados(request, lista_de_salas=None):
         valores = dict(form_aula.cleaned_data.items())
         if resultados['mostrar'] == 'todos':
             compus = mostrar_aula(valores['aulas'])
-            print compus, "todos"
         if resultados['mostrar'] == 'uno':
             compus = mostrar_computadora(resultados['ip'], 32)
     return render(request, 'botnet/mostrar_resultados.html',

@@ -108,7 +108,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'botnet.aula',
     'django_rq',
-    'dajaxice',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -138,19 +137,6 @@ LOGGING = {
             'propagate': True,
         },
     }
-}
-
-CACHES = {
-    'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': 'unix:/path/to/socket/file.sock:1',
-        'OPTIONS': {
-            'PASSWORD': 'foopassword',
-            'PICKLE_VERSION': -1,   # default
-            'PARSER_CLASS': 'redis.connection.HiredisParser',
-            'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
-        },
-    },
 }
 
 RQ_QUEUES = {
