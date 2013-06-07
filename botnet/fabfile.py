@@ -1,7 +1,5 @@
 from fabric.api import *
-from StringIO import StringIO
 from aula.models import Configuracion
-import sys
 ARCHIVO = '/tmp/temporal'
 
 
@@ -16,28 +14,17 @@ def configurar_entorno():
 @task
 def ejecutar(tarea, computadoras):
     configurar_entorno()
-    execute(ejecutar_clientes, instruccion=tarea, hosts=computadoras)
+    print "execute"
+    return execute(ejecutar_clientes, instruccion=tarea, hosts=computadoras)
 
 
 @task
 @parallel
 def ejecutar_clientes(instruccion):
-    output = StringIO()
-    error = StringIO()
-    sys.stdout = output
-    sys.stderr = error
     try:
-        run(instruccion)
+        return run(instruccion)
     except:
-        print '[' + env.host_string + '] out: fallo'
-    sys.stdout = sys.__stdout__
-    sys.stderr = sys.__stderr__
-    archivo = open(ARCHIVO, 'a')
-    try:
-        archivo.write(output.getvalue())
-    except:
-        archivo.write("esto falla")
-    archivo.close()
+        return '[' + env.host_string + '] out: fallo'
 
 
 @task

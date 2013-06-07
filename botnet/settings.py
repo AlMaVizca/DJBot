@@ -139,6 +139,18 @@ LOGGING = {
     }
 }
 
+
+CACHES = {
+    "default": {
+        "BACKEND": "redis_cache.cache.RedisCache",
+        "LOCATION": "127.0.0.1:6397:1",
+        "OPTIONS": {
+            "DB": 1
+        }
+    }
+}
+
+
 RQ_QUEUES = {
     'default': {
         'HOST': 'localhost',

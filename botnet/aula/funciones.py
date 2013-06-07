@@ -1,31 +1,34 @@
-# -*- coding: utf-8 -*-
-from botnet.aula.models import Aula, Tarea, Configuracion, Computadora
-from botnet import fabfile
 import re
 import subprocess
 import os
 import ipaddress
+import django_rq
+from botnet.aula.models import Aula, Tarea, Configuracion, Computadora
+from botnet import fabfile
+from django.core.cache import cache
 
 
 def mostrar_computadora(ip, mascara):
-    archivo = open(fabfile.ARCHIVO, 'r')
-    patronIp = re.compile("\[([0-9.]*)\]")
-    computadoras = {}
-    ip_buscada = ipaddress.IPv4Interface(unicode(ip) + '/' +
-            unicode(mascara))
-    for each in archivo.readlines():
-        if re.match(patronIp, each):
-            ip = unicode(obtener_ip(patronIp, each))
-            una_ip = ipaddress.IPv4Interface(ip + '/' +
-                    unicode(mascara))
-            if (ip_buscada == una_ip):
-                tipo, salida = obtener_salida(each)
-                try:
-                    computadoras[ip].append(tipo + ':' + salida)
-                except:
-                    computadoras[ip] = [tipo + ':' + salida]
-    archivo.close()
-    return computadoras
+    #computadoras = cache.get("ejecutado")
+    print "computadoras"
+#    archivo = open(fabfile.ARCHIVO, 'r')
+#    patronIp = re.compile("\[([0-9.]*)\]")
+#    computadoras = {}
+#    ip_buscada = ipaddress.IPv4Interface(unicode(ip) + '/' +
+#            unicode(mascara))
+#    for each in archivo.readlines():
+#        if re.match(patronIp, each):
+#            ip = unicode(obtener_ip(patronIp, each))
+#            una_ip = ipaddress.IPv4Interface(ip + '/' +
+#                    unicode(mascara))
+#            if (ip_buscada == una_ip):
+#                tipo, salida = obtener_salida(each)
+#                try:
+#                    computadoras[ip].append(tipo + ':' + salida)
+#                except:
+#                    computadoras[ip] = [tipo + ':' + salida]
+#    archivo.close()
+    return {'192.168.7.2': 'computadoras'}
 
 
 def mostrar_aula(aula):
@@ -58,24 +61,28 @@ def obtener_ip(patron, linea):
 
 
 def ejecutar_tareas(tareas, computadoras):
-    for unaTarea in tareas:
-        instrucciones = Tarea.objects.filter(nombre=unaTarea)
-        receta = instrucciones.values()[0]['instrucciones'].split('\n')
-        if os.path.isfile(instrucciones.values()[0]['archivo']):
-            if instrucciones.values()[0]['dividir_archivo']:
+    for each in tareas:
+        una_tarea = Tarea.objects.get(nombre=each)
+        archivo = str(una_tarea.archivo)
+        if os.path.isfile(archivo):
+            if una_tarea.dividir_archivo is True:
                 cantidad = len(computadoras)
                 secuencia_temporal = os.path.join(
                     Configuracion.objects.get(nombre="temporal").valor,
                     Configuracion.objects.get(nombre="secuencia").valor)
-                fabfile.cortar(cantidad, instrucciones.values()[0]['archivo'],
-                    secuencia_temporal)
+                fabfile.cortar(cantidad, archivo, secuencia_temporal)
                 for each in range(0, cantidad):
-                    print secuencia_temporal + str(each)
                     fabfile.enviar(secuencia_temporal + str(each).zfill(2),
                         computadoras[each])
             else:
-                fabfile.enviar(instrucciones.values()[0]['archivo'],
-                    computadoras)
+                fabfile.enviar(archivo, computadoras)
+        print "para ejecutar"
+        output = []
+        receta = una_tarea.instrucciones.split('\n')
+        print receta
         for each in receta:
-            fabfile.ejecutar(each, computadoras)
-
+            print "inst", each, "aaa"
+            django_rq.enqueue(output.append(
+                fabfile.ejecutar(each, computadoras)
+                ))
+        print output

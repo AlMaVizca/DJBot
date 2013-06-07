@@ -5,7 +5,6 @@ from django.shortcuts import render, redirect
 from botnet.aula.forms import FormularioAulas, FormularioListaTareas
 from botnet.aula.forms import FormularioResultados
 from botnet.aula.funciones import *
-import django_rq
 
 
 @login_required
@@ -19,12 +18,10 @@ def indice(request):
                 formulario_aula.cleaned_data.items())
         ips = [compu.ip for each in valores['aulas']
         for compu in Computadora.objects.filter(aula=each)]
-        borrar_archivo()
-        try:
-            django_rq.enqueue(ejecutar_tareas, tareas=valores['tareas'],
-                computadoras=ips)
-        except:
-            return HttpResponse("<h1>Estas ejecutando redis??</h1>")
+        #try:
+        ejecutar_tareas(valores['tareas'], computadoras=ips)
+        #except:
+        #    return HttpResponse("<h1>Estas ejecutando redis??</h1>")
         return redirect('mostrar_resultados')
     return render(request, 'botnet/index.html', contexto)
 
