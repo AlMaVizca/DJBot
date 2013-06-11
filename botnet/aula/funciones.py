@@ -2,10 +2,10 @@ import re
 import subprocess
 import os
 import ipaddress
-import django_rq
 from botnet.aula.models import Aula, Tarea, Configuracion, Computadora
 from botnet import fabfile
 from django.core.cache import cache
+import django_rq
 
 
 def mostrar_computadora(ip, mascara):
@@ -64,6 +64,7 @@ def ejecutar_tareas(tareas, computadoras):
     for each in tareas:
         una_tarea = Tarea.objects.get(nombre=each)
         archivo = str(una_tarea.archivo)
+        apagadas = []
         if os.path.isfile(archivo):
             if una_tarea.dividir_archivo is True:
                 cantidad = len(computadoras)
@@ -72,17 +73,13 @@ def ejecutar_tareas(tareas, computadoras):
                     Configuracion.objects.get(nombre="secuencia").valor)
                 fabfile.cortar(cantidad, archivo, secuencia_temporal)
                 for each in range(0, cantidad):
-                    fabfile.enviar(secuencia_temporal + str(each).zfill(2),
-                        computadoras[each])
+                    try:
+                        fabfile.enviar(secuencia_temporal + str(each).zfill(2),
+                            computadoras[each])
+                    except:
+                        apagadas.append(computadoras[each])
             else:
                 fabfile.enviar(archivo, computadoras)
-        print "para ejecutar"
-        output = []
         receta = una_tarea.instrucciones.split('\n')
-        print receta
         for each in receta:
-            print "inst", each, "aaa"
-            django_rq.enqueue(output.append(
-                fabfile.ejecutar(each, computadoras)
-                ))
-        print output
+            fabfile.ejecutar(each, computadoras)

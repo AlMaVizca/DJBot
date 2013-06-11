@@ -1,6 +1,7 @@
 from fabric.api import *
 from aula.models import Configuracion
 ARCHIVO = '/tmp/temporal'
+import django_rq
 
 
 @task
@@ -14,17 +15,17 @@ def configurar_entorno():
 @task
 def ejecutar(tarea, computadoras):
     configurar_entorno()
-    print "execute"
-    return execute(ejecutar_clientes, instruccion=tarea, hosts=computadoras)
+    execute(ejecutar_clientes, instruccion=tarea, hosts=computadoras)
 
 
 @task
 @parallel
 def ejecutar_clientes(instruccion):
     try:
-        return run(instruccion)
+        salida = run(instruccion)
     except:
-        return '[' + env.host_string + '] out: fallo'
+        salida = 'fallo'
+    print '[' + env.host_string + ']' + " out: " + salida
 
 
 @task
@@ -34,11 +35,16 @@ def generar_clave(nombre_archivo):
 
 @task
 def enviar(archivo, computadoras):
+    if isinstance(computadoras, str):
+        computadoras = [computadoras]
     configurar_entorno()
-    execute(enviar_archivos, archivos=archivo, hosts=[computadoras])
+    ejecutar = django_rq.get_queue('ejecutar')
+    ejecutar.enqueue(execute, enviar_archivos, archivos=archivo,
+        hosts=computadoras)
 
 
 @task
+@parallel
 def enviar_archivos(archivos):
     put(archivos, '/tmp/archivo', mirror_local_mode=True)
 
@@ -47,18 +53,3 @@ def enviar_archivos(archivos):
 def cortar(cantidad, archivo, path):
     comando = "split -d -nl/" + str(cantidad) + " " + archivo + " " + path
     local(comando)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

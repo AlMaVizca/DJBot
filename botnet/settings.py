@@ -141,17 +141,23 @@ LOGGING = {
 
 
 CACHES = {
-    "default": {
-        "BACKEND": "redis_cache.cache.RedisCache",
-        "LOCATION": "127.0.0.1:6397:1",
-        "OPTIONS": {
-            "DB": 1
-        }
-    }
+    'default': {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': 'localhost:6379:1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'redis_cache.client.DefaultClient',
+            'MAX_ENTRIES': 5000,
+        },
+    },
 }
 
-
 RQ_QUEUES = {
+    'ejecutar': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 1,
+        'PASSWORD': '',
+    },
     'default': {
         'HOST': 'localhost',
         'PORT': 6379,
