@@ -15,7 +15,7 @@ def configurar_entorno():
 @task
 def ejecutar(tarea, computadoras):
     configurar_entorno()
-    execute(ejecutar_clientes, instruccion=tarea, hosts=computadoras)
+    return execute(ejecutar_clientes, instruccion=tarea, hosts=computadoras)
 
 
 @task
@@ -25,7 +25,7 @@ def ejecutar_clientes(instruccion):
         salida = run(instruccion)
     except:
         salida = 'fallo'
-    print '[' + env.host_string + ']' + " out: " + salida
+    return salida
 
 
 @task

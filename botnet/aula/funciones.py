@@ -4,8 +4,8 @@ import os
 import ipaddress
 from botnet.aula.models import Aula, Tarea, Configuracion, Computadora
 from botnet import fabfile
-from django.core.cache import cache
 import django_rq
+from redis_cache.cache import RedisCache
 
 
 def mostrar_computadora(ip, mascara):
@@ -81,5 +81,10 @@ def ejecutar_tareas(tareas, computadoras):
             else:
                 fabfile.enviar(archivo, computadoras)
         receta = una_tarea.instrucciones.split('\n')
+        ejecutado = {}
         for each in receta:
-            fabfile.ejecutar(each, computadoras)
+            salida = fabfile.ejecutar(each, computadoras)
+            ejecutado[each] = salida
+        cache = RedisCache()
+        cache.set(each, ejecutado)
+        print ejecutado

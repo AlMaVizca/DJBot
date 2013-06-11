@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from botnet.aula.forms import FormularioAulas, FormularioListaTareas
 from botnet.aula.forms import FormularioResultados
 from botnet.aula.funciones import *
+from django.core.cache import cache
 import django_rq
 
 
@@ -20,6 +21,7 @@ def indice(request):
         ips = [compu.ip for each in valores['aulas']
         for compu in Computadora.objects.filter(aula=each)]
         try:
+            cache.set('tareas', valores['tareas'])
             django_rq.enqueue(ejecutar_tareas, tareas=valores['tareas'],
                 computadoras=ips)
         except:
@@ -71,6 +73,8 @@ def mostrar_resultados(request, lista_de_salas=None):
             compus = mostrar_aula(valores['aulas'])
         if resultados['mostrar'] == 'uno':
             compus = mostrar_computadora(resultados['ip'], 32)
+    a = cache.get('tareas')
+    print a
     return render(request, 'botnet/mostrar_resultados.html',
             {'formulario': FormularioAulas(), 'computadoras': compus,
             'mostrar': FormularioResultados()})
