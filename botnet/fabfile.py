@@ -35,12 +35,8 @@ def generar_clave(nombre_archivo):
 
 @task
 def enviar(archivo, computadoras):
-    if isinstance(computadoras, str):
-        computadoras = [computadoras]
     configurar_entorno()
-    ejecutar = django_rq.get_queue('ejecutar')
-    ejecutar.enqueue(execute, enviar_archivos, archivos=archivo,
-        hosts=computadoras)
+    execute(enviar_archivos, archivos=archivo, hosts=computadoras)
 
 
 @task

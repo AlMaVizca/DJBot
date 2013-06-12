@@ -1,3 +1,5 @@
+import django_rq
+import ast
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from botnet.aula.models import Computadora, Aula
@@ -6,7 +8,7 @@ from botnet.aula.forms import FormularioAulas, FormularioListaTareas
 from botnet.aula.forms import FormularioResultados
 from botnet.aula.funciones import *
 from django.core.cache import cache
-import django_rq
+from redis_cache import get_redis_connection
 
 
 @login_required
@@ -21,7 +23,6 @@ def indice(request):
         ips = [compu.ip for each in valores['aulas']
         for compu in Computadora.objects.filter(aula=each)]
         try:
-            cache.set('tareas', valores['tareas'])
             django_rq.enqueue(ejecutar_tareas, tareas=valores['tareas'],
                 computadoras=ips)
         except:
@@ -73,6 +74,9 @@ def mostrar_resultados(request, lista_de_salas=None):
             compus = mostrar_aula(valores['aulas'])
         if resultados['mostrar'] == 'uno':
             compus = mostrar_computadora(resultados['ip'])
+    cache = get_redis_connection('default')
+    apagadas = cache.get('apagadas')
+    apagadas = ast.literal_eval(apagadas)
     return render(request, 'botnet/mostrar_resultados.html',
             {'formulario': FormularioAulas(), 'computadoras': compus,
-            'mostrar': FormularioResultados()})
+            'mostrar': FormularioResultados(), 'apagadas': apagadas})
