@@ -1,7 +1,6 @@
 import re
 import subprocess
 import os
-import ipaddress
 import django_rq
 import ast
 from botnet.aula.models import Aula, Tarea, Configuracion, Computadora
