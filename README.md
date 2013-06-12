@@ -4,7 +4,7 @@ djbot
 Controlador de maquinas remotas.
 
 #Requisitos
-* [Django 1.4.5]: https://www.djangoproject.com/
+* [Django 1.4.5](https://www.djangoproject.com/ "django")
 * [Fabric]: http://docs.fabfile.org/en/1.6/
 * [django-admin-bootstrapped]: http://riccardo.forina.me/bootstrap-your-django-admin-in-3-minutes/
 * [Redis]: http://redis.io/
