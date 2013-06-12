@@ -2,33 +2,28 @@ import re
 import subprocess
 import os
 import ipaddress
+import django_rq
+import ast
 from botnet.aula.models import Aula, Tarea, Configuracion, Computadora
 from botnet import fabfile
-import django_rq
-from redis_cache.cache import RedisCache
+from redis_cache import get_redis_connection
 
 
-def mostrar_computadora(ip, mascara):
-    #computadoras = cache.get("ejecutado")
-    print "computadoras"
-#    archivo = open(fabfile.ARCHIVO, 'r')
-#    patronIp = re.compile("\[([0-9.]*)\]")
-#    computadoras = {}
-#    ip_buscada = ipaddress.IPv4Interface(unicode(ip) + '/' +
-#            unicode(mascara))
-#    for each in archivo.readlines():
-#        if re.match(patronIp, each):
-#            ip = unicode(obtener_ip(patronIp, each))
-#            una_ip = ipaddress.IPv4Interface(ip + '/' +
-#                    unicode(mascara))
-#            if (ip_buscada == una_ip):
-#                tipo, salida = obtener_salida(each)
-#                try:
-#                    computadoras[ip].append(tipo + ':' + salida)
-#                except:
-#                    computadoras[ip] = [tipo + ':' + salida]
-#    archivo.close()
-    return {'192.168.7.2': 'computadoras'}
+
+
+def mostrar_computadora(ip):
+    """Las claves de computadoras son el comando ejecutado"""
+    cache = get_redis_connection('default')
+    computadoras = cache.get("ejecutado")
+    resultado = {ip: {}}
+    computadoras = ast.literal_eval(computadoras)
+    for each in computadoras.keys():
+        if computadoras[each][ip]:
+            try:
+                resultado[ip].update({each, computadoras[each][ip]})
+            except:
+                resultado[ip][each] = computadoras[each][ip]
+    return resultado
 
 
 def mostrar_aula(aula):
@@ -37,7 +32,7 @@ def mostrar_aula(aula):
         un_aula = Aula.objects.get(nombre=each)
         sala = Computadora.objects.filter(aula=un_aula)
         for each in sala:
-            una_computadora = mostrar_computadora(each.ip, un_aula.mascara)
+            una_computadora = mostrar_computadora(each.ip)
             computadoras.update(una_computadora)
     return computadoras
 
@@ -81,10 +76,15 @@ def ejecutar_tareas(tareas, computadoras):
             else:
                 fabfile.enviar(archivo, computadoras)
         receta = una_tarea.instrucciones.split('\n')
+        cache = get_redis_connection('default')
         ejecutado = {}
         for each in receta:
             salida = fabfile.ejecutar(each, computadoras)
             ejecutado[each] = salida
-        cache = RedisCache()
-        cache.set(each, ejecutado)
-        print ejecutado
+        cache.set('ejecutado', ejecutado)
+
+
+
+
+        
+

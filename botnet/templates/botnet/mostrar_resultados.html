@@ -23,11 +23,12 @@
 {% endif %}
 
 {% if computadoras %}
-    {%for computadora,resultado in computadoras.items %}
+    {%for computadora,comandos in computadoras.items %}
         <div class="acciones">
             <h2>{{computadora}}</h2>
-        {%for comando in resultado %}
-            <p>{{comando}}</p>
+        {%for comando,resultado in comandos.items %}
+            <h3>{{comando}}</h3>
+            <p>{{resultado}}</p>
         {% endfor %}
         </div>
 

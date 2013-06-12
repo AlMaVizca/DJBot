@@ -155,7 +155,7 @@ RQ_QUEUES = {
     'ejecutar': {
         'HOST': 'localhost',
         'PORT': 6379,
-        'DB': 1,
+        'DB': 0,
         'PASSWORD': '',
     },
     'default': {

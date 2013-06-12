@@ -72,9 +72,7 @@ def mostrar_resultados(request, lista_de_salas=None):
         if resultados['mostrar'] == 'todos':
             compus = mostrar_aula(valores['aulas'])
         if resultados['mostrar'] == 'uno':
-            compus = mostrar_computadora(resultados['ip'], 32)
-    a = cache.get('tareas')
-    print a
+            compus = mostrar_computadora(resultados['ip'])
     return render(request, 'botnet/mostrar_resultados.html',
             {'formulario': FormularioAulas(), 'computadoras': compus,
             'mostrar': FormularioResultados()})

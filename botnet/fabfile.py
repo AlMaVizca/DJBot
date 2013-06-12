@@ -25,7 +25,7 @@ def ejecutar_clientes(instruccion):
         salida = run(instruccion)
     except:
         salida = 'fallo'
-    return salida
+    return str(salida)
 
 
 @task
