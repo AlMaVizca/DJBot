@@ -1,7 +1,4 @@
-import re
-import subprocess
 import os
-import django_rq
 import ast
 from botnet.aula.models import Aula, Tarea, Configuracion, Computadora
 from botnet import fabfile
@@ -55,11 +52,13 @@ def repartir_archivo(archivo, dividir, computadoras):
             fabfile.enviar(archivo, computadoras)
     return apagadas
 
+
 def ejecutar_tareas(tareas, computadoras):
     for each in tareas:
         una_tarea = Tarea.objects.get(nombre=each)
         archivo = str(una_tarea.archivo)
-        apagadas = repartir_archivo(archivo, una_tarea.dividir_archivo, computadoras)
+        apagadas = repartir_archivo(archivo, una_tarea.dividir_archivo,
+            computadoras)
         receta = una_tarea.instrucciones.split('\n')
         cache = get_redis_connection('default')
         ejecutado = {}
@@ -71,5 +70,5 @@ def ejecutar_tareas(tareas, computadoras):
 
 
 
-        
+
 

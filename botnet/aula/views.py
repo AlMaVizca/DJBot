@@ -7,7 +7,6 @@ from django.shortcuts import render, redirect
 from botnet.aula.forms import FormularioAulas, FormularioListaTareas
 from botnet.aula.forms import FormularioResultados
 from botnet.aula.funciones import *
-from django.core.cache import cache
 from redis_cache import get_redis_connection
 
 
@@ -32,21 +31,6 @@ def indice(request):
 
 
 @login_required
-def ejecutar(request, lista_de_tareas=None):
-    try:
-        tareas = lista_de_tareas.split(',')
-    except:
-        tareas = None
-    formularioTareas = FormularioListaTareas(
-    initial={'tareas': tareas})
-    contexto = {
-        'tareas': formularioTareas,
-        'formulario': FormularioAulas(),
-    }
-    return render(request, 'botnet/ejecutar.html', contexto)
-
-
-@login_required
 def prender(request, lista_de_salas):
     pass
     salas = lista_de_salas.split(',')
@@ -63,7 +47,7 @@ def prender(request, lista_de_salas):
 
 
 @login_required
-def mostrar_resultados(request, lista_de_salas=None):
+def mostrar_resultados(request):
     form_aula = FormularioAulas(request.POST or None)
     form_resultados = FormularioResultados(request.POST or None)
     compus = None

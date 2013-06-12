@@ -1,7 +1,5 @@
 from fabric.api import *
 from aula.models import Configuracion
-ARCHIVO = '/tmp/temporal'
-import django_rq
 
 
 @task

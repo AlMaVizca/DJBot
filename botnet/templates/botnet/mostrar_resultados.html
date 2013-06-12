@@ -4,15 +4,6 @@
 {% block content %}
 {%if formulario and mostrar %}
 
-{%if apagadas %}
-    <p>Parece que las siguientes maquinas estan apagadas, o por lo menos no se puede conectar</p>
-    {% for each in apagadas %}
-       {{ each }}
-    {% endfor %}
-{% endif %}
-
-
-
 <p>Consultar los resultados de la ejecuci&oacute;n:</p>
 <form action="." method="post">
     {% csrf_token %}
@@ -29,6 +20,14 @@
     <input type="submit" value="Consultar" />
 </form>
 
+{% endif %}
+
+{%if apagadas %}
+    <b>Parece que las siguientes maquinas estan apagadas,
+        o por lo menos no se puede conectar:</b>
+    {% for each in apagadas %}
+       {{ each }} -
+    {% endfor %}
 {% endif %}
 
 {% if computadoras %}
