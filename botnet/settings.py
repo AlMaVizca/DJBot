@@ -152,7 +152,7 @@ CACHES = {
 }
 
 RQ_QUEUES = {
-    'ejecutar': {
+    'ejecutados': {
         'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,
