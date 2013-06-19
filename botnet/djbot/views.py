@@ -2,11 +2,11 @@ import django_rq
 import ast
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from botnet.aula.models import Computadora, Aula
+from botnet.djbot.models import Computadora, Aula
 from django.shortcuts import render, redirect
-from botnet.aula.forms import FormularioAulas, FormularioListaTareas
-from botnet.aula.forms import FormularioResultados
-from botnet.aula.funciones import *
+from botnet.djbot.forms import FormularioAulas, FormularioListaTareas
+from botnet.djbot.forms import FormularioResultados
+from botnet.djbot.funciones import *
 from redis_cache import get_redis_connection
 
 

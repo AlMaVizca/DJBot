@@ -1,7 +1,3 @@
-{% extends "admin/base_site.html" %}
-{% load i18n admin_static %}
-
-
 {% block extrahead %}{{ block.super }}
     <script type="text/javascript" src="/static/interaccion.js"></script>
 {% endblock %}
@@ -9,7 +5,7 @@
 
 {% block extrastyle %}
 <link rel="stylesheet" type="text/css"
-    href="{% static "aula/estilos.css" %}" />
+    href="{% static "djbot/estilos.css" %}" />
 {% endblock %}
 
 {% block content %}

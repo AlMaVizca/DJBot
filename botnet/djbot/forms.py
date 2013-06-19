@@ -1,5 +1,5 @@
 from django import forms
-from botnet.aula.models import Aula, Tarea
+from botnet.djbot.models import Aula, Tarea
 from django.core.validators import validate_ipv4_address
 import re
 
