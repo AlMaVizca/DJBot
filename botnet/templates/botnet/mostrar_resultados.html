@@ -7,15 +7,13 @@
 <p>Consultar los resultados de la ejecuci&oacute;n:</p>
 <form action="." method="post">
     {% csrf_token %}
-    <div class="acciones">
     {{ formulario.as_p }}
-    <p> El campo ip es opcional y se usa solamente cuando se pide la maquina x
-    </p>
     {{ mostrar.as_p }}
-    </div>
-    <p> Se supone que todas las computadoras tienen los mismos programas
-    instalados, por ende se ofrece visualizar todas, una o una al azar <p>
-
+    <ul>
+        <li> Se supone que todas las computadoras tienen los mismos programas
+    instalados, por ende se ofrece visualizar todas, una o una al azar </li>
+        <li> El campo ip es opcional y se usa solamente cuando se pide la maquina x</li>
+    </ul>
 
     <input type="submit" value="Consultar" />
 </form>

@@ -5,6 +5,13 @@ from botnet import fabfile
 from redis_cache import get_redis_connection
 
 
+def agregar_salida(ip, tarea, resultado):
+    try:
+        resultado[ip].update({each, computadoras[tarea][ip]})
+    except:
+        resultado[ip][tarea] = computadoras[tarea][ip]
+	
+
 def mostrar_computadora(ip):
     """Las claves de computadoras son el comando ejecutado"""
     cache = get_redis_connection('default')
@@ -13,11 +20,13 @@ def mostrar_computadora(ip):
     if isinstance(computadoras, str):
         computadoras = ast.literal_eval(computadoras)
         for each in computadoras.keys():
-            if computadoras[each][ip]:
-                try:
-                    resultado[ip].update({each, computadoras[each][ip]})
-                except:
-                    resultado[ip][each] = computadoras[each][ip]
+            if (not computadoras[each][ip]):
+                computadoras[each][ip] = "La salida no mostro resultado"
+            try:
+                resultado[ip].update({each, computadoras[each][ip]})
+            except:
+                resultado[ip][each] = computadoras[each][ip]
+                
         return resultado
     return {}
 
@@ -64,6 +73,7 @@ def ejecutar_tareas(tareas, computadoras):
         ejecutado = {}
         for each in receta:
             salida = fabfile.ejecutar(each, computadoras)
+	    print "salida:",salida
             ejecutado[each] = salida
         cache.set('ejecutado', ejecutado)
         cache.set('apagadas', apagadas)
