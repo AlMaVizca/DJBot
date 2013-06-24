@@ -2,7 +2,6 @@
 *.pot
 *.pyc
 *.sql
-botnet/aula/fixtures/initial_data.json
 clave
 clave.pub
 envdjbot

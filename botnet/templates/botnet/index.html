@@ -1,37 +1,66 @@
-{% block extrahead %}{{ block.super }}
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block head %}
     <script type="text/javascript" src="/static/interaccion.js"></script>
+    <title>DjBot</title>
+    {% block extrastyle %}
+       <link rel="stylesheet" type="text/css"
+	      href="{{ STATIC_URL }}djbot/estilos.css" />
+    {% endblock %}
+{% endblock %}
+</head>
+
+<body>
+
+{% block  content_title %}
+<nav>
+  <a href="./admin/djbot/aula">Aulas</a>
+  <a href="./admin/djbot/tarea">Tareas</a>
+  <a href="http://www.google.com">Ejecutar</a>
+  <a href="http://www.google.com">Mostrar resultados</a>
+</nav>
 {% endblock %}
 
-
-{% block extrastyle %}
-<link rel="stylesheet" type="text/css"
-    href="{% static "djbot/estilos.css" %}" />
-{% endblock %}
 
 {% block content %}
-
 <div id="content-main">
-
 {%if formulario_tarea and formulario_aula %}
-<p>Esta herramienta permite ejecutar una lista de
-tareas en una seleccion de aulas.</p>
+
+    <div id="descripcion-accion">
+
+    <p>Seleccione una o m&aacute;s tareas que desee ejecutar y una o m&aacute;s aulas.</p>
+
+    </div>
+
+
     <form action="." method="post">
         {% csrf_token %}
-        <div class='acciones'>
-            {{ formulario_tarea.as_p }}
-            <div class='descripcion_tarea'>
+
+        {% for field in formulario_tarea %}
+            <div class="ejecutar">
+                {{ field.errors }}
+                {{ field.label_tag }}: {{ field }}
             </div>
-        </div>
-        <div class='acciones'>
-            {{ formulario_aula.as_p }}
-            <div class='descripcion_aula'>
+        {% endfor %}
+        {% for field in formulario_aula %}
+            <div class="ejecutar">
+                {{ field.errors }}
+                {{ field.label_tag }}: {{ field }}
             </div>
-        </div>
-        <div id='enviar'>
-            <input type="submit" value="Ejecutar" />
-        </div>
+        {% endfor %}
+        <input type="submit" value="Ejecutar" />
     </form>
+
+
+    <div id="descripcion-seleccion">
+    </div>
+
 {% endif %}
 
 </div>
 {% endblock %}
+</body>
+
+</html>

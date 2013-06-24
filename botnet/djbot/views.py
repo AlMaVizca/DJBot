@@ -60,7 +60,10 @@ def mostrar_resultados(request):
             compus = mostrar_computadora(resultados['ip'])
     cache = get_redis_connection('default')
     apagadas = cache.get('apagadas')
-    apagadas = ast.literal_eval(apagadas)
+    if apagadas:
+        apagadas = ast.literal_eval(apagadas)
+    else:
+        apagadas = ''
     return render(request, 'botnet/mostrar_resultados.html',
             {'formulario': FormularioAulas(), 'computadoras': compus,
             'mostrar': FormularioResultados(), 'apagadas': apagadas})
