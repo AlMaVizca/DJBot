@@ -1,5 +1,5 @@
 from fabric.api import *
-from aula.models import Configuracion
+from djbot.models import Configuracion
 
 
 @task

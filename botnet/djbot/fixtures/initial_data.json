@@ -1,6 +1,6 @@
 [
     {
-    "model": "aula.aula",
+    "model": "djbot.aula",
     "pk": "PruebaAula",
     "fields": {
         "interfaz": "eth0",
@@ -11,7 +11,7 @@
          }
     },
     {
-    "model": "aula.computadora",
+    "model": "djbot.computadora",
     "pk": 1,
     "fields": {
         "aula": "PruebaAula",
@@ -21,7 +21,7 @@
         }
     },
     {
-    "model": "aula.computadora",
+    "model": "djbot.computadora",
     "pk": 2,
     "fields": {
         "aula": "PruebaAula",
@@ -31,7 +31,7 @@
         }
     },
     {
-    "model": "aula.configuracion",
+    "model": "djbot.configuracion",
     "pk": 1,
     "fields": {
         "nombre": "usuario",
@@ -39,7 +39,7 @@
         }
     },
     {
-    "model": "aula.configuracion",
+    "model": "djbot.configuracion",
     "pk": 2,
     "fields": {
         "nombre": "clave-privada",
@@ -47,7 +47,7 @@
         }
     },
     {
-    "model": "aula.configuracion",
+    "model": "djbot.configuracion",
     "pk": 3,
     "fields": {
         "nombre": "temporal",
@@ -55,7 +55,7 @@
         }
     },
     {
-    "model": "aula.configuracion",
+    "model": "djbot.configuracion",
     "pk": 4,
     "fields": {
         "nombre": "secuencia",
@@ -63,7 +63,7 @@
         }
     },
     {
-    "model": "aula.tarea",
+    "model": "djbot.tarea",
     "pk": 1,
     "fields": {
         "nombre": "PruebaTarea",

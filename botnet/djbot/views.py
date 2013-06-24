@@ -2,11 +2,11 @@ import django_rq
 import ast
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from botnet.aula.models import Computadora, Aula
+from botnet.djbot.models import Computadora, Aula
 from django.shortcuts import render, redirect
-from botnet.aula.forms import FormularioAulas, FormularioListaTareas
-from botnet.aula.forms import FormularioResultados
-from botnet.aula.funciones import *
+from botnet.djbot.forms import FormularioAulas, FormularioListaTareas
+from botnet.djbot.forms import FormularioResultados
+from botnet.djbot.funciones import *
 from redis_cache import get_redis_connection
 
 
@@ -60,7 +60,10 @@ def mostrar_resultados(request):
             compus = mostrar_computadora(resultados['ip'])
     cache = get_redis_connection('default')
     apagadas = cache.get('apagadas')
-    apagadas = ast.literal_eval(apagadas)
+    if apagadas:
+        apagadas = ast.literal_eval(apagadas)
+    else:
+        apagadas = ''
     return render(request, 'botnet/mostrar_resultados.html',
             {'formulario': FormularioAulas(), 'computadoras': compus,
             'mostrar': FormularioResultados(), 'apagadas': apagadas})

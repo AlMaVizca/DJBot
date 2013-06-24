@@ -46,7 +46,7 @@ STATIC_URL = '/static/'
 # Additional locations of static files
 STATICFILES_DIRS = (
 
-    ("aula", os.path.join(PATH, 'aula/static')),
+    ("djbot", os.path.join(PATH, 'djbot/static')),
 )
 
 # List of finder classes that know how to find static files in
@@ -106,7 +106,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_admin_bootstrapped',
     'django.contrib.admin',
-    'botnet.aula',
+    'botnet.djbot',
     'django_rq',
 )
 
@@ -152,7 +152,7 @@ CACHES = {
 }
 
 RQ_QUEUES = {
-    'ejecutados': {
+    'ejecutar': {
         'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,

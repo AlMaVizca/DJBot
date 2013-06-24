@@ -1,6 +1,6 @@
 import os
 import ast
-from botnet.aula.models import Aula, Tarea, Configuracion, Computadora
+from botnet.djbot.models import Aula, Tarea, Configuracion, Computadora
 from botnet import fabfile
 from redis_cache import get_redis_connection
 

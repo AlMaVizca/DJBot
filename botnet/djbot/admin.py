@@ -1,6 +1,6 @@
-from botnet.aula.models import Aula, Computadora, Tarea, Configuracion
+from botnet.djbot.models import Aula, Computadora, Tarea, Configuracion
 from django.contrib import admin
-from botnet.aula.forms import FormularioTareas, FormularioAula,\
+from botnet.djbot.forms import FormularioTareas, FormularioAula,\
     FormularioComputadora, FormularioListaTareas
 from django.shortcuts import redirect
 from botnet import fabfile
