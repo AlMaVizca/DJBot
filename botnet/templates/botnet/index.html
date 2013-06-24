@@ -16,10 +16,10 @@
 
 {% block  content_title %}
 <nav>
-  <a href="./admin/djbot/aula">Aulas</a>
-  <a href="./admin/djbot/tarea">Tareas</a>
-  <a href="http://www.google.com">Ejecutar</a>
-  <a href="http://www.google.com">Mostrar resultados</a>
+  <a href="{{ SITE_URL }}/admin/djbot/aula">Aulas</a>
+  <a href="{{ SITE_URL }}/admin/djbot/tarea">Tareas</a>
+  <a href="{{ SITE_URL }}">Ejecutar</a>
+  <a href="{% url 'mostrar_resultados' %}">Mostrar resultados</a>
 </nav>
 {% endblock %}
 
