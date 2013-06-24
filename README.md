@@ -26,5 +26,5 @@ El desarrollo del sistema se llevo a cabo con [virtualenv](https://pypi.python.o
 Para ejecutar el proyecto tenemos que instalar Redis y ejecutar redis-server con las configuracion que se encuentra en la carpeta de djbot.
 
 
-    python manage.py rqworker default
+    python manage.py rqworker default ejecutados
     python manage.py runserver
