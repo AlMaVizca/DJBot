@@ -6,7 +6,7 @@ import re
 
 class FormularioListaTareas(forms.Form):
     def __init__(self, *args, **kwargs):
-        super(FormularioListaTareas, self).__init__()
+        super(FormularioListaTareas, self).__init__(*args, **kwargs)
         lista_tareas = Tarea.objects.all()
         opciones = [(each, each) for each in lista_tareas]
         self.fields['tareas'] = forms.MultipleChoiceField(choices=opciones)
@@ -14,7 +14,7 @@ class FormularioListaTareas(forms.Form):
 
 class FormularioAulas(forms.Form):
     def __init__(self, *args, **kwargs):
-        super(FormularioAulas, self).__init__()
+        super(FormularioAulas, self).__init__(*args, **kwargs)
         salas = Aula.objects.all()
         opciones = [(each, each) for each in salas]
         self.fields['aulas'] = forms.MultipleChoiceField(choices=opciones)
