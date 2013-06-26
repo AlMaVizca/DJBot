@@ -5,15 +5,19 @@ import re
 
 
 class FormularioListaTareas(forms.Form):
-    lista_tareas = Tarea.objects.all()
-    opciones = [(each, each) for each in lista_tareas]
-    tareas = forms.MultipleChoiceField(choices=opciones)
+    def __init__(self, *args, **kwargs):
+        super(FormularioListaTareas, self).__init__(*args, **kwargs)
+        lista_tareas = Tarea.objects.all()
+        opciones = [(each, each) for each in lista_tareas]
+        tareas = forms.MultipleChoiceField(choices=opciones)
 
 
 class FormularioAulas(forms.Form):
-    salas = Aula.objects.all()
-    opciones = [(each, each) for each in salas]
-    aulas = forms.MultipleChoiceField(choices=opciones)
+    def __init__(self, *args, **kwargs):
+        super(FormularioAulas, self).__init__(*args, **kwargs)
+        salas = Aula.objects.all()
+        opciones = [(each, each) for each in salas]
+        aulas = forms.MultipleChoiceField(choices=opciones)
 
 
 class FormularioTareas(forms.ModelForm):
