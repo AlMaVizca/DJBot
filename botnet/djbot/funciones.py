@@ -12,13 +12,11 @@ def agregar_salida(ip, tarea, resultado):
         resultado[ip][tarea] = computadoras[tarea][ip]
 	
 
-def mostrar_computadora(ip):
+def mostrar_computadora(cache, ip):
     """Las claves de computadoras son el comando ejecutado"""
-    cache = get_redis_connection('default')
-    computadoras = cache.get("ejecutado")
     resultado = {ip: {}}
-    if isinstance(computadoras, str):
-        computadoras = ast.literal_eval(computadoras)
+    if isinstance(cache, str):
+        computadoras = ast.literal_eval(cache)
         for each in computadoras.keys():
             if (not computadoras[each][ip]):
                 computadoras[each][ip] = "La salida no mostro resultado"
@@ -34,10 +32,12 @@ def mostrar_computadora(ip):
 def mostrar_aula(aula):
     computadoras = {}
     for each in aula:
+        cache = get_redis_connection('default')
+        resultado_cache = cache.get(each)
         un_aula = Aula.objects.get(nombre=each)
         sala = Computadora.objects.filter(aula=un_aula)
         for each in sala:
-            una_computadora = mostrar_computadora(each.ip)
+            una_computadora = mostrar_computadora(resultado_cache, each.ip)
             computadoras.update(una_computadora)
     return computadoras
 
@@ -62,21 +62,21 @@ def repartir_archivo(archivo, dividir, computadoras):
     return apagadas
 
 
-def ejecutar_tareas(tareas, computadoras):
-    for each in tareas:
-        una_tarea = Tarea.objects.get(nombre=each)
-        archivo = str(una_tarea.archivo)
-        apagadas = repartir_archivo(archivo, una_tarea.dividir_archivo,
-            computadoras)
-        receta = una_tarea.instrucciones.split('\n')
-        cache = get_redis_connection('default')
-        ejecutado = {}
-        for each in receta:
-            salida = fabfile.ejecutar(each, computadoras)
-	    print "salida:",salida
-            ejecutado[each] = salida
-        cache.set('ejecutado', ejecutado)
-        cache.set('apagadas', apagadas)
+def ejecutar_tareas(tareas, salas):
+    for sala in salas.keys():
+        for each in tareas:
+            una_tarea = Tarea.objects.get(nombre=each)
+            archivo = str(una_tarea.archivo)
+            apagadas = repartir_archivo(archivo, una_tarea.dividir_archivo,
+                                        salas[sala])
+            receta = una_tarea.instrucciones.split('\n')
+            cache = get_redis_connection('default')
+            ejecutado = {}
+            for each in receta:
+                salida = fabfile.ejecutar(each, salas[sala])
+                ejecutado[each] = salida
+                cache.set(sala, ejecutado)
+                cache.set('apagadas', apagadas)
 
 
 
