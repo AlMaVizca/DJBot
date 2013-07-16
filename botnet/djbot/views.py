@@ -19,11 +19,14 @@ def indice(request):
     if formulario_aula.is_valid() and formulario_tareas.is_valid():
         valores = dict(formulario_tareas.cleaned_data.items() +
                 formulario_aula.cleaned_data.items())
-        ips = [compu.ip for each in valores['aulas']
-        for compu in Computadora.objects.filter(aula=each)]
+        salas = {}
+        for each in valores['aulas']:
+            salas[each] = []
+            for compu in Computadora.objects.filter(aula=each):
+                salas[each].append(compu.ip)
         try:
             django_rq.enqueue(ejecutar_tareas, tareas=valores['tareas'],
-                computadoras=ips)
+                              salas=salas)
         except:
             return HttpResponse("<h1>Estas ejecutando redis??</h1>")
         return redirect('mostrar_resultados')
@@ -57,7 +60,7 @@ def mostrar_resultados(request):
         if resultados['mostrar'] == 'todos':
             compus = mostrar_aula(valores['aulas'])
         if resultados['mostrar'] == 'uno':
-            compus = mostrar_computadora(resultados['ip'])
+            compus = mostrar_computadora(valores['aulas'], resultados['ip'])
     cache = get_redis_connection('default')
     apagadas = cache.get('apagadas')
     if apagadas:
