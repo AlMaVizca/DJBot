@@ -30,6 +30,7 @@
 
 {% if computadoras %}
     {%for computadora,comandos in computadoras.items %}
+	<section name="{{computadora}}">
         <div class="acciones">
             <h2>{{computadora}}</h2>
         {%for comando,resultado in comandos.items %}
@@ -37,6 +38,7 @@
             <p>{{resultado}}</p>
         {% endfor %}
         </div>
+	</section>
 
     {% endfor %}
 {% endif %}
