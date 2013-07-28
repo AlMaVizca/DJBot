@@ -1,7 +1,7 @@
-djbot
+Djbot
 ======
 
-Controlador de maquinas remotas.
+Sistema de control remoto de equipos basado en SSH.
 
 #Requisitos
 * [Django 1.4.5](https://www.djangoproject.com/ "django")
