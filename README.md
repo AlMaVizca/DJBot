@@ -20,11 +20,11 @@ El desarrollo del sistema se llevo a cabo con [virtualenv](https://pypi.python.o
 
     virtualenv envdjbot
     source <path envdjbot>/bin/activate
-    pip install django==1.4.5 fabric django-admin-bootstrapped django-rq django-redis
+    pip install django==1.4.8 fabric django-admin-bootstrapped django-rq django-redis
     python manage.py syncdb
   
 Para ejecutar el proyecto tenemos que instalar Redis y ejecutar redis-server con las configuracion que se encuentra en la carpeta de djbot.
 
 
-    python manage.py rqworker default ejecutados
+    python manage.py rqworker default ejecutar
     python manage.py runserver

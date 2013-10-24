@@ -1,3 +1,4 @@
+
 import os
 PATH = os.path.dirname(__file__)
 DEBUG = True
@@ -109,7 +110,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_admin_bootstrapped',
     'django.contrib.admin',
     'botnet.djbot',
     'django_rq',
