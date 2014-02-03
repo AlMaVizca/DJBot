@@ -40,7 +40,7 @@ def enviar(archivo, computadoras):
 @task
 @parallel
 def enviar_archivos(archivos):
-    put(archivos, '/tmp/archivo', mirror_local_mode=True)
+    put(archivos, '/tmp/archivo.remoto', mirror_local_mode=True)
 
 
 @task
