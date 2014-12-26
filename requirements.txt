@@ -1,0 +1,5 @@
+django==1.4.8
+fabric
+django-admin-bootstrapped
+django-rq
+django-redis
