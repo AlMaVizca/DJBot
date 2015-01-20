@@ -3,6 +3,8 @@ Djbot
 
 Sistema de control remoto de equipos basado en SSH.
 
+Podes encontrar una mejor descripción [aquí](http://sedici.unlp.edu.ar/handle/10915/31339)
+
 #Requisitos
 * [Django 1.4.5](https://www.djangoproject.com/ "django")
 * [Fabric](http://docs.fabfile.org/en/1.6/)
