@@ -33,8 +33,10 @@ class FormularioTareas(forms.ModelForm):
 
 
 class FormularioAula(forms.ModelForm):
-    maquina_intermediaria = forms.IPAddressField(label='Maquina Intermediaria',
-        validators=[validate_ipv4_address])
+    maquina_intermediaria = forms.IPAddressField(
+        label='Maquina Intermediaria',
+        validators=[validate_ipv4_address]
+        )
     red = forms.IPAddressField(validators=[validate_ipv4_address])
 
 
@@ -44,9 +46,9 @@ class FormularioComputadora(forms.ModelForm):
 
 class FormularioResultados(forms.Form):
     opciones = (
-    ('todos', 'Todos'),
-    ('uno', 'Uno'),
-)
+        ('todos', 'Todos'),
+        ('uno', 'Uno'),
+        )
     mostrar = forms.ChoiceField(choices=opciones)
     ip = forms.IPAddressField(validators=[validate_ipv4_address],
-        required=False)
+                              required=False)

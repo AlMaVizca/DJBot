@@ -15,10 +15,10 @@ def indice(request):
     formulario_aula = FormularioAulas(request.POST or None)
     formulario_tareas = FormularioListaTareas(request.POST or None)
     contexto = {'formulario_aula': formulario_aula,
-        'formulario_tarea': formulario_tareas}
+                'formulario_tarea': formulario_tareas}
     if formulario_aula.is_valid() and formulario_tareas.is_valid():
         valores = dict(formulario_tareas.cleaned_data.items() +
-                formulario_aula.cleaned_data.items())
+                       formulario_aula.cleaned_data.items())
         salas = {}
         for each in valores['aulas']:
             salas[each] = []
@@ -44,8 +44,10 @@ def prender(request, lista_de_salas):
         for each in computadoras.values():
             compus = each['nombre']
             unAula.maquina_intermediaria
-            fabfile.ejecutar('etherwake -i ' + unAula.interfaz + ' ' +
-            each['mac'], [unAula.maquina_intermediaria])
+            fabfile.ejecutar(
+                'etherwake -i ' + unAula.interfaz + ' ' +
+                each['mac'], [unAula.maquina_intermediaria]
+                )
     return HttpResponse(compus)
 
 
@@ -67,6 +69,8 @@ def mostrar_resultados(request):
         apagadas = ast.literal_eval(apagadas)
     else:
         apagadas = ''
-    return render(request, 'botnet/mostrar_resultados.html',
-            {'formulario': FormularioAulas(), 'computadoras': compus,
-            'mostrar': FormularioResultados(), 'apagadas': apagadas})
+    context = {'formulario': FormularioAulas(),
+               'computadoras': compus,
+               'mostrar': FormularioResultados(),
+               'apagadas': apagadas}
+    return render(request, 'botnet/mostrar_resultados.html', context)
