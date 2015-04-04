@@ -6,11 +6,12 @@ from redis_cache import get_redis_connection
 
 
 def agregar_salida(ip, tarea, resultado):
+    # FIX computadoras?
     try:
         resultado[ip].update({each, computadoras[tarea][ip]})
     except:
         resultado[ip][tarea] = computadoras[tarea][ip]
-	
+
 
 def mostrar_computadora(cache, ip):
     """Las claves de computadoras son el comando ejecutado"""
@@ -24,7 +25,7 @@ def mostrar_computadora(cache, ip):
                 resultado[ip].update({each, computadoras[each][ip]})
             except:
                 resultado[ip][each] = computadoras[each][ip]
-                
+
         return resultado
     return {}
 
@@ -53,8 +54,10 @@ def repartir_archivo(archivo, dividir, computadoras):
             fabfile.cortar(cantidad, archivo, secuencia_temporal)
             for each in range(0, cantidad):
                 try:
-                    fabfile.enviar(secuencia_temporal + str(each).zfill(2),
-                            [computadoras[each]])
+                    fabfile.enviar(
+                        secuencia_temporal + str(each).zfill(2),
+                        [computadoras[each]]
+                        )
                 except:
                     apagadas.append(computadoras[each])
         else:
@@ -77,8 +80,3 @@ def ejecutar_tareas(tareas, salas):
                 ejecutado[each] = salida
                 cache.set(sala, ejecutado)
                 cache.set('apagadas', apagadas)
-
-
-
-
-

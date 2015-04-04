@@ -35,7 +35,7 @@ class AulaAdmin(admin.ModelAdmin):
     prender_sala.short_description = "Prender las maquinas de la sala"
 
 
-###Tareas
+# Tareas
 class TareaAdmin(admin.ModelAdmin):
     actions = ['ejecutar_tarea']
     form = FormularioTareas
@@ -56,7 +56,7 @@ class TareaAdmin(admin.ModelAdmin):
     ejecutar_tarea.short_description = "Ejecutar la tarea seleccionada"
 
 
-###Configuraciones
+# Configuraciones
 class ConfiguracionesAdmin(admin.ModelAdmin):
     actions = ['generar_claves']
     list_display = ('nombre', 'valor')

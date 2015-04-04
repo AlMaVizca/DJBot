@@ -11,11 +11,11 @@ class Tarea(models.Model):
     nombre = models.CharField(primary_key=True, max_length=50)
     instrucciones = models.CharField(max_length=400)
     tipo_archivo = models.CharField(max_length=50, blank=True,
-        choices=TIPO_ARCHIVO)
+                                    choices=TIPO_ARCHIVO)
     archivo = models.FileField(upload_to=MEDIA_ROOT, max_length=100,
-        blank=True)
+                               blank=True)
     dividir_archivo = models.BooleanField(default=False)
-    ##Algun Archivo
+    # Algun Archivo
 
     def __unicode__(self):
         return self.nombre
@@ -23,7 +23,7 @@ class Tarea(models.Model):
 
 class Aula(models.Model):
     nombre = models.CharField(primary_key=True,
-        max_length=50)
+                              max_length=50)
     interfaz = models.CharField(max_length=20)
     usuario = models.CharField(max_length=20)
     maquina_intermediaria = models.IPAddressField("Maquina Intermediaria")
