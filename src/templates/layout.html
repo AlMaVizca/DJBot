@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webapp Template</title>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  {% block nav %}
+  {% endblock %}
+
+  <div class="container">
+    <div id="content">{% block content %}{% endblock %}</div>
+  </div>
+
+  {% block scripts %}{% endblock %}
+
+</body>
+</html>
