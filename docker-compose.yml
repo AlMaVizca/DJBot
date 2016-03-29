@@ -1,6 +1,7 @@
 ---
 djbot:
   build: src/
+  image: krahser/djbot
   ports:
     - "80:80"
   restart: always

@@ -7,8 +7,9 @@ app.secret_key = 'DevDThelopmente'
 app.config.from_object(__name__)
 
 
+
 @app.route('/', methods=['GET', 'POST'])
-def home():
+def index():
     page = {'error': False}
     return render_template('home.html', page=page)
 

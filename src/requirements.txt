@@ -1,3 +1,4 @@
 # requirements.txt
-flask==0.10.1
-gunicorn==19.1.1
+flask
+gunicorn
+nose
