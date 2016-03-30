@@ -14,12 +14,12 @@ class MainTestCase(unittest.TestCase):
 
     def test_playbooks(self):
         tester = app.test_client(self)
-        response = tester.get('/', content_type='html/text')
+        response = tester.get('/playbooks/', content_type='html/text')
         self.assertEqual(response.status_code, 200)
 
     def test_inventory(self):
         tester = app.test_client(self)
-        response = tester.get('/', content_type='html/text')
+        response = tester.get('/inventory/', content_type='html/text')
         self.assertEqual(response.status_code, 200)
         
 if __name__ == '__main__':
