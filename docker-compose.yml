@@ -1,11 +1,15 @@
 ---
-djbot:
-  build: src/
-  image: krahser/djbot
-  ports:
-    - "80:80"
-  restart: always
-  environment:
-    MODE: dev
-  volumes:
-    - "src:/usr/src/app:ro"
+version: '2'
+services:
+  service:
+    build: src/
+    image: krahser/djbot
+    ports:
+      - "80:80"
+    restart: always
+    environment:
+      MODE: dev
+    volumes:
+      - "./src/:/usr/src/app:ro"
+
+    
