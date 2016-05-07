@@ -1,9 +1,10 @@
 <div class="host">
-    <h1>{{ host.name }}</h1>
-    <ul id={{ host.name }}>
-	<li><p>CPU: {{ host.ansible_processor }}{{ host.ansible_processor_vcpus }} {{ host.ansible_machine }} {{ host.ansible_distribution }}{{ host.ansible_kernel }}</p> </li>
-	<li><p>Devices: {{ host.ansible_devices }}{{ host.ansible_mounts }}</p></li>
-	<li><p>Memory: {{ host.ansible_memory_mb }}</p></li>
-	<li><p>Network: {{ host.ansible_all_ipv4_addresses }}</p></li>
+    <ul id={{ host.ansible_hostname }}>
+	<!-- <li>{% include 'processor.html' %}</li> -->
+	<li>{% include 'os.html' %}</li>
+	<!-- <li>{% include 'devices.html' %}</li>
+	     <li>{% include 'mounts.html' %}</li> -->
+	<li>{% include 'memory.html' %}</li>
+	<li>{% include 'network.html' %}</li>
     </ul>    
 </div>

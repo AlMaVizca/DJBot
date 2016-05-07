@@ -2,18 +2,88 @@
 <html>
 <head>
     <title>DjBot</title>
-  {% block head %}{% endblock %}
+    {% block head %}{% endblock %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='semantic/dist/semantic.min.css')}}">
+    
+    <style type="text/css">
+     body {
+	 background-color: #FFFFFF;
+     }
+     
+     .main.container {
+	 height: 100%;
+	 padding-top: 3em;
+     }
+     
+     .row.top {
+	 height: 50%;
+	}
+     .row.middle {
+	 height: 10%;
+	 text-align: right;
+     }
+     
+     .row.bottom {
+	 height: 40%;
+     }
+     
+     .bottom.aligned.content{
+	 height: 100%; 
+	}
+     .ui.one.cards{
+	 height: 75%;
+     }
+     .ui.card.status {
+	 background-color: #000000;
+	 height: 100%; 
+     }
+
+     li {
+	 list-style-type: none;
+     }
+
+     #sortable {
+	 list-style-type: none;
+	 margin: 0;
+	 padding: 0;
+	 justify-content: center;
+     }
+     
+    </style>
 </head>
 <body>
-  {% block nav %}
-  {% endblock %}
+    <nav class="ui inverted menu fixed">
+	<div class="ui container">
+	    <div class="header item">
+		{% block header %}
+		{% endblock %}
+	    </div>
+	    {% block nav %}
+	    {% endblock %}
+	</div>
+    </nav>
+    <div class="ui main container">
+	    {% block content %}{% endblock %}
+    </div>
 
-  <div class="container">
-    <div id="content">{% block content %}{% endblock %}</div>
-  </div>
+    {% block scripts %}{% endblock %}
+        <script src="{{ url_for('static', filename='jquery/dist/jquery.min.js') }}"></script>
 
-  {% block scripts %}{% endblock %}
- <script src="http://localhost:35729/livereload.js?snipver=2"></script>
+    <script src="http://localhost:35729/livereload.js?snipver=2"></script>
 
+    <script src="{{ url_for('static', filename='semantic/dist/semantic.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-ui/jquery-ui.min.js') }}"></script>
+
+
+    <script>
+     $(function() {
+	 $( "#sortable" ).sortable();
+	 $( "#sortable" ).disableSelection();
+     });
+     
+     $(function() {
+         $( "#accordion" ).accordion();
+     });
+    </script>
 </body>
 </html>
