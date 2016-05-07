@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block header %}
+Dashboard
+{% endblock %}
+{% block content %}
+<div class="row top">
+    <h1>Computer Rooms</h1>
+    <div class="ui six cards">
+	{% for each in computer_rooms %}
+	<div class="ui card">
+	    <a href="{{ url_for('room', room_name=each.name)}}">{{ each.name }}</a>
+	    <p>{{ each.machines|default('machines is not defined') }}</p>
+	    <p>{{ each.network|default('network is not defined') }} </p>
+	    <p>{{ each.status|default('status is not defined') }} </p>
+	</div>
+	{% endfor %}
+    </div>
+</div>
+<div class="row middle">
+    <i class="add circle icon"></i>Add
+    <i class="remove circle icon"></i>Remove
+</div>
+<div class="row bottom">
+    <div class="bottom aligned content">
+	<h1>Last Known Status</h1>
+	<div class="ui one cards">
+	    <div class="ui card status">
+		<p style="color:red">Failed</p>
+		<p style="color:yellow">Warning</p>
+		<p style="color:green">OK</p>
+	    </div>
+	</div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+{% endblock %}

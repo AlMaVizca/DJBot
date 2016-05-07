@@ -1,0 +1,12 @@
+<p>Devices: </p>
+{% for key, description in host.ansible_devices.iteritems() %}
+<div>{{ key|e }}:</div>
+<ul>
+    {% for key, value in description.iteritems() %}
+    <li>
+	<div>{{ key|e }}</div>
+	<div>{{ value|e }}</div>
+    </li>
+    {% endfor %}
+</ul>	
+{% endfor %}

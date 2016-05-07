@@ -1,0 +1,442 @@
+{
+    "ansible_all_ipv4_addresses": [
+        "192.168.1.104", 
+        "172.18.0.1", 
+        "172.17.0.1"
+    ], 
+    "ansible_all_ipv6_addresses": [
+        "fe80::1e3e:84ff:feef:db81", 
+        "fe80::42:cff:fe16:9fed", 
+        "fe80::645e:b6ff:fe2a:705"
+    ], 
+    "ansible_architecture": "x86_64", 
+    "ansible_bios_date": "04/09/2015", 
+    "ansible_bios_version": "GDETB0WW (1.70 )", 
+    "ansible_br_90e3c48eb1dc": {
+        "active": true, 
+        "device": "br-90e3c48eb1dc", 
+        "id": "8000.02420c169fed", 
+        "interfaces": [
+            "vethd89cd3f"
+        ], 
+        "ipv4": {
+            "address": "172.18.0.1", 
+            "broadcast": "global", 
+            "netmask": "255.255.0.0", 
+            "network": "172.18.0.0"
+        }, 
+        "ipv6": [
+            {
+                "address": "fe80::42:cff:fe16:9fed", 
+                "prefix": "64", 
+                "scope": "link"
+            }
+        ], 
+        "macaddress": "02:42:0c:16:9f:ed", 
+        "mtu": 1500, 
+        "promisc": false, 
+        "stp": false, 
+        "type": "bridge"
+    }, 
+    "ansible_cmdline": {
+        "initrd": "initramfs-linux-lts.img", 
+        "quiet": true, 
+        "resume": "/dev/sda6", 
+        "root": "PARTUUID=fe251291-c0d5-4231-934c-b8ee880a9333", 
+        "rw": true, 
+        "splash": true
+    }, 
+    "ansible_date_time": {
+        "date": "2016-04-03", 
+        "day": "03", 
+        "epoch": "1459719094", 
+        "hour": "18", 
+        "iso8601": "2016-04-03T21:31:34Z", 
+        "iso8601_basic": "20160403T183134517964", 
+        "iso8601_basic_short": "20160403T183134", 
+        "iso8601_micro": "2016-04-03T21:31:34.518234Z", 
+        "minute": "31", 
+        "month": "04", 
+        "second": "34", 
+        "time": "18:31:34", 
+        "tz": "ART", 
+        "tz_offset": "-0300", 
+        "weekday": "Sunday", 
+        "weekday_number": "0", 
+        "weeknumber": "13", 
+        "year": "2016"
+    }, 
+    "ansible_default_ipv4": {
+        "address": "192.168.1.104", 
+        "alias": "wlp3s0", 
+        "broadcast": "192.168.1.255", 
+        "gateway": "192.168.1.1", 
+        "interface": "wlp3s0", 
+        "macaddress": "1c:3e:84:ef:db:81", 
+        "mtu": 1500, 
+        "netmask": "255.255.255.0", 
+        "network": "192.168.1.0", 
+        "type": "ether"
+    }, 
+    "ansible_default_ipv6": {}, 
+    "ansible_devices": {
+        "sda": {
+            "holders": [], 
+            "host": "SATA controller: Intel Corporation 7 Series Chipset Family 6-port SATA Controller [AHCI mode] (rev 04)", 
+            "model": "HGST HTS725050A7", 
+            "partitions": {
+                "sda1": {
+                    "sectors": "2048000", 
+                    "sectorsize": 512, 
+                    "size": "1000.00 MB", 
+                    "start": "2048"
+                }, 
+                "sda2": {
+                    "sectors": "532480", 
+                    "sectorsize": 512, 
+                    "size": "260.00 MB", 
+                    "start": "2050048"
+                }, 
+                "sda3": {
+                    "sectors": "262144", 
+                    "sectorsize": 512, 
+                    "size": "128.00 MB", 
+                    "start": "2582528"
+                }, 
+                "sda4": {
+                    "sectors": "209711343", 
+                    "sectorsize": 512, 
+                    "size": "100.00 GB", 
+                    "start": "2844672"
+                }, 
+                "sda5": {
+                    "sectors": "25032704", 
+                    "sectorsize": 512, 
+                    "size": "11.94 GB", 
+                    "start": "212557824"
+                }, 
+                "sda6": {
+                    "sectors": "8380687", 
+                    "sectorsize": 512, 
+                    "size": "4.00 GB", 
+                    "start": "237590528"
+                }, 
+                "sda7": {
+                    "sectors": "730796850", 
+                    "sectorsize": 512, 
+                    "size": "348.47 GB", 
+                    "start": "245971215"
+                }
+            }, 
+            "removable": "0", 
+            "rotational": "1", 
+            "scheduler_mode": "deadline", 
+            "sectors": "976773168", 
+            "sectorsize": "512", 
+            "size": "465.76 GB", 
+            "support_discard": "0", 
+            "vendor": "ATA"
+        }, 
+        "sdb": {
+            "holders": [], 
+            "host": "SATA controller: Intel Corporation 7 Series Chipset Family 6-port SATA Controller [AHCI mode] (rev 04)", 
+            "model": "SanDisk SSD U100", 
+            "partitions": {
+                "sdb1": {
+                    "sectors": "46903183", 
+                    "sectorsize": 512, 
+                    "size": "22.37 GB", 
+                    "start": "2048"
+                }
+            }, 
+            "removable": "0", 
+            "rotational": "0", 
+            "scheduler_mode": "deadline", 
+            "sectors": "46905264", 
+            "sectorsize": "512", 
+            "size": "22.37 GB", 
+            "support_discard": "512", 
+            "vendor": "ATA"
+        }
+    }, 
+    "ansible_distribution": "Archlinux", 
+    "ansible_distribution_major_version": "NA", 
+    "ansible_distribution_release": "NA", 
+    "ansible_distribution_version": "NA", 
+    "ansible_dns": {
+        "nameservers": [
+            "200.42.4.210"
+        ], 
+        "search": [
+            "transiris.com.ar"
+        ]
+    }, 
+    "ansible_docker0": {
+        "active": false, 
+        "device": "docker0", 
+        "id": "8000.02426c2722d4", 
+        "interfaces": [], 
+        "ipv4": {
+            "address": "172.17.0.1", 
+            "broadcast": "global", 
+            "netmask": "255.255.0.0", 
+            "network": "172.17.0.0"
+        }, 
+        "macaddress": "02:42:6c:27:22:d4", 
+        "mtu": 1500, 
+        "promisc": false, 
+        "stp": false, 
+        "type": "bridge"
+    }, 
+    "ansible_domain": "", 
+    "ansible_enp4s0": {
+        "active": false, 
+        "device": "enp4s0", 
+        "macaddress": "20:89:84:d4:79:db", 
+        "module": "r8169", 
+        "mtu": 1500, 
+        "pciid": "0000:04:00.0", 
+        "promisc": false, 
+        "type": "ether"
+    }, 
+    "ansible_env": {
+        "COLORTERM": "drop-down-terminal", 
+        "DBUS_SESSION_BUS_ADDRESS": "unix:path=/run/user/1000/bus", 
+        "DESKTOP_SESSION": "gnome", 
+        "DISPLAY": ":0", 
+        "EDITOR": "emacsclient -s /tmp/emacs1000/main -t ", 
+        "ESOCKET": "/tmp/emacs1000/main", 
+        "EVENT_NOEPOLL": "1", 
+        "G": "\\033[0;32m", 
+        "GDMSESSION": "gnome", 
+        "GDM_LANG": "en_US.UTF-8", 
+        "GIO_LAUNCHED_DESKTOP_FILE": "/usr/share/applications/gnome-shell.desktop", 
+        "GIO_LAUNCHED_DESKTOP_FILE_PID": "1154", 
+        "GJS_DEBUG_OUTPUT": "stderr", 
+        "GJS_DEBUG_TOPICS": "JS ERROR;JS LOG", 
+        "GJS_PATH": "/home/krahser/.local/share/gnome-shell/extensions/drop-down-terminal@gs-extensions.zzrough.org", 
+        "GNOME_DESKTOP_SESSION_ID": "this-is-deprecated", 
+        "GREP_COLOR": "37;45", 
+        "GREP_COLORS": "mt=37;45", 
+        "HOME": "/home/krahser", 
+        "LANG": "en_US.UTF-8", 
+        "LANGUAGE": "en_US.UTF-8", 
+        "LC_ALL": "en_US.UTF-8", 
+        "LC_MESSAGES": "en_US.UTF-8", 
+        "LESS": "-F -g -i -M -R -S -w -X -z-4", 
+        "LESS_TERMCAP_mb": "\u001b[01;31m", 
+        "LESS_TERMCAP_md": "\u001b[01;31m", 
+        "LESS_TERMCAP_me": "\u001b[0m", 
+        "LESS_TERMCAP_se": "\u001b[0m", 
+        "LESS_TERMCAP_so": "\u001b[00;47;30m", 
+        "LESS_TERMCAP_ue": "\u001b[0m", 
+        "LESS_TERMCAP_us": "\u001b[01;32m", 
+        "LOGNAME": "krahser", 
+        "LS_COLORS": "rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:", 
+        "MAIL": "/var/spool/mail/krahser", 
+        "MOZ_PLUGIN_PATH": "/usr/lib/mozilla/plugins", 
+        "PAGER": "less", 
+        "PATH": "/home/krahser/.bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl", 
+        "PWD": "/home/krahser/Repositories/machine_bootstrap", 
+        "R": "\\033[0;31m", 
+        "RESET": "\\033[0m", 
+        "SCPT_NAME": "yat.sh", 
+        "SESSION_MANAGER": "local/hydrogen:@/tmp/.ICE-unix/1084,unix/hydrogen:/tmp/.ICE-unix/1084", 
+        "SHELL": "/bin/zsh", 
+        "SHLVL": "5", 
+        "SSH_AGENT_PID": "2343", 
+        "SSH_AUTH_SOCK": "/tmp/ssh-AcmKDwVq428r/agent.2342", 
+        "TAB": "  ", 
+        "TERM": "screen", 
+        "TMPDIR": "/tmp/krahser", 
+        "TMUX": "/tmp/tmux-1000/default,2524,0", 
+        "TMUX_PANE": "%1", 
+        "USER": "krahser", 
+        "USERNAME": "krahser", 
+        "VISUAL": "nano", 
+        "VTE_VERSION": "4205", 
+        "WINDOWPATH": "2", 
+        "XAUTHORITY": "/run/user/1000/gdm/Xauthority", 
+        "XDG_CURRENT_DESKTOP": "GNOME", 
+        "XDG_MENU_PREFIX": "gnome-", 
+        "XDG_RUNTIME_DIR": "/run/user/1000", 
+        "XDG_SEAT": "seat0", 
+        "XDG_SESSION_DESKTOP": "gnome", 
+        "XDG_SESSION_ID": "c2", 
+        "XDG_SESSION_TYPE": "x11", 
+        "XDG_VTNR": "2", 
+        "Y": "\\033[0;33m", 
+        "YATSH_DIR": "/home/krahser/.yat.sh", 
+        "YATSH_PLUGINS_PATH": "/home/krahser/.local/share/yat.sh/plugins:/usr/local/share/yat.sh/plugins:/usr/share/yat.sh/plugins", 
+        "YATSH_ROOT": "/home/krahser/Repositories/yat.sh/libexec/..", 
+        "YATSH_SESSIONS_DIR": "/home/krahser/.yat.sh/sessions", 
+        "YATSH_SESSIONS_PATH": "/home/krahser:/home/krahser/.yat.sh/sessions", 
+        "_": "/usr/bin/python2"
+    }, 
+    "ansible_fips": false, 
+    "ansible_form_factor": "Notebook", 
+    "ansible_fqdn": "hydrogen", 
+    "ansible_hostname": "hydrogen", 
+    "ansible_interfaces": [
+        "docker0", 
+        "lo", 
+        "enp4s0", 
+        "br-90e3c48eb1dc", 
+        "wlp3s0", 
+        "vethd89cd3f"
+    ], 
+    "ansible_kernel": "4.1.20-1-lts", 
+    "ansible_lo": {
+        "active": true, 
+        "device": "lo", 
+        "ipv4": {
+            "address": "127.0.0.1", 
+            "broadcast": "host", 
+            "netmask": "255.0.0.0", 
+            "network": "127.0.0.0"
+        }, 
+        "ipv6": [
+            {
+                "address": "::1", 
+                "prefix": "128", 
+                "scope": "host"
+            }
+        ], 
+        "mtu": 65536, 
+        "promisc": false, 
+        "type": "loopback"
+    }, 
+    "ansible_machine": "x86_64", 
+    "ansible_machine_id": "eeb506b048ee43deac4519b2b2d82479", 
+    "ansible_memfree_mb": 2782, 
+    "ansible_memory_mb": {
+        "nocache": {
+            "free": 5340, 
+            "used": 2466
+        }, 
+        "real": {
+            "free": 2782, 
+            "total": 7806, 
+            "used": 5024
+        }, 
+        "swap": {
+            "cached": 0, 
+            "free": 4092, 
+            "total": 4092, 
+            "used": 0
+        }
+    }, 
+    "ansible_memtotal_mb": 7806, 
+    "ansible_mounts": [
+        {
+            "device": "/dev/sdb1", 
+            "fstype": "ext4", 
+            "mount": "/", 
+            "options": "rw,noatime,discard,data=ordered", 
+            "size_available": 8302645248, 
+            "size_total": 23503216640, 
+            "uuid": "83160100-b1d3-423d-a2b0-070a551c5056"
+        }, 
+        {
+            "device": "/dev/sda2", 
+            "fstype": "vfat", 
+            "mount": "/boot", 
+            "options": "rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro", 
+            "size_available": 105869312, 
+            "size_total": 268435456, 
+            "uuid": "5499-BBD5"
+        }, 
+        {
+            "device": "/dev/mapper/storage-krahser", 
+            "fstype": "ext4", 
+            "mount": "/home", 
+            "options": "rw,relatime,data=ordered", 
+            "size_available": 34845388800, 
+            "size_total": 73848397824, 
+            "uuid": "e7288a0c-ed66-4dae-98ce-2b35598acac2"
+        }
+    ], 
+    "ansible_nodename": "hydrogen", 
+    "ansible_os_family": "Archlinux", 
+    "ansible_pkg_mgr": "pacman", 
+    "ansible_processor": [
+        "GenuineIntel", 
+        "Intel(R) Core(TM) i7-3537U CPU @ 2.00GHz", 
+        "GenuineIntel", 
+        "Intel(R) Core(TM) i7-3537U CPU @ 2.00GHz", 
+        "GenuineIntel", 
+        "Intel(R) Core(TM) i7-3537U CPU @ 2.00GHz", 
+        "GenuineIntel", 
+        "Intel(R) Core(TM) i7-3537U CPU @ 2.00GHz"
+    ], 
+    "ansible_processor_cores": 2, 
+    "ansible_processor_count": 1, 
+    "ansible_processor_threads_per_core": 2, 
+    "ansible_processor_vcpus": 4, 
+    "ansible_product_name": "33476LU", 
+    "ansible_product_serial": "NA", 
+    "ansible_product_uuid": "NA", 
+    "ansible_product_version": "ThinkPad Twist", 
+    "ansible_python_version": "2.7.11", 
+    "ansible_selinux": false, 
+    "ansible_service_mgr": "systemd", 
+    "ansible_ssh_host_key_dsa_public": "AAAAB3NzaC1kc3MAAACBAOMumbIdZ/ESnOb6rvyd6tr2cj4umhYZjFXYjPj9LkjXtN4+X2MXiUREml6lWV0Y2uZz9li4tuepK3ZRazFS3emu2CuBnn50Atvuadnhcw49W1S9ogIy8ctva6yxzOnkCRki3b/jR/YYuhV0OgY3n0t2c2Hw53mztlU+KL2n5ULDAAAAFQCB48AMMTlPKo+7gGCju/IACmiDrQAAAIEAwRNbU4HxN22DRsGw93Sq5X/B7gi22y0H7+R4xVgcY7wM6ohKdRC/UQ7VOORh3HDvRBaCCA/2CPpZzh+Td4s44DurexC9mdCF9Gxupc+id8iNL7ET5GDF4ygtcIQLgFWv6EOHseL/gHNisOW/3aMAEjS8OgQptEvYK3b843WwwKUAAACAUh4foPIGQjtMMQH7mT+h0cXJucMGlPTcGIBjN1WAd9CTgpwb2MOa9/4KbhTdE3z+Qd15O0wmPkxa5e3YbC6PPlyiSF/tngEOyuBElFEj56BkTQCDM7U1tezdLA1kagI47oOx9K7xpSFp7bdh2H1loFX5oASmeJogXUifEG0oOU0=", 
+    "ansible_ssh_host_key_ecdsa_public": "AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBKZYPiN2+S5WXUzOXp4GSuTbVJvUgGhU3txut6NgGR0Tbzn+5RY/jqQkb88NfWfPHAKnt4OWDxfdvTOPGhwSS0k=", 
+    "ansible_ssh_host_key_ed25519_public": "AAAAC3NzaC1lZDI1NTE5AAAAIBIadoe2J35M+W5ekzx+j+tqZC7PPxKQB+wEapBIGQE2", 
+    "ansible_ssh_host_key_rsa_public": "AAAAB3NzaC1yc2EAAAADAQABAAABAQCl7P10/dhDtMxoiqun7DOphnWrkggonKSBpd76EUB+bK94Iq4G8PvP2VyMleNN1378z/uUliiT/gnoE7iF3qUbNtXkojeLYGCmET//2s3TP9jEr0iJABPWc2sx749bH8yzE7BGhYC/NP/C70m13yt94VN6OVmdnc+ASJC7cRbX7ObtJHI8jxYvKXH5f5sKAaSn0apjecq7fcKaAc2isWngsyEo+cGQIxlm6OtnwAv6nNU4SoCTJ4aa2JwXVQ3IXNWWokpqQfRffeyVAYxknW/NxaxibF4Sl+c3CXaorzkQgdUZaTsZATPV4EHm11fExUYQNDi0GSeXgliCPUBgKNXL", 
+    "ansible_swapfree_mb": 4092, 
+    "ansible_swaptotal_mb": 4092, 
+    "ansible_system": "Linux", 
+    "ansible_system_vendor": "LENOVO", 
+    "ansible_uptime_seconds": 23176, 
+    "ansible_user_dir": "/home/krahser", 
+    "ansible_user_gecos": "", 
+    "ansible_user_gid": 1000, 
+    "ansible_user_id": "krahser", 
+    "ansible_user_shell": "/bin/zsh", 
+    "ansible_user_uid": 1000, 
+    "ansible_userspace_architecture": "x86_64", 
+    "ansible_userspace_bits": "64", 
+    "ansible_vethd89cd3f": {
+        "active": true, 
+        "device": "vethd89cd3f", 
+        "ipv6": [
+            {
+                "address": "fe80::645e:b6ff:fe2a:705", 
+                "prefix": "64", 
+                "scope": "link"
+            }
+        ], 
+        "macaddress": "66:5e:b6:2a:07:05", 
+        "mtu": 1500, 
+        "promisc": true, 
+        "type": "ether"
+    }, 
+    "ansible_virtualization_role": "host", 
+    "ansible_virtualization_type": "kvm", 
+    "ansible_wlp3s0": {
+        "active": true, 
+        "device": "wlp3s0", 
+        "ipv4": {
+            "address": "192.168.1.104", 
+            "broadcast": "192.168.1.255", 
+            "netmask": "255.255.255.0", 
+            "network": "192.168.1.0"
+        }, 
+        "ipv6": [
+            {
+                "address": "fe80::1e3e:84ff:feef:db81", 
+                "prefix": "64", 
+                "scope": "link"
+            }
+        ], 
+        "macaddress": "1c:3e:84:ef:db:81", 
+        "module": "wl", 
+        "mtu": 1500, 
+        "pciid": "0000:03:00.0", 
+        "promisc": false, 
+        "type": "ether"
+    }, 
+    "module_setup": true
+}
+

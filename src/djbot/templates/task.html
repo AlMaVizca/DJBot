@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block header %}
+Run tasks on {{ room_name }}
+{% endblock %}
+{% block content %}
+<div class="row top">
+    <div class="ui two column grid">
+	<div class="ui column">
+	    <ul>
+		<li>update</li>
+		<li>install system</li>
+		<li>install docker</li>
+		<li>install something</li>
+	    </ul>
+	</div>
+	
+	<div class="ui column">
+	    <h1> References </h1>
+	    <div id="accordion">
+		<h3>apt</h3>
+		<div>
+		    <p> docs</p>
+		</div>
+		<h3>get</h3>
+		<div>
+		    <p> docs</p>
+		</div>
+
+	    </div>
+	</div>
+	
+    </div>
+</div>
+<div class="row middle">
+    <div>
+	<i class="add circle icon"></i>Add
+	<i class="remove circle icon"></i>Remove
+	<i class="video play icon"></i>Run
+    </div>
+
+</div>
+<div class="row bottom">
+</div>
+{% endblock %}
