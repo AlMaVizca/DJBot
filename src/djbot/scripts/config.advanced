@@ -1,0 +1,19 @@
+[DEFAULT]
+controlmaster = auto
+controlpath = ~/.ssh/controlmaster/%h-%p-%r.sock
+escapechar = ~
+identityfile = ~/.ssh/id_rsa
+forwardagent = yes
+gateways = direct
+port = 22
+proxycommand = assh connect %h --port=%p
+pubkeyauthentication = yes
+user = avizcaino
+visualhostkey = yes
+
+[proxy1]
+forwardagent = yes
+hostname = 163.10.78.1
+port = 22
+user = avizcaino
+

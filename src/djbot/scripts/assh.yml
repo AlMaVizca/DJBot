@@ -1,0 +1,16 @@
+hosts:
+  163.10.78.[4-50]:
+    Gateways:
+    - proxy1
+  proxy1:
+    ForwardAgent: 'yes'
+    Hostname: 163.10.78.1
+    Port: '22'
+    User: avizcaino
+defaults:
+  ForwardAgent: 'yes'
+  IdentityFile: ~/.ssh/id_rsa
+  Port: '22'
+  PubkeyAuthentication: 'yes'
+  User: avizcaino
+  compression: 'yes'
