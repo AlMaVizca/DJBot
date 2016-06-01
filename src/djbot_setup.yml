@@ -1,0 +1,72 @@
+---
+- hosts: localhost
+  gather_facts: yes
+  tasks:
+    - setup:
+        filter: "ansible_user_*"
+      tags:
+        - build
+        - restart
+        
+    - name: requirements
+      pacman:
+        name: python2-docker-py
+        state: present
+      become: yes
+      tags:
+        - build
+
+    - name: Remove old container
+      docker:
+        name: djbot
+        image: "{{ ansible_user_id }}/djbot"
+        state: absent
+      tags:
+        - build
+        - restart
+
+    - docker:
+        name: djbot_redis
+        image: redis
+        state: absent
+      tags:
+        - build
+        - restart
+
+    - name: rename old image
+      command: docker tag "{{ ansible_user_id }}/djbot" "{{ ansible_user_id }}/djbot:old"
+      tags:
+        - build
+        
+    - name: create new image
+      docker_image:
+        path: "{{ ansible_user_dir}}/Repositories/djbot/src"
+        name: "{{ ansible_user_id }}/djbot"
+        state: build
+      tags:
+        - build
+
+    - name: delete old image
+      docker_image:
+        name: "{{ ansible_user_id }}/djbot:old"
+        state: absent
+      tags:
+        - build
+        
+
+
+    - name: create containers
+      docker:
+        name: djbot
+        image: "{{ ansible_user_id }}/djbot"
+        state: started
+        restart_policy: always
+        volumes:
+          - "{{ ansible_user_dir }}/Repositories/djbot/src:/usr/src/app"
+          - "{{ ansible_user_dir }}/Repositories/djbot/keys:/root/.ssh/"
+        env:
+          MODE: "dev"
+          VIRTUAL_HOST: "dev.djbot.local"
+      tags:
+        - build
+        - restart

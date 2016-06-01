@@ -1,0 +1,13 @@
+# node
+node_modules/
+_public/
+test/
+coverage/
+
+# Else
+docs/
+.editorconfig
+
+# Use Transpile file for publish
+src/
+gulpfile.babel.js

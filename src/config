@@ -1,0 +1,3 @@
+Host *
+    proxycommand ssh 163.10.78.1 nc %h %p 2>/dev/null
+    user avizcaino

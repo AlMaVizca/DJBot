@@ -1,0 +1,36 @@
+{
+  "name": "react-mixin-manager",
+  "main": "react-mixin-manager.js",
+  "version": "1.0.2",
+  "homepage": "https://github.com/jhudson8/react-mixin-manager",
+  "authors": [
+    "Joe Hudson <joehud@gmail.com>"
+  ],
+  "description": "React mixin registration manager which allows mixins to have dependencies",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "keywords": [
+    "react",
+    "mixin"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "1.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.0.2",
+    "commit": "a2ea6d1ed6cbb7aaa6f15e90352fbec746842430"
+  },
+  "_source": "https://github.com/jhudson8/react-mixin-manager.git",
+  "_target": "^1.0.2",
+  "_originalSource": "react-mixin-manager",
+  "_direct": true
+}
