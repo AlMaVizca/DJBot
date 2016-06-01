@@ -1,5 +1,8 @@
 # requirements.txt
+factory
 flask
+flask-SQLAlchemy
 gunicorn
 nose
-
+SQLAlchemy
+wtforms

@@ -1,12 +1,31 @@
+#!/usr/bin/python2
 import json
+from ansibleapi import *
 
-def get_host():
-    host = {}
-    with open('context.json', 'r') as host_file:
-        host = json.load(host_file)
-    return host
-
-def get_rooms():
-    rooms = [{ 'name': 'C' , 'network': '192.168.1.0/24', 'machines': 5},{ 'name': 'python' , 'network': '192.168.2.0/24', 'machines': 3},{ 'name': 'javascript' , 'network': '192.168.3.0/24', 'machines': 6},{ 'name': 'bash' , 'network': '192.168.4.0/24', 'machines': 7},{ 'name': 'C++' , 'network': '192.168.5.0/24', 'machines': 7}, { 'name': 'ruby' , 'network': '192.168.5.0/24', 'machines': 7}]
-    return rooms
+class Host():
+    def __init__(self, address='127.0.0.1'):
+        self.address = address
+    
+    def get_setup(self):
+        inventory = [self.address]
+        ansible_game = Runner(inventory, 'avizcaino')
+        ansible_game.add_setup(inventory)
+        ansible_game.run()
+        data = ansible_game.get_setup()
+        memory = data["ansible_memory_mb"]["real"]["free"]
+        lsb = data["ansible_lsb"]["description"]
+        devices = data["ansible_devices"]["sda"]["host"]
+        host = {
+            "hostname": data["ansible_hostname"],
+            "memory": memory,
+            "lsb": lsb,
+            "devices": devices,
+        }
+        return host
         
+
+
+
+
+
+

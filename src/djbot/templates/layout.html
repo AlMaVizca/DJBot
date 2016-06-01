@@ -3,13 +3,17 @@
 <head>
     <title>DjBot</title>
     {% block head %}{% endblock %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='semantic/dist/semantic.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bower_components/semantic/dist/semantic.min.css')}}">
     
     <style type="text/css">
      body {
 	 background-color: #FFFFFF;
      }
-     
+
+     #content {
+	 height: 100%;
+     }
+
      .main.container {
 	 height: 100%;
 	 padding-top: 3em;
@@ -48,6 +52,10 @@
 	 padding: 0;
 	 justify-content: center;
      }
+
+     .grid.centered{
+	 margin-top: 1em;
+     } 
      
     </style>
 </head>
@@ -62,28 +70,19 @@
 	    {% endblock %}
 	</div>
     </nav>
-    <div class="ui main container">
-	    {% block content %}{% endblock %}
+    <div id="content">
+    {% block content %}{% endblock %}
     </div>
 
+    <script src="{{ url_for('static', filename='bower_components/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bower_components/semantic/dist/semantic.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bower_components/jquery-ui/jquery-ui.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bower_components/react/react.js') }}"></script>
+    <script src="{{ url_for('static', filename='bower_components/react/react-dom.js') }}"></script>
+    <script src="{{ url_for('static', filename='bower_components/react-semantify/dst/react-semantify.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='browser.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='marked.min.js') }}"></script>
     {% block scripts %}{% endblock %}
-        <script src="{{ url_for('static', filename='jquery/dist/jquery.min.js') }}"></script>
-
-    <script src="http://localhost:35729/livereload.js?snipver=2"></script>
-
-    <script src="{{ url_for('static', filename='semantic/dist/semantic.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='jquery-ui/jquery-ui.min.js') }}"></script>
-
-
-    <script>
-     $(function() {
-	 $( "#sortable" ).sortable();
-	 $( "#sortable" ).disableSelection();
-     });
-     
-     $(function() {
-         $( "#accordion" ).accordion();
-     });
-    </script>
 </body>
 </html>

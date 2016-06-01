@@ -24,62 +24,70 @@ class ResultsCollector(CallbackBase):
         self.host_failed = {}
         
     def v2_runner_on_unreachable(self, result):
-        self.host_unreachable[result._host.get_name()] = result
+        self.host_unreachable[result._host.get_name()] = result._result
 
     def v2_runner_on_ok(self, result,  *args, **kwargs):
-        self.host_ok[result._host.get_name()] = result
+        self.host_ok[result._host.get_name()] = result._result['ansible_facts']
 
     def v2_runner_on_failed(self, result,  *args, **kwargs):
-        self.host_failed[result._host.get_name()] = result
+        self.host_failed[result._host.get_name()] = result._result
+
+    def get_all(self):
+        return {'ok': self.host_ok,
+                'unreachable': self.host_unreachable, \
+                'failed': self.host_failed}
+        
 
 class Runner(object):
-    def __init__(self, inventory):
+    def __init__(self, inventory, remote_user='root', private_key_file=None, ssh_extra_args = None):
         # initialize needed objects
         self.callback = ResultsCollector()
         self.variable_manager = VariableManager()
         self.loader = DataLoader()
+        self.remote_user = remote_user
         self.inventory = Inventory(loader=self.loader, variable_manager=self.variable_manager, host_list=inventory)
-        self.plays = {}
-        self.host_ok = {}
-        self.host_failed = {}
-        self.host_unreachable = {}
-
+        self.variable_manager.set_inventory(self.inventory)
         self.options = Options(connection='smart',
-                          module_path='/home/krahser/Repositories/djbot/src/env/lib/python2.7/site-packages/ansible',
-                          forks=100, remote_user='avizcaino',
-                          private_key_file=None,
-                          ssh_common_args=None, ssh_extra_args=None,
-                          sftp_extra_args=None, scp_extra_args=None,
-                          become=None, become_method=None,
-                          become_user=None, verbosity=None,
-                          check=False)
-        
+                               module_path='/usr/local/lib/python2.7/site-packages/ansible',
+                               forks=100, remote_user=remote_user,
+                               private_key_file=private_key_file,
+                               ssh_common_args=None,
+                               ssh_extra_args=ssh_extra_args,
+                               sftp_extra_args=None, scp_extra_args=None,
+                               become=None, become_method=None,
+                               become_user=None, verbosity=None,
+                               check=False)
+        # create inventory and pass to var manager        
         self.passwords = dict(vault_pass='secret')
 
-        # create inventory and pass to var manager
+        self.plays = {}
+        self.hosts_results = {}
 
 
-    def setup(self):
-        
-        self.variable_manager.set_inventory(self.inventory)
+    def clean_callback():
+        self.callback = ResultsCollector()
+
+    def add_setup(self, hosts):
+        self.play_source =  dict(
+            name = 'setup',
+            hosts = ', '.join(hosts),
+            tasks = [
+                dict(action=dict(module='setup', args=(dict(filter='ansible_[h,m,l,d][o,e,s]*')))),
+                 ]
+        )
+        self.plays['setup'] = Play().load(self.play_source, variable_manager=self.variable_manager, loader=self.loader)
 
 
-    def add_play(self, name, hosts):
-        # create play with tasks
+    def add_plays(self, name='undefined', hosts=[], tasks=[]):
+        """ add tasks to play"""
         self.play_source =  dict(
             name = name,
             hosts = ', '.join(hosts),
-            tasks = [
-                
-                dict(action=dict(module='setup'))
-
-                 ]
+            tasks = tasks
         )
         self.plays[name] = Play().load(self.play_source, variable_manager=self.variable_manager, loader=self.loader)
 
     def run(self):
-        self.setup()
-        # actually run it
         tqm = None
         try:
             tqm = TaskQueueManager(
@@ -96,23 +104,10 @@ class Runner(object):
             if tqm is not None:
                 tqm.cleanup()
 
-    def get_setup(self):
-        setup = ''
-        for host, result in self.callback.host_ok.items():
-            setup = result._result['ansible_facts']
-
-        for host, result in self.callback.host_failed.items():
-            print result._result
-
-        for host, result in self.callback.host_unreachable.items():
-            print result._result
-
-        return setup
-            
-                
 if __name__ == '__main__':
-    inventory = ['localhost','QM-firewall','Q-controller', '163.10.78.1']
-    ansible_api = Runner(inventory)
-    ansible_api.add_play('shell log',['163.10.78.1'], 'yes')
+    inventory = ['163.10.78.1']
+    ansible_api = Runner(inventory, 'avizcaino')
+    ansible_api.add_setup(inventory)
     ansible_api.run()
+
             

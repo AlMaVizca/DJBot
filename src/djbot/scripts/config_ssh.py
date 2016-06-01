@@ -20,6 +20,8 @@ class SshConfig():
             'PubkeyAuthentication': 'yes',
             'User': user,
             'compression': 'yes',
+            'UserKnownHostsFile': '/dev/null',
+            'StrictHostKeyChecking': 'no',
         }
 
     def write_settings(self):
@@ -46,40 +48,19 @@ class SshConfig():
             'User': user,
         }
 
-    def _first(self, network):
-        ip_str = str(network.network_address + 2).split('.')
-        base = '.'.join(ip_str[0:3])
-        start = '.[' + ip_str[3] + '-'
-        end =  str(network.broadcast_address -1).split('.')[3] + ']'
-        return base + start + end
 
-    def _last(self, network):
-        ip_str = str(network.network_address + 1).split('.')
-        base = '.'.join(ip_str[0:3])
-        start = '.[' + ip_str[3] + '-'
-        end =  str(network.broadcast_address - 2).split('.')[3] + ']'
-        regex = base + start + end
-        
 
     def add_room(self, network, proxy, user = None):
         network = IPv4Network(unicode(network))
         regex = IPv4Address(unicode(self.hosts[proxy]['Hostname']))
-        whereis = { 'first': (regex == network.network_address + 1),
-                    'last' : (regex == network.broadcast_address -1 ),
-                    'bigger': (regex > network.broadcast_address),
-                    'smaller': (regex < network.network_address),
-                 }
 
-        if whereis['bigger'] or whereis['smaller']:
-            regex = str(regex)
-        if whereis['last']:
-            regex = self._last(network)
-        if whereis['first']:
-            regex = self._first(network)
+        
+        ip_str = str(network.network_address + 1).split('.')
+        base = '.'.join(ip_str[0:3])
+        wild = '.*'
+        regex = base + wild
+        
 
-
-        regex = '"' + regex + '"'
-            
         self.hosts[regex] = { 'User': user, 'Gateways': [proxy]}
 
 

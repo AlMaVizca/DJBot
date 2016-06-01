@@ -1,46 +1,17 @@
 {% extends "layout.html" %}
 {% block header %}
-Working with {{ room_name }} room
+Working with {{ room['settings']['name'] }} 
 {% endblock %}
 {% block content %}
-<div class="row top">
-    <div class="ui doubling center aligned three column grid">
-	<div class="column">
-	    <a href="{{ url_for('settings', room_name=room_name)}}">
-		<i class="setting icon"></i>
-		Settings
-	    </a>
-	</div>
-	<div class="column">
-	    <h1>Blackboard</h1>
-	</div>
-	<div class="column">
-	    <a href="{{ url_for('task', room_name=room_name)}}">
-		<i class="send outline icon"></i>
-		tasks
-	    </a>
-	</div>
-    </div>
-    <div class="ui cards ten column grid" id="sortable">
-	<div class="ui card ui-state-default">{% include 'host.html' %}} </div>
-	    <div class="ui card ui-state-default">2</div>
-	    <div class="ui card ui-state-default">3</div>
-	    <div class="ui card ui-state-default">4</div>
-	    <div class="ui card ui-state-default">5</div>
-	    <div class="ui card ui-state-default">6</div>
-	    <div class="ui card ui-state-default">7</div>
-    </div>
-</div>
-<div class="row middle">
-</div>
-<div class="row bottom">
-    <h3>Select computer to run shell</h3>
-    <div class="ui one cards">
-	<div class="ui card status">
-	    <p style="color:red">Failed</p>
-	    <p style="color:yellow">Warning</p>
-	    <p style="color:green">OK</p>
-	</div>
-    </div>
-</div>
 {% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='bower_components/validator-js/validator.min.js') }}"></script>
+
+<script type="text/babel">
+
+{% include djbot.jsx %}
+    
+</script>
+
+{% endblock %}
+
