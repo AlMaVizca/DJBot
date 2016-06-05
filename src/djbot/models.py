@@ -2,58 +2,79 @@ from ansibleapi import *
 from database import Base, db_session
 from context import Host
 from flask import jsonify
-from helpers import set_properties
+from helpers import room_properties
 from scripts import proxy, config_ssh
 from sqlalchemy import Column, Integer, SmallInteger, String
 from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy.orm import relationship
 
 
-
-class Task(Base):
+class TaskTable(Base):
     __tablename__ = 'task'
     key = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
-    modules = relationship("Module")
+    modules = relationship("ModuleTable", cascade="all, delete-orphan")
 
-class Module(Base):
+    def __repr__(self):
+        return '<TaskTable %r %r %r>' % (self.key, self.name, self.modules)
+
+
+class ModuleTable(Base):
     __tablename__ = 'module'
     key = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
-    module = Column(String(50), nullable=False)
-    args = Column(String(50), nullable=False)
+    args = relationship("ArgsTable", cascade="all, delete-orphan")
     task_key = Column(Integer, ForeignKey('task.key'))
 
 
+class ArgsTable(Base):
+    __tablename__ = 'argument'
+    key = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50), nullable=False)
+    value = Column(String(50), nullable=False)
+    task_key = Column(Integer, ForeignKey('module.key'))
 
-class Room(Base):
+
+class RoomTable(Base):
     __tablename__ = 'room'
     key = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     machines = Column(SmallInteger, nullable=False)
     network = Column(String, nullable=False)
     proxy = Column(String)
+
+            
+    def __repr__(self):
+        return '<RoomTable %r %r %r %r %r>' % (self.key,
+                                          self.name, self.machines,
+                                          self.network, self.proxy)
+
+
     
-    
-    def __init__(self, name=None, machines=None, network=None,
-                 proxy=None):
-        self.name = name
-        self.machines = machines
-        self.network = network
-        self.netmask = 8
-        self.proxy = proxy
-        self.db = Room.query.filter(Room.name == self.name).first()
-        self.username = 'avizcaino'
-        self.key = None
-        self.hosts = ['163.10.78.4', '163.10.78.34', '163.10.78.79']
+
+class Room():
+    def __init__(self, key=None):
+        """Get the object from database, and complete with parameters"""
+        self.key = key
+        self.db = RoomTable.query.filter(RoomTable.key == self.key).first()
+        self.name = None
+        self.machines = None
+        self.network = None
+        self.netmask = None
+        self.proxy = None
+
         self.get()
+        self.username = 'avizcaino'
+        self.hosts = ['163.10.78.4', '163.10.78.34', '163.10.78.79']
         
     def __repr__(self):
         return '<Room %r %r %r %r %r>' % (self.key,
                                           self.name, self.machines,
                                           self.network, self.proxy)
 
-    def _set_network(self):
+    def _set_network(self, network=None, netmask=None):
+        if network and netmask:
+            return network + '/' + str(netmask)
         return self.network + '/' + str(self.netmask)
         
     def _get_network(self, cidr):
@@ -70,7 +91,7 @@ class Room(Base):
                  netmask=self.netmask,
                  proxy=self.proxy,
                  status='on',
-                 key=self.key)
+                 keyRoom=self.key)
 
     def discover_hosts(self):
         self.hosts = proxy.check_network(unicode(self._set_network()))
@@ -86,32 +107,29 @@ class Room(Base):
         """Complete (or not) from database"""
         if self.db:
             if complete:
-                set_properties(self, self.db)
+                room_properties(self, self.db)
             return True
         return False
         
-    def save(self):
+    def save(self, name, network, netmask, proxy, machines):
         """save in database"""
-        self.db.name = self.name
-        self.db.network = self._set_network()
-        self.db.machines = self.machines
-        self.db.proxy = self.proxy
-        try:
-            db_session.commit()
-            return True
-        except:
+        network = self._set_network(network,netmask)
+        if self.get(complete=False):
+            self.db.name = name
+            self.db.machines = machines
+            self.db.network = network
+            self.db.proxy = proxy
             db_session.add(self.db)
-            db_session.commit()
-            return False
+        else:
+            room = RoomTable(name=name,network=network,proxy=proxy,machines=machines)
+            db_session.add(room)
+        db_session.commit()
+        return True
 
     def delete(self):
         """delete on database"""
-        try:
-            db_session.delete(self)
-            db_session.commit()
-            return True
-        except:
-            return False
+        db_session.delete(self.db)
+        db_session.commit()
 
     def get_hosts(self):
         """run ansible setup on hosts"""
@@ -137,14 +155,14 @@ class Room(Base):
                     "hostname": facts[host_data]["ansible_hostname"],
                     "memory": facts[host_data]["ansible_memory_mb"]["real"]["free"],
                     "lsb": facts[host_data]["ansible_lsb"]["description"],
-                    "id": host_data.split('.')[3]
+                    "key": host_data.split('.')[3]
                 }
             except:
                 host = {
                     "hostname": "Something wrong happen",
                     "memory": "ansible_memory_mb",
                     "lsb": "ansible_lsb",
-                    "id": 999
+                    "key": 999
                 }
             hosts.append(host)
         return 	{"hosts": hosts}

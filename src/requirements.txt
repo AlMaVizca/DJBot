@@ -1,8 +1,11 @@
 # requirements.txt
 factory
 flask
+Flask-User
+Flask-WTF
 flask-SQLAlchemy
 gunicorn
+ipaddress
 nose
 SQLAlchemy
 wtforms

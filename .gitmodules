@@ -1,0 +1,3 @@
+[submodule "src/djbot/static/third/react-clock"]
+	path = src/djbot/static/third/react-clock
+	url = git@github.com:ryanburgess/react-clock.git

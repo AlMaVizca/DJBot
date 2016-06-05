@@ -1,7 +1,0 @@
-<p>Mounts: </p>
-{% for mount_point in host.ansible_mounts %}
-{% for key, value in mount_point.iteritems() %}
-<div>{{ key|e }}</div>
-<div>{{ value|e }}</div>
-{% endfor %}
-{% endfor %}

@@ -1,15 +1,19 @@
-from models import Room
-from helpers import set_properties
-
+from models import RoomTable, Room
+from models import TaskTable
+from task import Task
 
 def get_rooms():
-    rooms = Room().query.all()
+    rooms = RoomTable().query.all()
     rooms_info = {'rooms': []}
     for each in rooms:
-        a_room = Room(each.name)
-        rooms_info['rooms'].append(a_room.get_setup())
+        each_room = Room(key=each.key)
+        rooms_info['rooms'].append(each_room.get_setup())
     return rooms_info
         
-    
-
-
+def get_tasks():
+    tasks = TaskTable().query.all()
+    tasks_info = {'tasks': []}
+    for each in tasks:
+        each_task = Task(key=each.key)
+        tasks_info['tasks'].append(each_task.get_setup())
+    return tasks_info

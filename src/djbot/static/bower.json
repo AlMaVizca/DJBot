@@ -27,6 +27,7 @@
     "jquery-ui": "^1.11.4",
     "react-semantify": "^0.5.1",
     "validator-js": "^5.2.0",
-    "classnames": "^2.2.5"
+    "classnames": "^2.2.5",
+    "datetimepicker": "^2.5.4"
   }
 }
