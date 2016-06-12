@@ -9,12 +9,22 @@
         - restart
         
     - name: requirements
+      pip:
+        name: docker-py
+        state: present
+      become: yes
+      tags:
+        - build
+      when: "{{ ansible_distribution }}" == "Debian"
+        
+    - name: requirements
       pacman:
         name: python2-docker-py
         state: present
       become: yes
       tags:
         - build
+      when: "{{ ansible_distribution }}" == "Archlinux"
 
     - name: Remove old container
       docker:
