@@ -7,8 +7,9 @@ RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
 RUN apt-get install -yqq nodejs
 
 WORKDIR /usr/src/app/djbot
-RUN npm install -g 
-RUN npm install -g gulp bower
+RUN npm install gulp bower gulp-concat
+
+
 RUN gulp
 WORKDIR /usr/src/app/djbot/static
 RUN bower install --allow-root
