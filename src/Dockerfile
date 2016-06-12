@@ -7,7 +7,8 @@ RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
 RUN apt-get install -yqq nodejs
 
 WORKDIR /usr/src/app/djbot
-RUN npm install gulp bower gulp-concat
+
+RUN npm install
 
 
 RUN gulp
