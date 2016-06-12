@@ -38,6 +38,14 @@
         - build
         - restart
 
+    - name: delete old image
+      docker_image:
+        path: "{{ ansible_user_dir}}/Repositories/djbot/src"
+        name: "{{ ansible_user_id }}/djbot"
+        state: absent
+      ignore_errors: yes
+      tags:
+        - build
 
     - name: create new image
       docker_image:
