@@ -2,8 +2,6 @@ var fs = require('fs');
 var path = require('path');
 var gulp = require('gulp');
 var concat = require('gulp-concat');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
 var livereload = require('gulp-livereload');
 
 
@@ -21,7 +19,6 @@ gulp.task('default', function() {
     
     return gulp.src(path.join(scriptsPath, '/*.jsx'))
         .pipe(concat('main.js'))
-        // write to output
         .pipe(gulp.dest(buildPath));
         // minify
         // .pipe(uglify())    
