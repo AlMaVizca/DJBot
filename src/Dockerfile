@@ -14,14 +14,13 @@ WORKDIR /usr/src/app/djbot/static
 RUN bower install --allow-root
 
 
-RUN apt-get remove --purge -yqq node npm\
- && rm -rf /var/lib/apt/lists/*
-
-
+RUN apt-get remove --purge -yqq nodejs\
+     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/go
 RUN wget https://storage.googleapis.com/golang/go1.6.linux-amd64.tar.gz
 RUN tar -xvf go1.6.linux-amd64.tar.gz
+RUN rm go1.6.linux-amd64.tar.gz
 RUN mv go /usr/local
 	
 ENV GOPATH /go
