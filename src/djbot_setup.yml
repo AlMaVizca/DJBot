@@ -3,7 +3,7 @@
   gather_facts: yes
   tasks:
     - setup:
-        filter: "ansible_user_*"
+        filter: "ansible_*"
       tags:
         - build
         - restart
@@ -13,28 +13,31 @@
         name: docker-py
         state: present
       become: yes
+      when: ansible_distribution == "Debian"
       tags:
         - build
-      when: ansible_distribution == "Debian"
+
         
     - name: requirements
       pacman:
         name: python2-docker-py
         state: present
       become: yes
+      when: ansible_distribution == "Archlinux"      
       tags:
         - build
-      when: ansible_distribution == "Archlinux"
+
 
     - name: Remove old container
       docker:
         name: djbot
         image: "{{ ansible_user_id }}/djbot"
         state: absent
+      ignore_errors: yes        
       tags:
         - build
         - restart
-      ignore_error: yes
+
 
     - name: create new image
       docker_image:
