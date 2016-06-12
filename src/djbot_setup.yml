@@ -43,7 +43,7 @@
       docker_image:
         path: "{{ ansible_user_dir}}/Repositories/djbot/src"
         name: "{{ ansible_user_id }}/djbot"
-        state: build
+        state: present
       tags:
         - build
 
