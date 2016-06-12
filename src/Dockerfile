@@ -4,10 +4,11 @@ VOLUME /usr/src/app
 RUN pip install git+git://github.com/ansible/ansible.git@stable-2.1
 
 RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
-RUN apt-get install -y nodejs
+RUN apt-get install -yqq nodejs
 
 WORKDIR /usr/src/app/djbot
-RUN npm install
+RUN npm install -g 
+RUN npm install -g gulp bower
 RUN gulp
 WORKDIR /usr/src/app/djbot/static
 RUN bower install --allow-root
@@ -29,6 +30,5 @@ RUN go get -u github.com/moul/advanced-ssh-config/cmd/assh
 
 
 
-USER djbot
 WORKDIR /usr/src/app
 CMD ["gunicorn", "--config=gunicorn.py", "djbot:app"]
