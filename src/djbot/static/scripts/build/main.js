@@ -248,6 +248,7 @@ var Run = React.createClass({
 	    rooms.splice(index,0,key);
 	}
 	this.setState({listRooms: rooms});
+	console.log(this.state.listRooms);
     },
     taskList: function(key){
 	var tasks = this.state.listTasks;
@@ -264,15 +265,15 @@ var Run = React.createClass({
 	var Steps = Semantify.Steps;
         var Step = Semantify.Step;
 	return(
-	    <div className="ui bottom attached tab" data-tab="run">
+	    <div className="ui bottom attached tab active" data-tab="run">
 		<Steps className="fluid top attached">
 		    <Step active={this.state.active[0]} data-tab='where'>Where are we working?</Step>
 		    <Step active={this.state.active[1]} data-tab='what'>What are we doing?</Step>
-		    <Step active={this.state.active[2]} data-tab='when'>When do it?</Step>
+		    <Step active={this.state.active[2]} data-tab='when'>Confirm</Step>
 		</Steps>
 		<Segment className='action'>
-		<SelectTask active={this.state.active[0]} next={this.nextStep} tasks={this.props.tasks} edit={this.taskList}/>
-		<SelectRooms active={this.state.active[1]} next={this.nextStep} rooms={this.props.rooms} reset={this.reset} edit={this.roomList}/>
+		<SelectRooms active={this.state.active[0]} next={this.nextStep} rooms={this.props.rooms} reset={this.reset} edit={this.roomList}/>
+		<SelectTask active={this.state.active[1]} next={this.nextStep} tasks={this.props.tasks} edit={this.taskList}/>
 		<Schedule active={this.state.active[2]} next={this.nextStep} reset={this.reset} listRooms={this.state.listRooms} listTasks={this.state.listTasks} rooms={this.props.rooms} tasks={this.props.tasks}/>
 		</Segment>
 	    </div>
@@ -285,7 +286,7 @@ var ItemList = React.createClass({
 	$('.ui.checkbox').checkbox();
     },
     updateList: function(e){
-	this.props.edit(this.props.element.key);
+	this.props.edit(this.props.elementKey);
     },
     render: function(){
 	var Checkbox = Semantify.Checkbox;
@@ -306,10 +307,20 @@ var ItemList = React.createClass({
 
 
 var CheckList = React.createClass({
+    componentWillReceiveProps: function(){
+	var elements = '';
+	if (this.props.elements){
+	    var elements = this.props.elements.map(function(element, i){
+		return <ItemList key={i} element={element} edit={this.props.edit} elementKey={element.key}/>;
+	    },this);
+	}
+    },
     render: function(){
 	var Icon = Semantify.Icon;
 	var Table = Semantify.Table;
-	var callback = this.props.edit;
+	var elements = this.props.elements.map(function(element, i){
+			   return <ItemList key={i} element={element} elementKey={element.key} edit={this.props.edit}/>;
+	}, this);
 	return(<div>
 		<Table className="blue">
 		<thead>
@@ -319,10 +330,8 @@ var CheckList = React.createClass({
 		<Icon className="sitemap"/>Name</th>
 		</tr>
 		</thead>
-	        <tbody>
-	       {this.props.elements.map(function(element){
-		       return <ItemList key={element.key} element={element} edit={callback} />;
-	       })}
+	       <tbody>
+	       {elements}
 	       </tbody>
 	       </Table>
 	       </div> 
@@ -422,10 +431,6 @@ var Schedule  = React.createClass({
 			   return <RoomName key={room.key} name={room.name}/>;		       }
 	       })}
 	       </div>
-	       <div className="five wide column ">
-	       <Header className="second">Schedule</Header>
-	       <input type="text" name="datetimepicker" id="datetimepicker"/>
-	       </div>
 	       </Grid>
 		   <Grid className="right aligned">
 	       <div className="sixteen wide column">
@@ -451,32 +456,30 @@ var Schedule  = React.createClass({
 var Room = React.createClass({
     deleteRoom: function(){
 	var classRoom = '.' + this.props.classRoom;
-	$(classRoom).modal('hide');
 	this.props.editRoom('remove');
+	$(classRoom).modal('hide');
+	console.log(classRoom);
     },
     saveRoom: function(){
 	var classRoom = '.' + this.props.classRoom;
+	console.log(classRoom);
 	$(classRoom).modal('hide');
-	$('.add').modal({closable: true,
-			 onHide: function(){
-			     console.log('hidden');
-			 },
-			}).modal('hide');
+	$('.add.basic').modal({closable: true}).modal('hide');
 	this.props.editRoom('save');
 	return true
     },
     cancelRoom: function(){
-	console.log(this.props);
 	var classRoom = '.' + this.props.classRoom;
+	console.log(classRoom);
 	$(classRoom).modal('hide');
-	$('.add').modal('hide');
+	$('.add.basic').modal({closable: true}).modal('hide');
+	console.log('cancel');
 	return true
     },
     render: function(){
 	var Button = Semantify.Button;
 	var Form = Semantify.Form;
 	var Field = Semantify.Field;
-	var Fields = Semantify.Fields;
 	var Grid = Semantify.Grid;
 	var Header = Semantify.Header;
 	var Icon = Semantify.Icon;
@@ -484,7 +487,7 @@ var Room = React.createClass({
 	var Label = Semantify.Label;
 	var Modal = Semantify.Modal;
 	var classRoom = classNames(this.props.classRoom, 'basic');
-	var deleteButton = (this.props.keyRoom != 999);
+	var deleteButton = (this.props.roomKey != 999);
 	return (
 		<Modal className={classRoom} init={this.props.modal}>
 		<Header className="inverted grey">{this.props.name}</Header>
@@ -560,7 +563,7 @@ var RoomItem = React.createClass({
 	this.props.updateStateRoom(this.props.room);
 	var classRoom = classNames('.', this.props.classRoom);
 	classRoom = classRoom.replace(/ /g,'');
-	$(classRoom).modal({closable: false}).modal('toggle');
+	$(classRoom).modal('toggle');
     },
     render: function(){
 	var Icon = Semantify.Icon;
@@ -577,7 +580,7 @@ var RoomItem = React.createClass({
 	        <Icon className="edit"/>
 	       </div>
 	      </div>
-	    <Room {...this.props} keyRoom={this.props.room.keyRoom}/>
+	    <Room {...this.props} roomKey={this.props.room.key}/>
 	    </td>
 	    </tr>
     );
@@ -600,12 +603,19 @@ var RemoveButton = React.createClass({
 
 
 var Settings = React.createClass({
+    getInitialState: function(){
+	return {newRoom: { name: "Add Room", network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', key: 999, keys:[]}}
+    },
     componentDidMount: function(){
+	var keys = []
+	for(var i=0;i< this.props.rooms.length+10;i++){
+	    keys.push(Math.random().toString(36).substring(4));
+	}
+	this.setState({keys: keys})
     },
     addRoom: function(){
-	var newRoom = { name: "Add Room", network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', keyRoom: 999};
-	this.props.updateStateRoom(newRoom);
-	$('.add').modal({closable: false,
+	this.props.updateStateRoomKey(999)
+	$('.add.basic').modal({closable: false,
 			 onApprove: function () {
 			     console.log('Approve');
 			 },
@@ -619,9 +629,10 @@ var Settings = React.createClass({
 			}).modal('toggle');
     },
     componentWillReceiveProps: function(){
+	var syncTab ='';
 	this.rooms = this.props.rooms.map(function(room,i){
-		 var syncTab = Math.random().toString(36).substring(7);
-		 return <RoomItem {...this.props} key={i} keyRoom={room.keyRoom} room={room} classRoom={syncTab}/>;
+	    syncTab = this.state.keys[i];
+		 return <RoomItem {...this.props} key={i} keyRoom={room.key} room={room} classRoom={syncTab}/>;
 		},this);
     },
     render: function(){
@@ -629,13 +640,11 @@ var Settings = React.createClass({
 	var Icon = Semantify.Icon;
 	var Grid = Semantify.Grid;
 	var Button = Semantify.Button;
-	var editRoom = this.props.editRoom;
+	var syncTab = '';
 	var rooms = this.props.rooms.map(function(room,i){
-		 var syncTab = Math.random().toString(36).substring(7);
-		 return <RoomItem {...this.props} key={i} keyRoom={room.keyRoom} room={room} classRoom={syncTab}/>;
+	    syncTab = this.state.keys[i];
+		 return <RoomItem {...this.props} key={i} keyRoom={room.key} room={room} classRoom={syncTab}/>;
 		},this);
-	var newRoom = { name: "Add Room", network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', keyRoom: 999};
-
 	return(
 		<div className="ui bottom attached tab" data-tab="settings">
 		<h1>Rooms </h1>
@@ -660,7 +669,7 @@ var Settings = React.createClass({
 		<Grid className="centered">
 		<Button className="icon circular green" onClick={this.addRoom}>
 		<Icon className="add circle icon" />
-		<Room {...this.props} name="Add Room" classRoom="add basic" editRoom={editRoom} room={newRoom}/>
+		<Room {...this.props} name="Add Room" classRoom="add" editRoom={this.props.editRoom} room={this.state.newRoom}/>
 	        </Button>
 		</Grid>
 		</div>
@@ -669,19 +678,22 @@ var Settings = React.createClass({
 });
 
 var ModuleArgs = React.createClass({
+    argumentDelete: function(){
+	this.props.argumentDelete(this.props.argumentKey);
+    },
     render: function(){
-	var Card = Semantify.Card;
-	var Label = Semantify.Label;
-	var Input = Semantify.Input;
+	var Button = Semantify.Button;
+	var Icon = Semantify.Icon;
 	return(
-	    <Card>
-		<Label className="blue" type="div">
-		{this.props.option}
-		</Label>
-		<Input>
-		{this.props.value}
-	    </Input>
-	    </Card>
+		<tr>
+		<td>{this.props.option}</td>
+	    	<td>{this.props.value}</td>
+		<td>
+		<Button className="icon red basic" onClick={this.argumentDelete}>
+		<Icon className="trash" />
+		</Button>
+		</td>
+	    </tr>
 	);
     }
 });
@@ -690,16 +702,21 @@ var ModuleArgs = React.createClass({
 var Module = React.createClass({
     render: function(){
 	var Button = Semantify.Button;
+	var Fields = Semantify.Fields;
+	var Field = Semantify.Field;	
 	var Icon = Semantify.Icon;
 	var Input = Semantify.Input;
+	
 	return(
 		<div className="add module item">
+		<div className="row">
 		<Input>
 		<input placeholder={this.props.moduleName} type="text" onChange={this.props.moduleChange} defaultValue={this.props.moduleName} />
-		<Button className="icon green" onClick={this.props.moduleAdd}>
+		</Input>
+		</div>
+		<Button className="icon basic green" onClick={this.props.moduleAdd}>
 		<Icon className="add" />
 		</Button>
-		</Input>
 		</div>
 	);
     }
@@ -707,9 +724,7 @@ var Module = React.createClass({
 
 var ModuleItem = React.createClass({
     moduleDelete: function(){
-	console.log(this.props);
-	this.props.moduleUpdate(this.props.modKey);
-	this.props.moduleDelete();
+	this.props.moduleDelete(this.props.modkey);
     },
     componentDidMount: function(){
 	$('.module.ui .item').tab();
@@ -729,17 +744,32 @@ var ModuleItem = React.createClass({
 });
 
 var ModuleContent = React.createClass({
+    componentDidMount: function(){
+	this.props.moduleUpdate(this.props.module.key);
+    },
     render: function(){
+	var Table = Semantify.Table;
 	var options = [];
 	if (this.props.module.options){
-	    options = this.props.module.options.map(function(option){
-	    return <ModuleArgs key={option.key} option={option.name} value={option.value} />;
-	});
+	    options = this.props.module.options.map(function(option, i){
+		return <ModuleArgs key={i} option={option.name} value={option.value} argumentKey={option.key} argumentDelete={this.props.argumentDelete}/>;}, this);
 	}
 	return(
 		<div className="ui tab segment" data-tab={this.props.keyname}>
-		{options}
-	 </div>
+		<Table className="blue">
+		<thead>
+		<tr>
+		<th className="two wide">Argument</th>
+		<th className="two wide">Value</th>
+		<th className="one wide"></th>
+		</tr>
+		</thead>
+		<tbody>
+
+	    {options}
+	    </tbody>
+		</Table>
+	    </div>
 	);
     }
 });
@@ -751,12 +781,14 @@ var Task = React.createClass({
 	var Input = Semantify.Input;
 	return(
 		<div className="add task item">
+		<div className="row">
 		<Input>
-		<input placeholder={this.props.taskName} type="text" onChange={this.props.changeTaskName} defaultValue={this.props.taskName} />
-		<Button className="icon green" onClick={this.props.addTask}>
+		<input placeholder={this.props.taskName} type="text" onChange={this.props.changeTaskName}  />
+		</Input>
+		</div>
+		<Button className="icon basic green" onClick={this.props.addTask}>
 		<Icon className="add" />
 		</Button>
-		</Input>
 		</div>
 	);
     }
@@ -785,14 +817,21 @@ var TaskItem = React.createClass({
 });
 var TaskContent = React.createClass({
     getInitialState: function(){
-	return {moduleName: '', moduleKey: 0}
+	return {moduleName: '', moduleKey: 0, argument: 'Argument', value: 'Value', keys: []}
     },
     componentDidMount: function() {
 	$('.module.ui .item').tab();
+	if (this.props.task.modules){
+	var keys = []
+	for(var i=0;i< this.props.task.modules.length+10;i++){
+	    keys.push(Math.random().toString(36).substring(4));
+	}
+	this.setState({keys: keys})
+	}
+
     },
     moduleAdd: function(){
-	console.log('add module');
-	var url = '/api/task/' + this.props.task.key + '/add'
+	var url = '/api/task/' + this.props.task.key + '/module/add'
         $.ajax({
 	    url: url,
 	    type: 'POST',
@@ -800,7 +839,6 @@ var TaskContent = React.createClass({
 	    data: {module: this.state.moduleName},
 	    success: function(data) {
 	        this.setState({message: data["message"]});
-		console.log(this.state.message);
 	    }.bind(this),
 	    error: function(xhr, status, err) {
 	        console.error(url, status, err.toString());
@@ -808,14 +846,13 @@ var TaskContent = React.createClass({
 	});
 	this.props.loadTasks()
     },
-    moduleDelete: function(){
-	var url = '/api/task/' + this.props.task.key + '/delete'
-	console.log(this.state.moduleKey);
+    moduleDelete: function(moduleKey){
+	var url = '/api/task/' + this.props.task.key + '/module/delete'
         $.ajax({
 	    url: url,
 	    type: 'POST',
 	    dataType: 'json',
-	    data: {key: this.state.moduleKey},
+	    data: {key: moduleKey},
 	    success: function(data) {
 	        this.setState({message: data["message"]});
 		console.log(this.state.message);
@@ -824,54 +861,90 @@ var TaskContent = React.createClass({
 	        console.error(url, status, err.toString());
 	    }.bind(this)
 	});
-	this.setState({moduleKey: -1});
+	this.setState({moduleKey: moduleKey});
 	this.props.loadTasks()
     },
-    moduleUpdate: function(key){
-	this.setState({moduleKey: key});
+    argumentAdd: function(){
+	var url = '/api/task/' + this.props.task.key + '/argument/add'
+        $.ajax({
+	    url: url,
+	    type: 'POST',
+	    dataType: 'json',
+	    data: {argument: this.state.argument, value: this.state.value, modulekey: this.state.moduleKey},
+	    success: function(data) {
+	        this.setState({message: data["message"]});
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error(url, status, err.toString());
+	    }.bind(this)
+	});
+	this.props.loadTasks()
+    },
+    argumentDelete: function(argumentKey){
+	var url = '/api/task/' + this.props.task.key + '/argument/delete'
+        $.ajax({
+	    url: url,
+	    type: 'POST',
+	    dataType: 'json',
+	    data: {key: argumentKey},
+	    success: function(data) {
+	        this.setState({message: data["message"]});
+		console.log(this.state.message);
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error(url, status, err.toString());
+	    }.bind(this)
+	});
+	this.props.loadTasks();
+    },
+    moduleUpdate: function(moduleKey){
+	this.setState({moduleKey: moduleKey});
     },
     moduleChange: function(e) {
 	this.setState({moduleName: e.target.value});
     },
+    argumentChange: function(e) {
+	this.setState({argument: e.target.value});
+    },
+    valueChange: function(e) {
+	this.setState({value: e.target.value});
+    },
     componentWillReceiveProps: function(){
-	var keys = [];
 	if (this.props.task.modules){
-	for(var i=0;i< this.props.task.modules.length;i++){
-	    keys.push(Math.random().toString(36).substring(7));
-	}
+	    var keyname = '';
 	this.modules = this.props.task.modules.map(function(module, i){
-	    var keyname = keys[i];
-	    return <ModuleItem {...this.props} key={i} modkey={module.key} name={module.name} keyname={keyname} moduleUpdate={this.moduleUpdate} moduleDelete={this.moduleDelete}/>;}, this);
+	    keyname = this.state.keys[i];
+	    return <ModuleItem {...this.props} key={i} modKey={module.key}
+	    name={module.name} keyname={keyname} moduleDelete={this.moduleDelete} />;}, this);
 	this.moduleArgs = this.props.task.modules.map(function(module, i){
-	    var keyname = keys[i];
-	    return <ModuleContent {...this.props} key={module.key}
-	    module={module} keyname={keyname} moduleDelete={this.moduleDelete}/>;}, this);
-	    $('.module.ui .item').tab();
+	    keyname = this.state.keys[i];
+	    return <ModuleContent {...this.props} key={i}
+	    module={module} keyname={keyname} moduleUpdate={this.moduleUpdate} argumentDelete={this.argumentDelete}/>;}, this);
 	}},
     render: function(){
 	var Button = Semantify.Button;
+	var Fields = Semantify.Fields;
+	var Field = Semantify.Field;
 	var Grid = Semantify.Grid;
 	var Icon = Semantify.Icon;
+	var Input = Semantify.Input;
+	var Label = Semantify.Label;
 	var Menu = Semantify.Menu;
-	var Row = Semantify.Row;	
-	var keys = [];
+	var Row = Semantify.Row;
+	var Table = Semantify.Table;	
+	var keyname = '';
 	if (this.props.task.modules){
-	for(var i=0;i< this.props.task.modules.length;i++){
-	    keys.push(Math.random().toString(36).substring(7));
-	}
-	    console.log(keys);
 	var modules = this.props.task.modules.map(function(module, i){
-	    var keyname = keys[i];
-	    return <ModuleItem {...this.props} key={i} modkey={module.key} name={module.name} keyname={keyname} moduleDelete={this.moduleDelete} moduleUpdate={this.moduleUpdate}/>;}, this);
+	    keyname = this.state.keys[i];
+	    return <ModuleItem {...this.props} key={i} modkey={module.key} name={module.name} keyname={keyname} moduleDelete={this.moduleDelete}/>;}, this);
 	var moduleArgs = this.props.task.modules.map(function(module, i){
-	    var keyname = keys[i];
-	    return <ModuleContent {...this.props} key={module.key}
-	    module={module} keyname={keyname} />;}, this);
+	    keyname = this.state.keys[i];
+	    return <ModuleContent {...this.props} key={module.key} moduleUpdate={this.moduleUpdate} argumentDelete={this.argumentDelete} module={module} keyname={keyname} />;}, this);
 	}
 	return(
 	<div className="ui tab segment" data-tab={this.props.task.name}>
 	 <Grid>
-	  <div className="four wide column">
+	  <div className="six wide stretched column">
 		<Menu className="vertical tabular fluid module">
 		{modules}
 	    	<Row>
@@ -879,8 +952,21 @@ var TaskContent = React.createClass({
 		</Row>
 		</Menu>
 		</div>
-		<div className="twelve wide stretched column">
+		<div className="eight wide stretched column">
 		{moduleArgs}
+	    	<div className='row'>
+		<div className="ui segment">
+		<Input>
+	    	<input placeholder={this.state.argument} type="text" onChange={this.argumentChange} />
+		</Input>
+		<Input>
+	    	<input placeholder={this.state.value} type="text" onChange={this.valueChange} />
+		</Input>
+		</div>
+		</div>
+		<Button className="icon basic green" onClick={this.argumentAdd}>
+		<Icon className="add" />
+		</Button>
 	  </div>
 	 </Grid>
        </div>
@@ -910,7 +996,7 @@ var Tasks = React.createClass({
 	      return <TaskContent key={i} task={task} loadTasks={this.props.loadTasks} />;
 	}, this);
 	return(
-	<div className="ui bottom attached tab active" data-tab="tasks">
+	<div className="ui bottom attached tab" data-tab="tasks">
 	<Grid>
 	 <div className="four wide column">
 	  <Menu className="vertical tabular fluid">
@@ -920,7 +1006,7 @@ var Tasks = React.createClass({
 	    </Row>
           </Menu>
 	</div>
-	<div className="twelve wide stretched column">
+	<div className="eleven wide stretched column">
 		{modules}
 	    </div>
 	</Grid>
@@ -931,14 +1017,19 @@ var Tasks = React.createClass({
 
 var Main = React.createClass({
     getInitialState: function() {
-        return {tasks : [{ key: 1, name: 'update debian', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'update_cache', value: 'yes', },{ key: 2, name: 'upgrade', value: 'yes', }]}]}, { key: 2, name: 'install docker', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'image', value: 'krahser/djbot', }]}, { key :2, name: 'command', options: [{ key: 1, name: 'dd', value: 'yes', }]}]}], rooms: [], name: 'name', network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', keyRoom: 999, taskName: 'New task', taskKey: 999 }},
+        return {tasks : [{ key: 1, name: 'update debian', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'update_cache', value: 'yes', },{ key: 2, name: 'upgrade', value: 'yes', }]}]}, { key: 2, name: 'install docker', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'image', value: 'krahser/djbot', }]}, { key :2, name: 'command', options: [{ key: 1, name: 'dd', value: 'yes', }]}]}], rooms: [], name: 'name', network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', roomKey: 999, taskName: 'New task', taskKey: 999 }},
     updateStateRoom: function(room){
-	this.setState({keyRoom: room.keyRoom});
+	console.log('updateState');
+	console.log(room);
+	this.setState({roomKey: room.key});
 	this.setState({name: room.name});
 	this.setState({network: room.network});
 	this.setState({netmask: room.netmask});
 	this.setState({machines: room.machines});
 	this.setState({proxy: room.proxy});
+    },
+    updateStateRoomKey: function(key){
+	this.setState({roomKey: key});
     },
     updateStateTask: function(task){
 	this.setState({taskName: task.name});
@@ -989,6 +1080,7 @@ var Main = React.createClass({
 	});
     },
     editRoom: function(action){
+	console.log(action);
 	switch (action){
 	case 'save':
 	    this.handleRoomSubmit();
@@ -1047,11 +1139,13 @@ var Main = React.createClass({
 	});
     },
     handleRoomDelete: function(){
+	var key = this.state.roomKey;
+	console.log(key);
 	$.ajax({
 	    url: "/api/room/delete",
 	    dataType: 'json',
 	    type: 'POST',
-	    data: {keyRoom: this.state.keyRoom},
+	    data: {key: key},
 	    success: function(data) {
 		this.setState({message: data["message"]});
 	    }.bind(this),
@@ -1066,11 +1160,13 @@ var Main = React.createClass({
 	var network = this.state.network.trim();
 	var netmask = this.state.netmask.trim();
 	var proxy = this.state.proxy.trim();
-	var keyRoom = this.state.keyRoom;
-        if (!name || !machines || !network || !netmask || !proxy || !keyRoom){
+	var key = this.state.roomKey;
+	
+        if (!name || !machines || !network || !netmask || !proxy || !key){
+	    console.log('algo falta');
 	    return;
 	}
-	    this.handleSettingsSubmit({name: name, machines: machines, network: network, netmask: netmask, proxy: proxy, keyRoom: keyRoom});
+	this.handleSettingsSubmit({name: name, machines: machines, network: network, netmask: netmask, proxy: proxy, key: key});
 	},
     discover: function(){
         $.ajax({
@@ -1099,7 +1195,7 @@ var Main = React.createClass({
 		</div>
 		</Grid>
 		<Menu />
-		<Settings {...this.state} updateStateRoom={this.updateStateRoom} rooms={this.state.rooms} editRoom={this.editRoom} changeName={this.changeName} changeNetwork={this.changeNetwork} changeNetmask={this.changeNetmask} changeProxy={this.changeProxy} changeMachines={this.changeMachines} />
+		<Settings {...this.state} updateStateRoom={this.updateStateRoom} rooms={this.state.rooms} editRoom={this.editRoom} changeName={this.changeName} changeNetwork={this.changeNetwork} changeNetmask={this.changeNetmask} changeProxy={this.changeProxy} changeMachines={this.changeMachines} updateStateRoomKey={this.updateStateRoomKey}/>
 		<Blackboard rooms={this.state.rooms}/>
 		<Tasks tasks={this.state.tasks} taskName={this.state.taskName} changeTaskName={this.changeTaskName} addTask={this.addTask} updateStateTask={this.updateStateTask} deleteTask={this.deleteTask} loadTasks={this.loadTasks}/>
 		<Run rooms={this.state.rooms} tasks={this.state.tasks}/>

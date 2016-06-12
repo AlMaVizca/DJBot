@@ -4,6 +4,8 @@ var gulp = require('gulp');
 var concat = require('gulp-concat');
 var rename = require('gulp-rename');
 var uglify = require('gulp-uglify');
+var livereload = require('gulp-livereload');
+
 
 var scriptsPath = 'static/scripts/src';
 var buildPath = 'static/scripts/build';
@@ -16,7 +18,7 @@ function getFolders(dir) {
 }
 
 gulp.task('default', function() {
-
+    
     return gulp.src(path.join(scriptsPath, '/*.jsx'))
         .pipe(concat('main.js'))
         // write to output
@@ -27,4 +29,8 @@ gulp.task('default', function() {
         // .pipe(rename('main.min.js'))
         // // write to output again
         // .pipe(gulp.dest(buildPath));
+});
+gulp.task('watch', function() {
+    livereload.listen();
+    gulp.watch(path.join(scriptsPath, '/*.jsx'), ['default']);
 });

@@ -9,4 +9,4 @@ class Config(object):
     DATABASE = 'djbot.db'
     USERNAME = 'admin'
     PASSWORD = 'admin'
-
+    SQLALCHEMY_ECHO=True

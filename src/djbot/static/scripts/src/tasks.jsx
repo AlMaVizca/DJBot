@@ -1,17 +1,20 @@
 var ModuleArgs = React.createClass({
+    argumentDelete: function(){
+	this.props.argumentDelete(this.props.argumentKey);
+    },
     render: function(){
-	var Card = Semantify.Card;
-	var Label = Semantify.Label;
-	var Input = Semantify.Input;
+	var Button = Semantify.Button;
+	var Icon = Semantify.Icon;
 	return(
-	    <Card>
-		<Label className="blue" type="div">
-		{this.props.option}
-		</Label>
-		<Input>
-		{this.props.value}
-	    </Input>
-	    </Card>
+		<tr>
+		<td>{this.props.option}</td>
+	    	<td>{this.props.value}</td>
+		<td>
+		<Button className="icon red basic" onClick={this.argumentDelete}>
+		<Icon className="trash" />
+		</Button>
+		</td>
+	    </tr>
 	);
     }
 });
@@ -20,16 +23,21 @@ var ModuleArgs = React.createClass({
 var Module = React.createClass({
     render: function(){
 	var Button = Semantify.Button;
+	var Fields = Semantify.Fields;
+	var Field = Semantify.Field;	
 	var Icon = Semantify.Icon;
 	var Input = Semantify.Input;
+	
 	return(
 		<div className="add module item">
+		<div className="row">
 		<Input>
 		<input placeholder={this.props.moduleName} type="text" onChange={this.props.moduleChange} defaultValue={this.props.moduleName} />
-		<Button className="icon green" onClick={this.props.moduleAdd}>
+		</Input>
+		</div>
+		<Button className="icon basic green" onClick={this.props.moduleAdd}>
 		<Icon className="add" />
 		</Button>
-		</Input>
 		</div>
 	);
     }
@@ -37,9 +45,7 @@ var Module = React.createClass({
 
 var ModuleItem = React.createClass({
     moduleDelete: function(){
-	console.log(this.props);
-	this.props.moduleUpdate(this.props.modKey);
-	this.props.moduleDelete();
+	this.props.moduleDelete(this.props.modkey);
     },
     componentDidMount: function(){
 	$('.module.ui .item').tab();
@@ -59,17 +65,32 @@ var ModuleItem = React.createClass({
 });
 
 var ModuleContent = React.createClass({
+    componentDidMount: function(){
+	this.props.moduleUpdate(this.props.module.key);
+    },
     render: function(){
+	var Table = Semantify.Table;
 	var options = [];
 	if (this.props.module.options){
-	    options = this.props.module.options.map(function(option){
-	    return <ModuleArgs key={option.key} option={option.name} value={option.value} />;
-	});
+	    options = this.props.module.options.map(function(option, i){
+		return <ModuleArgs key={i} option={option.name} value={option.value} argumentKey={option.key} argumentDelete={this.props.argumentDelete}/>;}, this);
 	}
 	return(
 		<div className="ui tab segment" data-tab={this.props.keyname}>
-		{options}
-	 </div>
+		<Table className="blue">
+		<thead>
+		<tr>
+		<th className="two wide">Argument</th>
+		<th className="two wide">Value</th>
+		<th className="one wide"></th>
+		</tr>
+		</thead>
+		<tbody>
+
+	    {options}
+	    </tbody>
+		</Table>
+	    </div>
 	);
     }
 });
@@ -81,12 +102,14 @@ var Task = React.createClass({
 	var Input = Semantify.Input;
 	return(
 		<div className="add task item">
+		<div className="row">
 		<Input>
-		<input placeholder={this.props.taskName} type="text" onChange={this.props.changeTaskName} defaultValue={this.props.taskName} />
-		<Button className="icon green" onClick={this.props.addTask}>
+		<input placeholder={this.props.taskName} type="text" onChange={this.props.changeTaskName}  />
+		</Input>
+		</div>
+		<Button className="icon basic green" onClick={this.props.addTask}>
 		<Icon className="add" />
 		</Button>
-		</Input>
 		</div>
 	);
     }
@@ -115,14 +138,21 @@ var TaskItem = React.createClass({
 });
 var TaskContent = React.createClass({
     getInitialState: function(){
-	return {moduleName: '', moduleKey: 0}
+	return {moduleName: '', moduleKey: 0, argument: 'Argument', value: 'Value', keys: []}
     },
     componentDidMount: function() {
 	$('.module.ui .item').tab();
+	if (this.props.task.modules){
+	var keys = []
+	for(var i=0;i< this.props.task.modules.length+10;i++){
+	    keys.push(Math.random().toString(36).substring(4));
+	}
+	this.setState({keys: keys})
+	}
+
     },
     moduleAdd: function(){
-	console.log('add module');
-	var url = '/api/task/' + this.props.task.key + '/add'
+	var url = '/api/task/' + this.props.task.key + '/module/add'
         $.ajax({
 	    url: url,
 	    type: 'POST',
@@ -130,7 +160,6 @@ var TaskContent = React.createClass({
 	    data: {module: this.state.moduleName},
 	    success: function(data) {
 	        this.setState({message: data["message"]});
-		console.log(this.state.message);
 	    }.bind(this),
 	    error: function(xhr, status, err) {
 	        console.error(url, status, err.toString());
@@ -138,14 +167,13 @@ var TaskContent = React.createClass({
 	});
 	this.props.loadTasks()
     },
-    moduleDelete: function(){
-	var url = '/api/task/' + this.props.task.key + '/delete'
-	console.log(this.state.moduleKey);
+    moduleDelete: function(moduleKey){
+	var url = '/api/task/' + this.props.task.key + '/module/delete'
         $.ajax({
 	    url: url,
 	    type: 'POST',
 	    dataType: 'json',
-	    data: {key: this.state.moduleKey},
+	    data: {key: moduleKey},
 	    success: function(data) {
 	        this.setState({message: data["message"]});
 		console.log(this.state.message);
@@ -154,54 +182,90 @@ var TaskContent = React.createClass({
 	        console.error(url, status, err.toString());
 	    }.bind(this)
 	});
-	this.setState({moduleKey: -1});
+	this.setState({moduleKey: moduleKey});
 	this.props.loadTasks()
     },
-    moduleUpdate: function(key){
-	this.setState({moduleKey: key});
+    argumentAdd: function(){
+	var url = '/api/task/' + this.props.task.key + '/argument/add'
+        $.ajax({
+	    url: url,
+	    type: 'POST',
+	    dataType: 'json',
+	    data: {argument: this.state.argument, value: this.state.value, modulekey: this.state.moduleKey},
+	    success: function(data) {
+	        this.setState({message: data["message"]});
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error(url, status, err.toString());
+	    }.bind(this)
+	});
+	this.props.loadTasks()
+    },
+    argumentDelete: function(argumentKey){
+	var url = '/api/task/' + this.props.task.key + '/argument/delete'
+        $.ajax({
+	    url: url,
+	    type: 'POST',
+	    dataType: 'json',
+	    data: {key: argumentKey},
+	    success: function(data) {
+	        this.setState({message: data["message"]});
+		console.log(this.state.message);
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error(url, status, err.toString());
+	    }.bind(this)
+	});
+	this.props.loadTasks();
+    },
+    moduleUpdate: function(moduleKey){
+	this.setState({moduleKey: moduleKey});
     },
     moduleChange: function(e) {
 	this.setState({moduleName: e.target.value});
     },
+    argumentChange: function(e) {
+	this.setState({argument: e.target.value});
+    },
+    valueChange: function(e) {
+	this.setState({value: e.target.value});
+    },
     componentWillReceiveProps: function(){
-	var keys = [];
 	if (this.props.task.modules){
-	for(var i=0;i< this.props.task.modules.length;i++){
-	    keys.push(Math.random().toString(36).substring(7));
-	}
+	    var keyname = '';
 	this.modules = this.props.task.modules.map(function(module, i){
-	    var keyname = keys[i];
-	    return <ModuleItem {...this.props} key={i} modkey={module.key} name={module.name} keyname={keyname} moduleUpdate={this.moduleUpdate} moduleDelete={this.moduleDelete}/>;}, this);
+	    keyname = this.state.keys[i];
+	    return <ModuleItem {...this.props} key={i} modKey={module.key}
+	    name={module.name} keyname={keyname} moduleDelete={this.moduleDelete} />;}, this);
 	this.moduleArgs = this.props.task.modules.map(function(module, i){
-	    var keyname = keys[i];
-	    return <ModuleContent {...this.props} key={module.key}
-	    module={module} keyname={keyname} moduleDelete={this.moduleDelete}/>;}, this);
-	    $('.module.ui .item').tab();
+	    keyname = this.state.keys[i];
+	    return <ModuleContent {...this.props} key={i}
+	    module={module} keyname={keyname} moduleUpdate={this.moduleUpdate} argumentDelete={this.argumentDelete}/>;}, this);
 	}},
     render: function(){
 	var Button = Semantify.Button;
+	var Fields = Semantify.Fields;
+	var Field = Semantify.Field;
 	var Grid = Semantify.Grid;
 	var Icon = Semantify.Icon;
+	var Input = Semantify.Input;
+	var Label = Semantify.Label;
 	var Menu = Semantify.Menu;
-	var Row = Semantify.Row;	
-	var keys = [];
+	var Row = Semantify.Row;
+	var Table = Semantify.Table;	
+	var keyname = '';
 	if (this.props.task.modules){
-	for(var i=0;i< this.props.task.modules.length;i++){
-	    keys.push(Math.random().toString(36).substring(7));
-	}
-	    console.log(keys);
 	var modules = this.props.task.modules.map(function(module, i){
-	    var keyname = keys[i];
-	    return <ModuleItem {...this.props} key={i} modkey={module.key} name={module.name} keyname={keyname} moduleDelete={this.moduleDelete} moduleUpdate={this.moduleUpdate}/>;}, this);
+	    keyname = this.state.keys[i];
+	    return <ModuleItem {...this.props} key={i} modkey={module.key} name={module.name} keyname={keyname} moduleDelete={this.moduleDelete}/>;}, this);
 	var moduleArgs = this.props.task.modules.map(function(module, i){
-	    var keyname = keys[i];
-	    return <ModuleContent {...this.props} key={module.key}
-	    module={module} keyname={keyname} />;}, this);
+	    keyname = this.state.keys[i];
+	    return <ModuleContent {...this.props} key={module.key} moduleUpdate={this.moduleUpdate} argumentDelete={this.argumentDelete} module={module} keyname={keyname} />;}, this);
 	}
 	return(
 	<div className="ui tab segment" data-tab={this.props.task.name}>
 	 <Grid>
-	  <div className="four wide column">
+	  <div className="six wide stretched column">
 		<Menu className="vertical tabular fluid module">
 		{modules}
 	    	<Row>
@@ -209,8 +273,21 @@ var TaskContent = React.createClass({
 		</Row>
 		</Menu>
 		</div>
-		<div className="twelve wide stretched column">
+		<div className="eight wide stretched column">
 		{moduleArgs}
+	    	<div className='row'>
+		<div className="ui segment">
+		<Input>
+	    	<input placeholder={this.state.argument} type="text" onChange={this.argumentChange} />
+		</Input>
+		<Input>
+	    	<input placeholder={this.state.value} type="text" onChange={this.valueChange} />
+		</Input>
+		</div>
+		</div>
+		<Button className="icon basic green" onClick={this.argumentAdd}>
+		<Icon className="add" />
+		</Button>
 	  </div>
 	 </Grid>
        </div>
@@ -240,7 +317,7 @@ var Tasks = React.createClass({
 	      return <TaskContent key={i} task={task} loadTasks={this.props.loadTasks} />;
 	}, this);
 	return(
-	<div className="ui bottom attached tab active" data-tab="tasks">
+	<div className="ui bottom attached tab" data-tab="tasks">
 	<Grid>
 	 <div className="four wide column">
 	  <Menu className="vertical tabular fluid">
@@ -250,7 +327,7 @@ var Tasks = React.createClass({
 	    </Row>
           </Menu>
 	</div>
-	<div className="twelve wide stretched column">
+	<div className="eleven wide stretched column">
 		{modules}
 	    </div>
 	</Grid>

@@ -1,11 +1,14 @@
 # requirements.txt
-factory
+#factory
 flask
+flask-debugtoolbar
 Flask-User
+FLask-Mail
+FLask-Login
 Flask-WTF
 flask-SQLAlchemy
 gunicorn
 ipaddress
 nose
 SQLAlchemy
-wtforms
+#wtforms

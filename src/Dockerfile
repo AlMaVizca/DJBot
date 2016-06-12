@@ -3,6 +3,19 @@ EXPOSE 80
 VOLUME /usr/src/app
 RUN pip install git+git://github.com/ansible/ansible.git@stable-2.1
 
+RUN curl -sL https://deb.nodesource.com/setup_4.x | bash -
+RUN apt-get install -y nodejs
+
+WORKDIR /usr/src/app/djbot
+RUN npm install
+RUN gulp
+WORKDIR /usr/src/app/djbot/static
+RUN bower install --allow-root
+
+
+RUN apt-get remove --purge -yqq node npm\
+ && rm -rf /var/lib/apt/lists/*
+
 
 
 WORKDIR /opt/go
@@ -16,6 +29,6 @@ RUN go get -u github.com/moul/advanced-ssh-config/cmd/assh
 
 
 
-
+USER djbot
 WORKDIR /usr/src/app
 CMD ["gunicorn", "--config=gunicorn.py", "djbot:app"]

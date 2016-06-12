@@ -1,13 +1,18 @@
 var Main = React.createClass({
     getInitialState: function() {
-        return {tasks : [{ key: 1, name: 'update debian', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'update_cache', value: 'yes', },{ key: 2, name: 'upgrade', value: 'yes', }]}]}, { key: 2, name: 'install docker', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'image', value: 'krahser/djbot', }]}, { key :2, name: 'command', options: [{ key: 1, name: 'dd', value: 'yes', }]}]}], rooms: [], name: 'name', network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', keyRoom: 999, taskName: 'New task', taskKey: 999 }},
+        return {tasks : [{ key: 1, name: 'update debian', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'update_cache', value: 'yes', },{ key: 2, name: 'upgrade', value: 'yes', }]}]}, { key: 2, name: 'install docker', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'image', value: 'krahser/djbot', }]}, { key :2, name: 'command', options: [{ key: 1, name: 'dd', value: 'yes', }]}]}], rooms: [], name: 'name', network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', roomKey: 999, taskName: 'New task', taskKey: 999 }},
     updateStateRoom: function(room){
-	this.setState({keyRoom: room.keyRoom});
+	console.log('updateState');
+	console.log(room);
+	this.setState({roomKey: room.key});
 	this.setState({name: room.name});
 	this.setState({network: room.network});
 	this.setState({netmask: room.netmask});
 	this.setState({machines: room.machines});
 	this.setState({proxy: room.proxy});
+    },
+    updateStateRoomKey: function(key){
+	this.setState({roomKey: key});
     },
     updateStateTask: function(task){
 	this.setState({taskName: task.name});
@@ -58,6 +63,7 @@ var Main = React.createClass({
 	});
     },
     editRoom: function(action){
+	console.log(action);
 	switch (action){
 	case 'save':
 	    this.handleRoomSubmit();
@@ -116,11 +122,13 @@ var Main = React.createClass({
 	});
     },
     handleRoomDelete: function(){
+	var key = this.state.roomKey;
+	console.log(key);
 	$.ajax({
 	    url: "/api/room/delete",
 	    dataType: 'json',
 	    type: 'POST',
-	    data: {keyRoom: this.state.keyRoom},
+	    data: {key: key},
 	    success: function(data) {
 		this.setState({message: data["message"]});
 	    }.bind(this),
@@ -135,11 +143,13 @@ var Main = React.createClass({
 	var network = this.state.network.trim();
 	var netmask = this.state.netmask.trim();
 	var proxy = this.state.proxy.trim();
-	var keyRoom = this.state.keyRoom;
-        if (!name || !machines || !network || !netmask || !proxy || !keyRoom){
+	var key = this.state.roomKey;
+	
+        if (!name || !machines || !network || !netmask || !proxy || !key){
+	    console.log('algo falta');
 	    return;
 	}
-	    this.handleSettingsSubmit({name: name, machines: machines, network: network, netmask: netmask, proxy: proxy, keyRoom: keyRoom});
+	this.handleSettingsSubmit({name: name, machines: machines, network: network, netmask: netmask, proxy: proxy, key: key});
 	},
     discover: function(){
         $.ajax({
@@ -168,7 +178,7 @@ var Main = React.createClass({
 		</div>
 		</Grid>
 		<Menu />
-		<Settings {...this.state} updateStateRoom={this.updateStateRoom} rooms={this.state.rooms} editRoom={this.editRoom} changeName={this.changeName} changeNetwork={this.changeNetwork} changeNetmask={this.changeNetmask} changeProxy={this.changeProxy} changeMachines={this.changeMachines} />
+		<Settings {...this.state} updateStateRoom={this.updateStateRoom} rooms={this.state.rooms} editRoom={this.editRoom} changeName={this.changeName} changeNetwork={this.changeNetwork} changeNetmask={this.changeNetmask} changeProxy={this.changeProxy} changeMachines={this.changeMachines} updateStateRoomKey={this.updateStateRoomKey}/>
 		<Blackboard rooms={this.state.rooms}/>
 		<Tasks tasks={this.state.tasks} taskName={this.state.taskName} changeTaskName={this.changeTaskName} addTask={this.addTask} updateStateTask={this.updateStateTask} deleteTask={this.deleteTask} loadTasks={this.loadTasks}/>
 		<Run rooms={this.state.rooms} tasks={this.state.tasks}/>

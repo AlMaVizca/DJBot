@@ -39,22 +39,33 @@ class Task():
         return dict(name=self.name, key=self.key,
                     modules=self.modules)
 
-    def modules(self):
-        modules = []
+    def argument_add(self, modulekey, options, app):
+        new_args = ArgsTable(name=options[0], value=options[1])
         for each in self.db.modules:
-            modules.append(dict(key=each.key, name=each.name))
-        self.modules = modules
+            app.logger.info(modulekey)
+            app.logger.info(each.key)
+            if int(modulekey) == each.key:
+                each.args.append(new_args)
+        db_session.add(self.db)
+        db_session.commit()
+        return True
 
-    def add_module(self, name):
-        new_module = ModuleTable(name=name)
+    def argument_delete(self, key):
+        arg = ArgsTable.query.filter(ArgsTable.key == key).first()
+        db_session.delete(arg)
+        db_session.commit()
+        return True
+
+    def module_add(self, name):
+        new_module = ModuleTable(name=name, args=[])
         self.db.modules.append(new_module)
         db_session.add(self.db)
         db_session.commit()
         return True
 
-    def delete_module(self, key):
-        if key >=0:
-            delete_module = ModuleTable(key=key)
-            db_session.delete(self.db)
-            db_session.commit()
+    def module_delete(self, key):
+        module = ModuleTable.query.filter(ModuleTable.key == key).first()
+        db_session.delete(module)
+        db_session.commit()
+        return True
         

@@ -25,6 +25,7 @@ var Run = React.createClass({
 	    rooms.splice(index,0,key);
 	}
 	this.setState({listRooms: rooms});
+	console.log(this.state.listRooms);
     },
     taskList: function(key){
 	var tasks = this.state.listTasks;
@@ -41,15 +42,15 @@ var Run = React.createClass({
 	var Steps = Semantify.Steps;
         var Step = Semantify.Step;
 	return(
-	    <div className="ui bottom attached tab" data-tab="run">
+	    <div className="ui bottom attached tab active" data-tab="run">
 		<Steps className="fluid top attached">
 		    <Step active={this.state.active[0]} data-tab='where'>Where are we working?</Step>
 		    <Step active={this.state.active[1]} data-tab='what'>What are we doing?</Step>
-		    <Step active={this.state.active[2]} data-tab='when'>When do it?</Step>
+		    <Step active={this.state.active[2]} data-tab='when'>Confirm</Step>
 		</Steps>
 		<Segment className='action'>
-		<SelectTask active={this.state.active[0]} next={this.nextStep} tasks={this.props.tasks} edit={this.taskList}/>
-		<SelectRooms active={this.state.active[1]} next={this.nextStep} rooms={this.props.rooms} reset={this.reset} edit={this.roomList}/>
+		<SelectRooms active={this.state.active[0]} next={this.nextStep} rooms={this.props.rooms} reset={this.reset} edit={this.roomList}/>
+		<SelectTask active={this.state.active[1]} next={this.nextStep} tasks={this.props.tasks} edit={this.taskList}/>
 		<Schedule active={this.state.active[2]} next={this.nextStep} reset={this.reset} listRooms={this.state.listRooms} listTasks={this.state.listTasks} rooms={this.props.rooms} tasks={this.props.tasks}/>
 		</Segment>
 	    </div>
@@ -62,7 +63,7 @@ var ItemList = React.createClass({
 	$('.ui.checkbox').checkbox();
     },
     updateList: function(e){
-	this.props.edit(this.props.element.key);
+	this.props.edit(this.props.elementKey);
     },
     render: function(){
 	var Checkbox = Semantify.Checkbox;
@@ -83,10 +84,20 @@ var ItemList = React.createClass({
 
 
 var CheckList = React.createClass({
+    componentWillReceiveProps: function(){
+	var elements = '';
+	if (this.props.elements){
+	    var elements = this.props.elements.map(function(element, i){
+		return <ItemList key={i} element={element} edit={this.props.edit} elementKey={element.key}/>;
+	    },this);
+	}
+    },
     render: function(){
 	var Icon = Semantify.Icon;
 	var Table = Semantify.Table;
-	var callback = this.props.edit;
+	var elements = this.props.elements.map(function(element, i){
+			   return <ItemList key={i} element={element} elementKey={element.key} edit={this.props.edit}/>;
+	}, this);
 	return(<div>
 		<Table className="blue">
 		<thead>
@@ -96,10 +107,8 @@ var CheckList = React.createClass({
 		<Icon className="sitemap"/>Name</th>
 		</tr>
 		</thead>
-	        <tbody>
-	       {this.props.elements.map(function(element){
-		       return <ItemList key={element.key} element={element} edit={callback} />;
-	       })}
+	       <tbody>
+	       {elements}
 	       </tbody>
 	       </Table>
 	       </div> 
@@ -198,10 +207,6 @@ var Schedule  = React.createClass({
 		       if (listTasks.indexOf(room.key) != -1 ){
 			   return <RoomName key={room.key} name={room.name}/>;		       }
 	       })}
-	       </div>
-	       <div className="five wide column ">
-	       <Header className="second">Schedule</Header>
-	       <input type="text" name="datetimepicker" id="datetimepicker"/>
 	       </div>
 	       </Grid>
 		   <Grid className="right aligned">

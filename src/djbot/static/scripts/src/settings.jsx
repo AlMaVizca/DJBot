@@ -1,32 +1,30 @@
 var Room = React.createClass({
     deleteRoom: function(){
 	var classRoom = '.' + this.props.classRoom;
-	$(classRoom).modal('hide');
 	this.props.editRoom('remove');
+	$(classRoom).modal('hide');
+	console.log(classRoom);
     },
     saveRoom: function(){
 	var classRoom = '.' + this.props.classRoom;
+	console.log(classRoom);
 	$(classRoom).modal('hide');
-	$('.add').modal({closable: true,
-			 onHide: function(){
-			     console.log('hidden');
-			 },
-			}).modal('hide');
+	$('.add.basic').modal({closable: true}).modal('hide');
 	this.props.editRoom('save');
 	return true
     },
     cancelRoom: function(){
-	console.log(this.props);
 	var classRoom = '.' + this.props.classRoom;
+	console.log(classRoom);
 	$(classRoom).modal('hide');
-	$('.add').modal('hide');
+	$('.add.basic').modal({closable: true}).modal('hide');
+	console.log('cancel');
 	return true
     },
     render: function(){
 	var Button = Semantify.Button;
 	var Form = Semantify.Form;
 	var Field = Semantify.Field;
-	var Fields = Semantify.Fields;
 	var Grid = Semantify.Grid;
 	var Header = Semantify.Header;
 	var Icon = Semantify.Icon;
@@ -34,7 +32,7 @@ var Room = React.createClass({
 	var Label = Semantify.Label;
 	var Modal = Semantify.Modal;
 	var classRoom = classNames(this.props.classRoom, 'basic');
-	var deleteButton = (this.props.keyRoom != 999);
+	var deleteButton = (this.props.roomKey != 999);
 	return (
 		<Modal className={classRoom} init={this.props.modal}>
 		<Header className="inverted grey">{this.props.name}</Header>
@@ -110,7 +108,7 @@ var RoomItem = React.createClass({
 	this.props.updateStateRoom(this.props.room);
 	var classRoom = classNames('.', this.props.classRoom);
 	classRoom = classRoom.replace(/ /g,'');
-	$(classRoom).modal({closable: false}).modal('toggle');
+	$(classRoom).modal('toggle');
     },
     render: function(){
 	var Icon = Semantify.Icon;
@@ -127,7 +125,7 @@ var RoomItem = React.createClass({
 	        <Icon className="edit"/>
 	       </div>
 	      </div>
-	    <Room {...this.props} keyRoom={this.props.room.keyRoom}/>
+	    <Room {...this.props} roomKey={this.props.room.key}/>
 	    </td>
 	    </tr>
     );
@@ -150,12 +148,19 @@ var RemoveButton = React.createClass({
 
 
 var Settings = React.createClass({
+    getInitialState: function(){
+	return {newRoom: { name: "Add Room", network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', key: 999, keys:[]}}
+    },
     componentDidMount: function(){
+	var keys = []
+	for(var i=0;i< this.props.rooms.length+10;i++){
+	    keys.push(Math.random().toString(36).substring(4));
+	}
+	this.setState({keys: keys})
     },
     addRoom: function(){
-	var newRoom = { name: "Add Room", network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', keyRoom: 999};
-	this.props.updateStateRoom(newRoom);
-	$('.add').modal({closable: false,
+	this.props.updateStateRoomKey(999)
+	$('.add.basic').modal({closable: false,
 			 onApprove: function () {
 			     console.log('Approve');
 			 },
@@ -169,9 +174,10 @@ var Settings = React.createClass({
 			}).modal('toggle');
     },
     componentWillReceiveProps: function(){
+	var syncTab ='';
 	this.rooms = this.props.rooms.map(function(room,i){
-		 var syncTab = Math.random().toString(36).substring(7);
-		 return <RoomItem {...this.props} key={i} keyRoom={room.keyRoom} room={room} classRoom={syncTab}/>;
+	    syncTab = this.state.keys[i];
+		 return <RoomItem {...this.props} key={i} keyRoom={room.key} room={room} classRoom={syncTab}/>;
 		},this);
     },
     render: function(){
@@ -179,13 +185,11 @@ var Settings = React.createClass({
 	var Icon = Semantify.Icon;
 	var Grid = Semantify.Grid;
 	var Button = Semantify.Button;
-	var editRoom = this.props.editRoom;
+	var syncTab = '';
 	var rooms = this.props.rooms.map(function(room,i){
-		 var syncTab = Math.random().toString(36).substring(7);
-		 return <RoomItem {...this.props} key={i} keyRoom={room.keyRoom} room={room} classRoom={syncTab}/>;
+	    syncTab = this.state.keys[i];
+		 return <RoomItem {...this.props} key={i} keyRoom={room.key} room={room} classRoom={syncTab}/>;
 		},this);
-	var newRoom = { name: "Add Room", network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', keyRoom: 999};
-
 	return(
 		<div className="ui bottom attached tab" data-tab="settings">
 		<h1>Rooms </h1>
@@ -210,7 +214,7 @@ var Settings = React.createClass({
 		<Grid className="centered">
 		<Button className="icon circular green" onClick={this.addRoom}>
 		<Icon className="add circle icon" />
-		<Room {...this.props} name="Add Room" classRoom="add basic" editRoom={editRoom} room={newRoom}/>
+		<Room {...this.props} name="Add Room" classRoom="add" editRoom={this.props.editRoom} room={this.state.newRoom}/>
 	        </Button>
 		</Grid>
 		</div>

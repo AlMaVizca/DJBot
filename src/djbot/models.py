@@ -9,6 +9,15 @@ from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy.orm import relationship
 
 
+run_room = Table('run_room', Base.metadata,
+                           Column('run', Integer, ForeignKey('run.key')),
+                           Column('room', Integer, ForeignKey('room.key')))
+
+run_task = Table('run_task', Base.metadata,
+                           Column('run', Integer, ForeignKey('run.key')),
+                           Column('task', Integer, ForeignKey('task.key')))
+
+
 class TaskTable(Base):
     __tablename__ = 'task'
     key = Column(Integer, primary_key=True, autoincrement=True)
@@ -24,7 +33,7 @@ class ModuleTable(Base):
     key = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     args = relationship("ArgsTable", cascade="all, delete-orphan")
-    task_key = Column(Integer, ForeignKey('task.key'))
+    task = Column(Integer, ForeignKey('task.key'))
 
 
 class ArgsTable(Base):
@@ -32,7 +41,8 @@ class ArgsTable(Base):
     key = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     value = Column(String(50), nullable=False)
-    task_key = Column(Integer, ForeignKey('module.key'))
+    filename = Column(String(50))
+    module = Column(Integer, ForeignKey('module.key'))
 
 
 class RoomTable(Base):
@@ -42,6 +52,7 @@ class RoomTable(Base):
     machines = Column(SmallInteger, nullable=False)
     network = Column(String, nullable=False)
     proxy = Column(String)
+    hosts = relationship("ComputerTable", cascade="all, delete-orphan")
 
             
     def __repr__(self):
@@ -49,7 +60,22 @@ class RoomTable(Base):
                                           self.name, self.machines,
                                           self.network, self.proxy)
 
-
+        
+class RunTable(Base):
+    __tablename__ = 'run'
+    key = Column(Integer, primary_key=True, autoincrement=True)
+    rooms = relationship("RoomTable", secondary=run_room)
+    tasks = relationship("TaskTable", secondary=run_task)
+    user = Column(String(20), nullable=False)
+        
+        
+class ComputerTable(Base):
+    __tablename__ = 'computer'
+    key = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(50), nullable=False)
+    mac = Column(String(50), nullable=False)
+    location = Column(SmallInteger, nullable=False)
+    task_key = Column(Integer, ForeignKey('room.key'))
     
 
 class Room():
@@ -91,7 +117,7 @@ class Room():
                  netmask=self.netmask,
                  proxy=self.proxy,
                  status='on',
-                 keyRoom=self.key)
+                 key=self.key)
 
     def discover_hosts(self):
         self.hosts = proxy.check_network(unicode(self._set_network()))
@@ -111,7 +137,7 @@ class Room():
             return True
         return False
         
-    def save(self, name, network, netmask, proxy, machines):
+    def save(self, name, network, netmask, proxy, machines, app):
         """save in database"""
         network = self._set_network(network,netmask)
         if self.get(complete=False):
@@ -119,10 +145,11 @@ class Room():
             self.db.machines = machines
             self.db.network = network
             self.db.proxy = proxy
-            db_session.add(self.db)
         else:
             room = RoomTable(name=name,network=network,proxy=proxy,machines=machines)
             db_session.add(room)
+        app.logger.info('do commit')
+        app.logger.info(db_session.dirty)
         db_session.commit()
         return True
 
