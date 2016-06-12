@@ -2,6 +2,9 @@
 *.pot
 *.pyc
 *.sql
-clave
-clave.pub
-envdjbot
+*.retry
+env
+*/__pycache__/*
+djbot/static/bower_components
+node_modules
+
