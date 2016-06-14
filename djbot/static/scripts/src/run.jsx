@@ -1,41 +1,69 @@
 var Run = React.createClass({
     getInitialState: function(){
-	return {active: [true, false,false], listRooms:[], listTasks:[]}
+	return {active: [true, false,false], rooms:[], tasks:[]}
     },
     componentDidMount: function() {
     },
     nextStep: function(){
 	if (this.state.active[0]){
 	    this.setState({active: [false, true, false]});
+	    return
 	}else if (this.state.active[1]){
 	    this.setState({active: [false, false, true]});
+	    return
 	} else {
 	    this.setState({active: [true, false, false]});
 	}
+	this.runAdd();
+	$('.ui.checkbox').checkbox('uncheck')
+	this.roomsClear();
+	this.tasksClear();
+    },
+    roomsClear: function(){
+	console.log('yit');
+	this.setState({rooms: []});
+    },
+    tasksClear: function(){
+	this.setState({tasks: []});
+    },
+    runAdd: function(){
+	$.ajax({
+	    url: "/api/run",
+	    dataType: 'json',
+	    type: 'POST',
+	    data: {tasks: this.state.tasks, rooms: this.state.rooms },
+	    success: function(data) {
+	        this.setState({message: data["message"]});
+		console.log(this.state.message);
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error(this.props.url, status, err.toString());
+	    }.bind(this)
+	});
+	this.setState({rooms: []});
     },
     reset: function(){
 	this.setState({active: [true, false,false]});
     },
     roomList: function(key){
-	var rooms = this.state.listRooms;
+	var rooms = this.state.rooms;
 	var index = rooms.indexOf(key);
 	if ( index != -1){
 	    rooms.splice(index,1);
 	}else{
 	    rooms.splice(index,0,key);
 	}
-	this.setState({listRooms: rooms});
-	console.log(this.state.listRooms);
+	this.setState({rooms: rooms});
     },
     taskList: function(key){
-	var tasks = this.state.listTasks;
+	var tasks = this.state.tasks;
 	var index = tasks.indexOf(key);
 	if ( index != -1){
 	    tasks.splice(index,1);
 	}else{
 	    tasks.splice(index,0,key);
 	}
-	this.setState({listTasks: tasks});
+	this.setState({tasks: tasks});
     },
     render: function(){
 	var Segment = Semantify.Segment;
@@ -49,9 +77,9 @@ var Run = React.createClass({
 		    <Step active={this.state.active[2]} data-tab='when'>Confirm</Step>
 		</Steps>
 		<Segment className='action'>
-		<SelectRooms active={this.state.active[0]} next={this.nextStep} rooms={this.props.rooms} reset={this.reset} edit={this.roomList}/>
-		<SelectTask active={this.state.active[1]} next={this.nextStep} tasks={this.props.tasks} edit={this.taskList}/>
-		<Schedule active={this.state.active[2]} next={this.nextStep} reset={this.reset} listRooms={this.state.listRooms} listTasks={this.state.listTasks} rooms={this.props.rooms} tasks={this.props.tasks}/>
+		<SelectRooms active={this.state.active[0]} next={this.nextStep} rooms={this.props.rooms} edit={this.roomList}/>
+		<SelectTask active={this.state.active[1]} next={this.nextStep} tasks={this.props.tasks} reset={this.reset} edit={this.taskList}/>
+		<Schedule active={this.state.active[2]} next={this.nextStep} reset={this.reset} listRooms={this.state.rooms} listTasks={this.state.tasks} rooms={this.props.rooms} tasks={this.props.tasks}/>
 		</Segment>
 	    </div>
 	);
@@ -128,6 +156,12 @@ var SelectTask  = React.createClass({
 		   <CheckList elements={this.props.tasks} edit={this.props.edit} />
 		   <Grid className="right aligned">
 		   <div className="sixteen wide column">
+		   <div className="ui animated fade red button" tabindex="0" onClick={this.props.reset}>
+		   <div className="hidden content">reset</div>
+		   <div className="visible content">
+	           <Icon className="angle double left"/>
+		   </div>
+		   </div>
 		   <div className="ui animated fade green button" tabindex="0" onClick={this.props.next}>
 		   <div className="hidden content">next</div>
 		   <div className="visible content">
@@ -153,12 +187,6 @@ var SelectRooms  = React.createClass({
 		   <CheckList elements={this.props.rooms} edit={this.props.edit}/>
 		   <Grid className="right aligned">
 		   <div className="sixteen wide column">
-		   <div className="ui animated fade red button" tabindex="0" onClick={this.props.reset}>
-		   <div className="hidden content">reset</div>
-		   <div className="visible content">
-	           <Icon className="angle double left"/>
-		   </div>
-		   </div>
 		   <div className="ui animated fade green button" tabindex="0" onClick={this.props.next}>
 		   <div className="hidden content">next</div>
 		   <div className="visible content">
@@ -177,7 +205,7 @@ var Schedule  = React.createClass({
 	return {datetime: "22:48 2016/6/2" }
     },
     componentDidMount: function(){
-	$('#datetimepicker').datetimepicker();
+
     },
     render: function(){
 	var Card = Semantify.Card;

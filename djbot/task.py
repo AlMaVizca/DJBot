@@ -39,7 +39,7 @@ class Task():
         return dict(name=self.name, key=self.key,
                     modules=self.modules)
 
-    def argument_add(self, modulekey, options, app):
+    def parameter_add(self, modulekey, options, app):
         new_args = ArgsTable(name=options[0], value=options[1])
         for each in self.db.modules:
             app.logger.info(modulekey)
@@ -50,7 +50,7 @@ class Task():
         db_session.commit()
         return True
 
-    def argument_delete(self, key):
+    def parameter_delete(self, key):
         arg = ArgsTable.query.filter(ArgsTable.key == key).first()
         db_session.delete(arg)
         db_session.commit()

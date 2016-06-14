@@ -37,7 +37,7 @@ class ModuleTable(Base):
 
 
 class ArgsTable(Base):
-    __tablename__ = 'argument'
+    __tablename__ = 'parameter'
     key = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     value = Column(String(50), nullable=False)
@@ -114,8 +114,6 @@ class Room():
                  machines=self.machines,
                  network=self.network,
                  netmask=self.netmask,
-                 proxy=self.proxy,
-                 status='on',
                  key=self.key)
 
     def discover_hosts(self):

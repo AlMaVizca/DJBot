@@ -40,7 +40,7 @@
 
     - name: delete old image
       docker_image:
-        path: "{{ ansible_user_dir}}/Repositories/djbot/src"
+        path: "{{ ansible_user_dir}}/Repositories/djbot"
         name: "{{ ansible_user_id }}/djbot"
         state: absent
       ignore_errors: yes
@@ -49,7 +49,7 @@
 
     - name: create new image
       docker_image:
-        path: "{{ ansible_user_dir}}/Repositories/djbot/src"
+        path: "{{ ansible_user_dir}}/Repositories/djbot"
         name: "{{ ansible_user_id }}/djbot"
         state: present
       tags:
@@ -62,8 +62,8 @@
         state: started
         restart_policy: always
         volumes:
-          - "{{ ansible_user_dir }}/Repositories/djbot/src:/usr/src/app"
-          - "{{ ansible_user_dir }}/Repositories/djbot/keys:/root/.ssh/"
+          - "{{ ansible_user_dir }}/Repositories/djbot/:/usr/src/app"
+          - "{{ ansible_user_dir }}/Repositories/djbot/keys/:/root/.ssh/"
         env:
           MODE: "dev"
           VIRTUAL_HOST: "dev.djbot.local"

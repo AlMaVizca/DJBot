@@ -19,7 +19,6 @@ var Room = React.createClass({
 	}
 	var room = {name: name, machines: machines, network: network, netmask: netmask};
 	var result = '';
-	console.log(room);
 	$.ajax({
 	    url: "/api/room/add",
 	    dataType: 'json',
@@ -174,11 +173,9 @@ var Settings = React.createClass({
 			     console.log('Approve');
 			 },
 			 onHide: function(){
-			     console.log('hidden');
 			     return false
 			 },
 			 onShow: function(){
-			     console.log('shown');
 			 },
 			      }).modal('toggle');
 	

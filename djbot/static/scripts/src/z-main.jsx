@@ -14,7 +14,7 @@ var Main = React.createClass({
 	    }.bind(this)
 	});
     },
-    loadTasks: function() {
+    tasksReload: function() {
         $.ajax({
 	    url: "/api/task/",
 	    dataType: 'json',
@@ -26,21 +26,6 @@ var Main = React.createClass({
 	        console.error(this.props.url, status, err.toString());
 	    }.bind(this)
 	});
-    },
-    deleteTask: function(){
-	$.ajax({
-	    url: "/api/task/delete",
-	    dataType: 'json',
-	    type: 'POST',
-	    data: {key: this.state.taskKey},
-	    success: function(data) {
-		this.setState({message: data["message"]});
-	    }.bind(this),
-	    error: function(xhr, status, err) {
-	        console.error("/api/task/delete", status, err.toString());
-	    }.bind(this)
-	});
-	this.loadTasks();	
     },
     discover: function(){
         $.ajax({
@@ -56,9 +41,9 @@ var Main = React.createClass({
 	    }.bind(this)
 	});
     },
-	componentDidMount: function() {
+    componentDidMount: function() {
 	    this.roomsReload();
-	    this.loadTasks();
+	    this.tasksReload();
 	},
 	render: function() {
 	var Grid = Semantify.Grid;
@@ -71,7 +56,7 @@ var Main = React.createClass({
 		<Menu />
 		<Settings roomsReload={this.roomsReload} rooms={this.state.rooms}/>
 		<Blackboard rooms={this.state.rooms}/>
-		<Tasks tasks={this.state.tasks} taskName={this.state.taskName} changeTaskName={this.changeTaskName} addTask={this.addTask} updateStateTask={this.updateStateTask} deleteTask={this.deleteTask} loadTasks={this.loadTasks}/>
+		<Tasks tasks={this.state.tasks} tasksReload={this.tasksReload}/>
 		<Run rooms={this.state.rooms} tasks={this.state.tasks}/>
 		<Results rooms={this.state.rooms}/>
 		</div>

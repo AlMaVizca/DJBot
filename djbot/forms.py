@@ -1,13 +1,14 @@
-from wtforms import Form, StringField, IntegerField, validators
+from wtforms import Form, StringField, IntegerField, validators, FieldList
 
+identifier = IntegerField(default=0)
 
-class ArgumentFormAdd(Form):
-    argument = StringField('argument', [validators.DataRequired()])
+class ParameterFormAdd(Form):
+    parameter = StringField('parameter', [validators.DataRequired()])
     value = StringField('value', [validators.DataRequired()])
     modulekey = StringField('modulekey', [validators.DataRequired()])
 
     
-class ArgumentFormDelete(Form):
+class ParameterFormDelete(Form):
     key = IntegerField('key', [validators.DataRequired()])
 
 
@@ -21,6 +22,10 @@ class RoomFormAdd(Form):
 class RoomFormDelete(Form):
     key = IntegerField('key', [validators.NumberRange(min=0,max=255)])
 
+
+class RunFormAdd(Form):
+    rooms = FieldList('rooms[]',identifier)
+    tasks = FieldList('tasks[]',identifier)    
 
 class TaskFormAdd(Form):
     taskName = StringField('taskName', [validators.DataRequired()])

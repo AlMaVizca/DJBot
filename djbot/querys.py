@@ -17,3 +17,10 @@ def get_tasks():
         each_task = Task(key=each.key)
         tasks_info['tasks'].append(each_task.get_setup())
     return tasks_info
+
+def get_machines(rooms):
+    hosts = []
+    for each in rooms:
+        aRoom = Room(each)
+        hosts.extend(aRoom.discover_hosts())
+    return hosts

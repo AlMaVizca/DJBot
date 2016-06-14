@@ -6,6 +6,9 @@ from ansible.inventory import Inventory
 from ansible.playbook.play import Play
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.plugins.callback import CallbackBase
+from threading import Thread
+import json
+import os
 
 Options = namedtuple('Options', ['connection','module_path', 'forks',
                                  'remote_user','private_key_file',
@@ -104,6 +107,26 @@ class Runner(object):
             if tqm is not None:
                 tqm.cleanup()
 
+
+class ThreadRunner(Thread):
+    def __init__(self, rooms, tasks, user, execution_name):
+        Thread.__init__(self)
+        self.execution_name = execution_name
+        self.rooms = rooms
+        self.tasks = tasks
+        self.user = user
+        self.playbook = Runner(self.rooms, self.user)
+        self.playbook.add_setup(self.rooms)
+
+    def run(self):
+        self.playbook.run()
+        results = self.playbook.callback.get_all()
+        name = os.getenv('PWD')+'/prueba.json'
+        with open(name, 'w') as record:
+            json.dump(results, record)
+        
+
+                
 if __name__ == '__main__':
     inventory = ['127.0.0.1']
     ansible_api = Runner(inventory, 'krahser')

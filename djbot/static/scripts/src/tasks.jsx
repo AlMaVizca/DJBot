@@ -1,6 +1,6 @@
 var ModuleArgs = React.createClass({
-    argumentDelete: function(){
-	this.props.argumentDelete(this.props.argumentKey);
+    parameterDelete: function(){
+	this.props.parameterDelete(this.props.parameterKey);
     },
     render: function(){
 	var Button = Semantify.Button;
@@ -10,7 +10,7 @@ var ModuleArgs = React.createClass({
 		<td>{this.props.option}</td>
 	    	<td>{this.props.value}</td>
 		<td>
-		<Button className="icon red basic" onClick={this.argumentDelete}>
+		<Button className="icon red basic" onClick={this.parameterDelete}>
 		<Icon className="trash" />
 		</Button>
 		</td>
@@ -68,19 +68,27 @@ var ModuleContent = React.createClass({
     componentDidMount: function(){
 	this.props.moduleUpdate(this.props.module.key);
     },
+    componentWillReceiveProps: function(){
+	var options = [];
+	if (this.props.module.options){
+	    options = this.props.module.options.map(function(option, i){
+		return <ModuleArgs key={i} option={option.name} value={option.value} parameterKey={option.key} parameterDelete={this.props.parameterDelete}/>;}, this);
+	}
+
+    },
     render: function(){
 	var Table = Semantify.Table;
 	var options = [];
 	if (this.props.module.options){
 	    options = this.props.module.options.map(function(option, i){
-		return <ModuleArgs key={i} option={option.name} value={option.value} argumentKey={option.key} argumentDelete={this.props.argumentDelete}/>;}, this);
+		return <ModuleArgs key={i} option={option.name} value={option.value} parameterKey={option.key} parameterDelete={this.props.parameterDelete}/>;}, this);
 	}
 	return(
 		<div className="ui tab segment" data-tab={this.props.keyname}>
 		<Table className="blue">
 		<thead>
 		<tr>
-		<th className="two wide">Argument</th>
+		<th className="two wide">Parameter</th>
 		<th className="two wide">Value</th>
 		<th className="one wide"></th>
 		</tr>
@@ -96,6 +104,32 @@ var ModuleContent = React.createClass({
 });
 
 var Task = React.createClass({
+    getInitialState: function(){
+	return { taskName: '' }	
+    },
+    taskAdd: function(){
+	var name = this.state.taskName.trim();
+	if (!name){
+	    return;
+	}
+	$.ajax({
+	    url: "/api/task/add",
+	    dataType: 'json',
+	    type: 'POST',
+	    data: {taskName: name},
+	    success: function(data) {
+	        this.setState({message: data["message"]});
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error(this.props.url, status, err.toString());
+	    }.bind(this)
+	});
+	this.setState({taskName: ''});
+	this.props.tasksReload();
+    },
+    taskChangeName: function(e) {
+	this.setState({taskName: e.target.value});
+    },
     render: function(){
 	var Button = Semantify.Button;
 	var Icon = Semantify.Icon;
@@ -104,10 +138,10 @@ var Task = React.createClass({
 		<div className="add task item">
 		<div className="row">
 		<Input>
-		<input placeholder={this.props.taskName} type="text" onChange={this.props.changeTaskName}  />
+		<input placeholder={this.state.taskName} type="text" onChange={this.taskChangeName}  />
 		</Input>
 		</div>
-		<Button className="icon basic green" onClick={this.props.addTask}>
+		<Button className="icon basic green" onClick={this.taskAdd}>
 		<Icon className="add" />
 		</Button>
 		</div>
@@ -119,16 +153,28 @@ var TaskItem = React.createClass({
     componentDidMount: function(){
 	$('.vertical.tabular .item').tab();
     },
-    deleteTask: function(){
-	this.props.updateStateTask(this.props.task);
-	this.props.deleteTask();
+    taskDelete: function(){
+	console.log(this.props);
+	$.ajax({
+	    url: "/api/task/delete",
+	    dataType: 'json',
+	    type: 'POST',
+	    data: {key: this.props.task.key},
+	    success: function(data) {
+		this.setState({message: data["message"]});
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error("/api/task/delete", status, err.toString());
+	    }.bind(this)
+	});
+	this.props.tasksReload();	
     },
     render: function(){
 	var Button = Semantify.Button;
 	var Icon = Semantify.Icon;
 	return(
 		<div className="item" data-tab={this.props.name}>
-		<Button className="icon red basic" onClick={this.deleteTask}>
+		<Button className="icon red basic" onClick={this.taskDelete}>
 		<Icon className="trash" />
 		</Button>
 		{this.props.name}
@@ -138,7 +184,7 @@ var TaskItem = React.createClass({
 });
 var TaskContent = React.createClass({
     getInitialState: function(){
-	return {moduleName: '', moduleKey: 0, argument: 'Argument', value: 'Value', keys: []}
+	return {moduleName: '', moduleKey: 0, parameter: 'Parameter', value: 'Value', keys: []}
     },
     componentDidMount: function() {
 	$('.module.ui .item').tab();
@@ -165,7 +211,7 @@ var TaskContent = React.createClass({
 	        console.error(url, status, err.toString());
 	    }.bind(this)
 	});
-	this.props.loadTasks()
+	this.props.tasksReload()
     },
     moduleDelete: function(moduleKey){
 	var url = '/api/task/' + this.props.task.key + '/module/delete'
@@ -183,15 +229,15 @@ var TaskContent = React.createClass({
 	    }.bind(this)
 	});
 	this.setState({moduleKey: moduleKey});
-	this.props.loadTasks()
+	this.props.tasksReload()
     },
-    argumentAdd: function(){
-	var url = '/api/task/' + this.props.task.key + '/argument/add'
+    parameterAdd: function(){
+	var url = '/api/task/' + this.props.task.key + '/parameter/add'
         $.ajax({
 	    url: url,
 	    type: 'POST',
 	    dataType: 'json',
-	    data: {argument: this.state.argument, value: this.state.value, modulekey: this.state.moduleKey},
+	    data: {parameter: this.state.parameter, value: this.state.value, modulekey: this.state.moduleKey},
 	    success: function(data) {
 	        this.setState({message: data["message"]});
 	    }.bind(this),
@@ -199,15 +245,15 @@ var TaskContent = React.createClass({
 	        console.error(url, status, err.toString());
 	    }.bind(this)
 	});
-	this.props.loadTasks()
+	this.props.tasksReload()
     },
-    argumentDelete: function(argumentKey){
-	var url = '/api/task/' + this.props.task.key + '/argument/delete'
+    parameterDelete: function(parameterKey){
+	var url = '/api/task/' + this.props.task.key + '/parameter/delete'
         $.ajax({
 	    url: url,
 	    type: 'POST',
 	    dataType: 'json',
-	    data: {key: argumentKey},
+	    data: {key: parameterKey},
 	    success: function(data) {
 	        this.setState({message: data["message"]});
 		console.log(this.state.message);
@@ -216,7 +262,7 @@ var TaskContent = React.createClass({
 	        console.error(url, status, err.toString());
 	    }.bind(this)
 	});
-	this.props.loadTasks();
+	this.props.tasksReload();
     },
     moduleUpdate: function(moduleKey){
 	this.setState({moduleKey: moduleKey});
@@ -224,8 +270,8 @@ var TaskContent = React.createClass({
     moduleChange: function(e) {
 	this.setState({moduleName: e.target.value});
     },
-    argumentChange: function(e) {
-	this.setState({argument: e.target.value});
+    parameterChange: function(e) {
+	this.setState({parameter: e.target.value});
     },
     valueChange: function(e) {
 	this.setState({value: e.target.value});
@@ -240,7 +286,7 @@ var TaskContent = React.createClass({
 	this.moduleArgs = this.props.task.modules.map(function(module, i){
 	    keyname = this.state.keys[i];
 	    return <ModuleContent {...this.props} key={i}
-	    module={module} keyname={keyname} moduleUpdate={this.moduleUpdate} argumentDelete={this.argumentDelete}/>;}, this);
+	    module={module} keyname={keyname} moduleUpdate={this.moduleUpdate} parameterDelete={this.parameterDelete}/>;}, this);
 	}},
     render: function(){
 	var Button = Semantify.Button;
@@ -258,9 +304,9 @@ var TaskContent = React.createClass({
 	var modules = this.props.task.modules.map(function(module, i){
 	    keyname = this.state.keys[i];
 	    return <ModuleItem {...this.props} key={i} modkey={module.key} name={module.name} keyname={keyname} moduleDelete={this.moduleDelete}/>;}, this);
-	var moduleArgs = this.props.task.modules.map(function(module, i){
+	var moduleParameters = this.props.task.modules.map(function(module, i){
 	    keyname = this.state.keys[i];
-	    return <ModuleContent {...this.props} key={module.key} moduleUpdate={this.moduleUpdate} argumentDelete={this.argumentDelete} module={module} keyname={keyname} />;}, this);
+	    return <ModuleContent {...this.props} key={module.key} moduleUpdate={this.moduleUpdate} parameterDelete={this.parameterDelete} module={module} keyname={keyname} />;}, this);
 	}
 	return(
 	<div className="ui tab segment" data-tab={this.props.task.name}>
@@ -274,18 +320,18 @@ var TaskContent = React.createClass({
 		</Menu>
 		</div>
 		<div className="eight wide stretched column">
-		{moduleArgs}
+		{moduleParameters}
 	    	<div className='row'>
 		<div className="ui segment">
 		<Input>
-	    	<input placeholder={this.state.argument} type="text" onChange={this.argumentChange} />
+	    	<input placeholder={this.state.parameter} type="text" onChange={this.parameterChange} />
 		</Input>
 		<Input>
 	    	<input placeholder={this.state.value} type="text" onChange={this.valueChange} />
 		</Input>
 		</div>
 		</div>
-		<Button className="icon basic green" onClick={this.argumentAdd}>
+		<Button className="icon basic green" onClick={this.parameterAdd}>
 		<Icon className="add" />
 		</Button>
 	  </div>
@@ -298,46 +344,23 @@ var TaskContent = React.createClass({
 
 
 var Tasks = React.createClass({
-    getInitialState: function(){
-	
-    },
     componentWillReceiveProps: function(){
 	this.tasks = this.props.tasks.map(function(task, i){
-	    return <TaskItem key={i} name={task.name} task={task} deleteTask={this.props.deleteTask} updateStateTask={this.props.updateStateTask}/>;
+	    return <TaskItem key={i} name={task.name} task={task} tasksReload={this.props.tasksReload} />;
 	}, this);
 	this.modules = this.props.tasks.map(function(task, i){
-	    return <TaskContent loadTasks={this.props.loadTasks} key={i} task={task} />;
+	    return <TaskContent tasksReload={this.props.tasksReload} key={i} task={task} />;
 	}, this);
     },
-    addTask: function(){
-	var name = this.state.taskName.trim();
-	if (!name){
-	    return;
-	}
-	$.ajax({
-	    url: "/api/task/add",
-	    dataType: 'json',
-	    type: 'POST',
-	    data: {taskName: this.state.taskName},
-	    success: function(data) {
-	        this.setState({message: data["message"]});
-	    }.bind(this),
-	    error: function(xhr, status, err) {
-	        console.error(this.props.url, status, err.toString());
-	    }.bind(this)
-	});
-	this.loadTasks();
-    },
-
     render: function(){
 	var Grid = Semantify.Grid;
 	var Menu = Semantify.Menu;
 	var Row = Semantify.Row;
 	var tasks = this.props.tasks.map(function(task, i){
-	    return <TaskItem key={i} name={task.name} task={task} deleteTask={this.props.deleteTask} updateStateTask={this.props.updateStateTask}/>;
+	    return <TaskItem key={i} name={task.name} task={task} tasksReload={this.props.tasksReload}/>;
 	}, this);
 	var modules = this.props.tasks.map(function(task, i){
-	      return <TaskContent key={i} task={task} loadTasks={this.props.loadTasks} />;
+	      return <TaskContent key={i} task={task} tasksReload={this.props.tasksReload} />;
 	}, this);
 	return(
 	<div className="ui bottom attached tab" data-tab="tasks">
@@ -346,7 +369,7 @@ var Tasks = React.createClass({
 	  <Menu className="vertical tabular fluid">
 		{tasks}
 		<Row>
-		<Task taskName={this.props.taskName} changeTaskName={this.props.changeTaskName} addTask={this.props.addTask}/>
+		<Task tasksReload={this.props.tasksReload}/>
 	    </Row>
           </Menu>
 	</div>
