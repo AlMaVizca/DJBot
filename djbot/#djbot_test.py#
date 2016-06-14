@@ -20,7 +20,8 @@ class DjbotTestCase(unittest.TestCase):
 
     def test_data(self):
         rooms = self.app.get('/api/room/')
-            
+
+        
         self.assertDictEqual(rooms, {"rooms":[]})    
         
 

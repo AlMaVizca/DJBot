@@ -454,27 +454,54 @@ var Schedule  = React.createClass({
     }});
 
 var Room = React.createClass({
-    deleteRoom: function(){
-	var classRoom = '.' + this.props.classRoom;
-	this.props.editRoom('remove');
-	$(classRoom).modal('hide');
-	console.log(classRoom);
+    getInitialState: function(){
+	return {name: "Room name", network: '127.0.0.0', netmask: '30', machines: '1'}
     },
-    saveRoom: function(){
-	var classRoom = '.' + this.props.classRoom;
-	console.log(classRoom);
-	$(classRoom).modal('hide');
+
+    roomCancel: function(){
 	$('.add.basic').modal({closable: true}).modal('hide');
-	this.props.editRoom('save');
 	return true
     },
-    cancelRoom: function(){
-	var classRoom = '.' + this.props.classRoom;
-	console.log(classRoom);
-	$(classRoom).modal('hide');
+    roomSave: function(){
+        var name = this.state.name.trim();
+        var machines = this.state.machines;
+	var network = this.state.network.trim();
+	var netmask = this.state.netmask.trim();
+	
+        if (!name || !machines || !network || !netmask){
+	    console.log('Missing value');
+	    return;
+	}
+	var room = {name: name, machines: machines, network: network, netmask: netmask};
+	var result = '';
+	console.log(room);
+	$.ajax({
+	    url: "/api/room/add",
+	    dataType: 'json',
+	    type: 'POST',
+	    data: room,
+	    success: function(data) {
+		result = data["message"];
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error("/api/room/add", status, err.toString());
+	    }.bind(this)
+	});
+	this.props.roomsReload();
 	$('.add.basic').modal({closable: true}).modal('hide');
-	console.log('cancel');
-	return true
+    },
+
+    changeName: function(e) {
+	this.setState({name: e.target.value});
+    },
+    changeNetwork: function(e) {
+	this.setState({network: e.target.value});
+    },
+    changeNetmask: function(e) {
+	this.setState({netmask: e.target.value});
+    },
+    changeMachines: function(e) {
+	this.setState({machines: e.target.value});
     },
     render: function(){
 	var Button = Semantify.Button;
@@ -486,12 +513,9 @@ var Room = React.createClass({
 	var Input = Semantify.Input;
 	var Label = Semantify.Label;
 	var Modal = Semantify.Modal;
-	var classRoom = classNames(this.props.classRoom, 'basic');
-	var deleteButton = (this.props.roomKey != 999);
 	return (
-		<Modal className={classRoom} init={this.props.modal}>
-		<Header className="inverted grey">{this.props.name}</Header>
-		<RemoveButton deleteRoom={this.deleteRoom} deleteButton={deleteButton}/>
+		<Modal className='add basic' init={this.props.modal}>
+		<Header className="inverted grey">{this.state.name}</Header>
 		<Grid className="center aligned">
 		<Form>
 		<Field>
@@ -500,7 +524,7 @@ var Room = React.createClass({
 		<Label>
 		Name
 	    </Label>
-		<input placeholder={this.props.room.name} type="text" onChange={this.props.changeName} defaultValue={this.props.room.name} />
+		<input placeholder={this.state.name} type="text" onChange={this.changeName} />
 	    </div>
 		</Input>
 		</Field>
@@ -510,7 +534,7 @@ var Room = React.createClass({
 		<Label>
 		Machines
 	    </Label>
-		<input placeholder={this.props.room.machines} type="text" onChange={this.props.changeMachines} defaultValue={this.props.room.machines} />
+		<input placeholder={this.state.machines} type="text" onChange={this.changeMachines} />
 		</div>
 		</Input>
 		</Field>
@@ -520,7 +544,7 @@ var Room = React.createClass({
 		<Label>
 		Network
 		</Label>
-		<input placeholder={this.props.room.network} type="text" onChange={this.props.changeNetwork} defaultValue={this.props.room.network} />
+		<input placeholder={this.state.network} type="text" onChange={this.changeNetwork} />
 		</div>
 		</Input>
 		</Field>
@@ -530,17 +554,7 @@ var Room = React.createClass({
 		<Label>
 		Netmask
 	    </Label>
-		<input placeholder={this.props.room.netmask} type="text" onChange={this.props.changeNetmask} defaultValue={this.props.room.netmask} />
-		</div>
-		</Input>
-		</Field>
-		<Field>
-		<Input>
-		<div className="ui labeled input">
-		<Label>
-		Proxy
-	    </Label>
-		<input placeholder={this.props.room.proxy} type="text" onChange={this.props.changeProxy} defaultValue={this.props.room.proxy} />
+		<input placeholder={this.state.netmask} type="text" onChange={this.changeNetmask} />
 		</div>
 		</Input>
 		</Field>
@@ -548,8 +562,8 @@ var Room = React.createClass({
 		</Grid>		
 		<Grid>
 		<div className="right aligned column">
-		<Button className="inverted red basic cancel" onClick={this.cancelRoom}>Cancel</Button>
-		<Button className="inverted green basic active approve" onClick={this.saveRoom}>Save</Button>
+		<Button className="inverted red basic cancel" onClick={this.roomCancel}>Cancel</Button>
+		<Button className="inverted green basic active approve" onClick={this.roomSave}>Save</Button>
 		</div>
 		</Grid>
 		</Modal>
@@ -559,11 +573,21 @@ var Room = React.createClass({
 });
 
 var RoomItem = React.createClass({
-    showEditRoom: function(){
-	this.props.updateStateRoom(this.props.room);
-	var classRoom = classNames('.', this.props.classRoom);
-	classRoom = classRoom.replace(/ /g,'');
-	$(classRoom).modal('toggle');
+    roomDelete: function(){
+	$.ajax({
+	    url: "/api/room/delete",
+	    dataType: 'json',
+	    type: 'POST',
+	    data: {key: this.props.room.key},
+	    success: function(data) {
+		this.setState({message: data["message"]});
+		console.log(this.state.message);
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error("/api/room/delete", status, err.toString());
+	    }.bind(this)
+	});
+	this.props.roomsReload();
     },
     render: function(){
 	var Icon = Semantify.Icon;
@@ -573,14 +597,8 @@ var RoomItem = React.createClass({
 	    <td><Machines machines={this.props.room.machines}/></td>
 	    <td><Network network={this.props.room.network}/></td>
 	    <td><Netmask netmask={this.props.room.netmask} /></td>
-	    <td><Proxy proxy={this.props.room.proxy} /></td>
-	    <td><div className="ui animated fade blue button" tabindex="0" onClick={this.showEditRoom}>
-	      <div className="hidden content">Edit</div>
-	       <div className="visible content">
-	        <Icon className="edit"/>
-	       </div>
-	      </div>
-	    <Room {...this.props} roomKey={this.props.room.key}/>
+	    <td>
+	    <RemoveButton roomDelete={this.roomDelete} key={this.props.room.key} />
 	    </td>
 	    </tr>
     );
@@ -595,7 +613,7 @@ var RemoveButton = React.createClass({
     	return(
 		<Grid className="right aligned">
 		<div className="right aligned column">
-		{this.props.deleteButton && <Button className="inverted red basic circular" onClick={this.props.deleteRoom}><Icon className="inverted red circle trash"/></Button>}
+		<Button className="inverted red basic circular" onClick={this.props.roomDelete}><Icon className="inverted red circle trash"/></Button>
 		</div>
 		</Grid>
 	);
@@ -603,18 +621,9 @@ var RemoveButton = React.createClass({
 
 
 var Settings = React.createClass({
-    getInitialState: function(){
-	return {newRoom: { name: "Add Room", network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', key: 999, keys:[]}}
-    },
     componentDidMount: function(){
-	var keys = []
-	for(var i=0;i< this.props.rooms.length+10;i++){
-	    keys.push(Math.random().toString(36).substring(4));
-	}
-	this.setState({keys: keys})
     },
-    addRoom: function(){
-	this.props.updateStateRoomKey(999)
+    roomAdd: function(){
 	$('.add.basic').modal({closable: false,
 			 onApprove: function () {
 			     console.log('Approve');
@@ -626,13 +635,12 @@ var Settings = React.createClass({
 			 onShow: function(){
 			     console.log('shown');
 			 },
-			}).modal('toggle');
+			      }).modal('toggle');
+	
     },
     componentWillReceiveProps: function(){
-	var syncTab ='';
 	this.rooms = this.props.rooms.map(function(room,i){
-	    syncTab = this.state.keys[i];
-		 return <RoomItem {...this.props} key={i} keyRoom={room.key} room={room} classRoom={syncTab}/>;
+		 return <RoomItem roomsReload={this.props.roomReload} key={i} keyRoom={room.key} room={room}/>;
 		},this);
     },
     render: function(){
@@ -640,10 +648,8 @@ var Settings = React.createClass({
 	var Icon = Semantify.Icon;
 	var Grid = Semantify.Grid;
 	var Button = Semantify.Button;
-	var syncTab = '';
 	var rooms = this.props.rooms.map(function(room,i){
-	    syncTab = this.state.keys[i];
-		 return <RoomItem {...this.props} key={i} keyRoom={room.key} room={room} classRoom={syncTab}/>;
+	    return <RoomItem roomsReload={this.props.roomsReload} key={i} keyRoom={room.key} room={room}/>;
 		},this);
 	return(
 		<div className="ui bottom attached tab" data-tab="settings">
@@ -657,8 +663,6 @@ var Settings = React.createClass({
 		<th className="four wide">
 		<Icon className="sitemap"/>Network</th>
 		<th className="one wide">Netmask</th>
-		<th className="four wide">
-		<Icon className="at"/>Proxy</th>
 		<th className="one wide"></th>
 		</tr>
 		</thead>
@@ -667,9 +671,9 @@ var Settings = React.createClass({
 	    </tbody>
 		</Table>
 		<Grid className="centered">
-		<Button className="icon circular green" onClick={this.addRoom}>
+		<Button className="icon circular green" onClick={this.roomAdd}>
+		<Room name="Add Room" roomsReload={this.props.roomsReload} />
 		<Icon className="add circle icon" />
-		<Room {...this.props} name="Add Room" classRoom="add" editRoom={this.props.editRoom} room={this.state.newRoom}/>
 	        </Button>
 		</Grid>
 		</div>
@@ -977,6 +981,9 @@ var TaskContent = React.createClass({
 
 
 var Tasks = React.createClass({
+    getInitialState: function(){
+	
+    },
     componentWillReceiveProps: function(){
 	this.tasks = this.props.tasks.map(function(task, i){
 	    return <TaskItem key={i} name={task.name} task={task} deleteTask={this.props.deleteTask} updateStateTask={this.props.updateStateTask}/>;
@@ -985,6 +992,26 @@ var Tasks = React.createClass({
 	    return <TaskContent loadTasks={this.props.loadTasks} key={i} task={task} />;
 	}, this);
     },
+    addTask: function(){
+	var name = this.state.taskName.trim();
+	if (!name){
+	    return;
+	}
+	$.ajax({
+	    url: "/api/task/add",
+	    dataType: 'json',
+	    type: 'POST',
+	    data: {taskName: this.state.taskName},
+	    success: function(data) {
+	        this.setState({message: data["message"]});
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error(this.props.url, status, err.toString());
+	    }.bind(this)
+	});
+	this.loadTasks();
+    },
+
     render: function(){
 	var Grid = Semantify.Grid;
 	var Menu = Semantify.Menu;
@@ -1017,43 +1044,8 @@ var Tasks = React.createClass({
 
 var Main = React.createClass({
     getInitialState: function() {
-        return {tasks : [{ key: 1, name: 'update debian', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'update_cache', value: 'yes', },{ key: 2, name: 'upgrade', value: 'yes', }]}]}, { key: 2, name: 'install docker', modules: [{ key :1, name: 'apt', options: [{ key: 1, name: 'image', value: 'krahser/djbot', }]}, { key :2, name: 'command', options: [{ key: 1, name: 'dd', value: 'yes', }]}]}], rooms: [], name: 'name', network: '0.0.0.0', netmask: '0',proxy: '0.0.0.0', machines: '0', roomKey: 999, taskName: 'New task', taskKey: 999 }},
-    updateStateRoom: function(room){
-	console.log('updateState');
-	console.log(room);
-	this.setState({roomKey: room.key});
-	this.setState({name: room.name});
-	this.setState({network: room.network});
-	this.setState({netmask: room.netmask});
-	this.setState({machines: room.machines});
-	this.setState({proxy: room.proxy});
-    },
-    updateStateRoomKey: function(key){
-	this.setState({roomKey: key});
-    },
-    updateStateTask: function(task){
-	this.setState({taskName: task.name});
-	this.setState({taskKey: task.key});
-    },
-    changeName: function(e) {
-	this.setState({name: e.target.value});
-    },
-    changeTaskName: function(e) {
-	this.setState({taskName: e.target.value});
-    },
-    changeNetwork: function(e) {
-	this.setState({network: e.target.value});
-    },
-    changeNetmask: function(e) {
-	this.setState({netmask: e.target.value});
-    },
-    changeProxy: function(e) {
-	this.setState({proxy: e.target.value});
-    },
-    changeMachines: function(e) {
-	this.setState({machines: e.target.value});
-    },
-    loadRooms: function() {
+        return {tasks : [{ key: 0, name: 'your connection is not working', modules: [{ key :1, name: 'failed', options: [{ key: 1, name: "let's hand some work", value: 'yeah!', }]}]}], rooms: [{name:'your conecction is not working', machines: 0, network: '127.0.0.1', netmask:'24'}] }},
+    roomsReload: function() {
         $.ajax({
 	    url: "/api/room/",
 	    dataType: 'json',
@@ -1079,35 +1071,6 @@ var Main = React.createClass({
 	    }.bind(this)
 	});
     },
-    editRoom: function(action){
-	console.log(action);
-	switch (action){
-	case 'save':
-	    this.handleRoomSubmit();
-	case 'remove':
-	    this.handleRoomDelete();
-	}
-	this.loadRooms();
-    },
-    addTask: function(){
-	var name = this.state.taskName.trim();
-	if (!name){
-	    return;
-	}
-	$.ajax({
-	    url: "/api/task/add",
-	    dataType: 'json',
-	    type: 'POST',
-	    data: {taskName: this.state.taskName},
-	    success: function(data) {
-	        this.setState({message: data["message"]});
-	    }.bind(this),
-	    error: function(xhr, status, err) {
-	        console.error(this.props.url, status, err.toString());
-	    }.bind(this)
-	});
-	this.loadTasks();
-    },
     deleteTask: function(){
 	$.ajax({
 	    url: "/api/task/delete",
@@ -1123,51 +1086,6 @@ var Main = React.createClass({
 	});
 	this.loadTasks();	
     },
-    handleSettingsSubmit: function(room){
-	console.log(room);
-	$.ajax({
-	    url: "/api/room/add",
-	    dataType: 'json',
-	    type: 'POST',
-	    data: room,
-	    success: function(data) {
-		this.setState({message: data["message"]});
-	    }.bind(this),
-	    error: function(xhr, status, err) {
-	        console.error("/api/room/add", status, err.toString());
-	    }.bind(this)
-	});
-    },
-    handleRoomDelete: function(){
-	var key = this.state.roomKey;
-	console.log(key);
-	$.ajax({
-	    url: "/api/room/delete",
-	    dataType: 'json',
-	    type: 'POST',
-	    data: {key: key},
-	    success: function(data) {
-		this.setState({message: data["message"]});
-	    }.bind(this),
-	    error: function(xhr, status, err) {
-	        console.error("/api/room/add", status, err.toString());
-	    }.bind(this)
-	});
-    },
-    handleRoomSubmit: function() {
-        var name = this.state.name.trim();
-        var machines = this.state.machines;
-	var network = this.state.network.trim();
-	var netmask = this.state.netmask.trim();
-	var proxy = this.state.proxy.trim();
-	var key = this.state.roomKey;
-	
-        if (!name || !machines || !network || !netmask || !proxy || !key){
-	    console.log('algo falta');
-	    return;
-	}
-	this.handleSettingsSubmit({name: name, machines: machines, network: network, netmask: netmask, proxy: proxy, key: key});
-	},
     discover: function(){
         $.ajax({
 	    url: "/api/room/discover",
@@ -1183,7 +1101,7 @@ var Main = React.createClass({
 	});
     },
 	componentDidMount: function() {
-	    this.loadRooms();
+	    this.roomsReload();
 	    this.loadTasks();
 	},
 	render: function() {
@@ -1195,7 +1113,7 @@ var Main = React.createClass({
 		</div>
 		</Grid>
 		<Menu />
-		<Settings {...this.state} updateStateRoom={this.updateStateRoom} rooms={this.state.rooms} editRoom={this.editRoom} changeName={this.changeName} changeNetwork={this.changeNetwork} changeNetmask={this.changeNetmask} changeProxy={this.changeProxy} changeMachines={this.changeMachines} updateStateRoomKey={this.updateStateRoomKey}/>
+		<Settings roomsReload={this.roomsReload} rooms={this.state.rooms}/>
 		<Blackboard rooms={this.state.rooms}/>
 		<Tasks tasks={this.state.tasks} taskName={this.state.taskName} changeTaskName={this.changeTaskName} addTask={this.addTask} updateStateTask={this.updateStateTask} deleteTask={this.deleteTask} loadTasks={this.loadTasks}/>
 		<Run rooms={this.state.rooms} tasks={this.state.tasks}/>

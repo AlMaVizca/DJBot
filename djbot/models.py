@@ -51,7 +51,6 @@ class RoomTable(Base):
     name = Column(String(50), nullable=False)
     machines = Column(SmallInteger, nullable=False)
     network = Column(String, nullable=False)
-    proxy = Column(String)
     hosts = relationship("ComputerTable", cascade="all, delete-orphan")
 
             
@@ -137,19 +136,11 @@ class Room():
             return True
         return False
         
-    def save(self, name, network, netmask, proxy, machines, app):
+    def save(self, name, network, netmask, machines):
         """save in database"""
         network = self._set_network(network,netmask)
-        if self.get(complete=False):
-            self.db.name = name
-            self.db.machines = machines
-            self.db.network = network
-            self.db.proxy = proxy
-        else:
-            room = RoomTable(name=name,network=network,proxy=proxy,machines=machines)
-            db_session.add(room)
-        app.logger.info('do commit')
-        app.logger.info(db_session.dirty)
+        room = RoomTable(name=name,network=network,machines=machines)
+        db_session.add(room)
         db_session.commit()
         return True
 

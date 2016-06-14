@@ -4,6 +4,7 @@ from flask import Flask, g, Response, render_template, request
 from flask import url_for, redirect
 from flask import jsonify, flash
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CsrfProtect
 from forms import *
 from models import Room
@@ -19,6 +20,8 @@ app.config.from_object('settings.Config')
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.debug = app.config['DEBUG']
 toolbar = DebugToolbarExtension(app)
+# db = SQLAlchemy()
+# db.init_app(app)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
@@ -31,15 +34,15 @@ def index():
 @app.route('/api/room/', methods=['GET'])
 def api_rooms():
     return jsonify(get_rooms())
-
+    
 
 @app.route('/api/room/add', methods=['POST'])
 def room_add():
     form = RoomFormAdd(request.form)
+    app.logger.info(request.form)
     if form.validate():
-        room = Room(key=form.key.data)
-        app.logger.info(request.form)
-        saved = room.save(form.name.data, form.network.data, form.netmask.data, form.proxy.data, form.machines.data, app)
+        room = Room()
+        saved = room.save(form.name.data, form.network.data, form.netmask.data, form.machines.data)
         app.logger.info(saved)
         if saved:
             return jsonify({'message': 'saved'})
@@ -147,13 +150,7 @@ def argument_delete(id):
 
 @app.route('/api/run', methods=['POST'])
 def room(name):
-    room = Room(name)
-    if room.get(name):
-        room.hosts = ['163.10.78.1','163.10.78.79']
-        return render_template('room.html', room=room.get_all())
-    else:
-        return redirect(url_for('index'))
-
+    pass
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

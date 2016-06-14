@@ -39,7 +39,7 @@ class ResultsCollector(CallbackBase):
         
 
 class Runner(object):
-    def __init__(self, inventory, remote_user='root', private_key_file=None, ssh_extra_args = None):
+    def __init__(self, inventory, remote_user='root', private_key_file=None, ssh_extra_args = None, become = None):
         # initialize needed objects
         self.callback = ResultsCollector()
         self.variable_manager = VariableManager()
@@ -54,7 +54,7 @@ class Runner(object):
                                ssh_common_args=None,
                                ssh_extra_args=ssh_extra_args,
                                sftp_extra_args=None, scp_extra_args=None,
-                               become=None, become_method=None,
+                               become=become, become_method=None,
                                become_user=None, verbosity=None,
                                check=False)
         # create inventory and pass to var manager        
@@ -105,8 +105,8 @@ class Runner(object):
                 tqm.cleanup()
 
 if __name__ == '__main__':
-    inventory = ['163.10.78.1']
-    ansible_api = Runner(inventory, 'avizcaino')
+    inventory = ['127.0.0.1']
+    ansible_api = Runner(inventory, 'krahser')
     ansible_api.add_setup(inventory)
     ansible_api.run()
 

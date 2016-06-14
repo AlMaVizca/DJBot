@@ -298,6 +298,9 @@ var TaskContent = React.createClass({
 
 
 var Tasks = React.createClass({
+    getInitialState: function(){
+	
+    },
     componentWillReceiveProps: function(){
 	this.tasks = this.props.tasks.map(function(task, i){
 	    return <TaskItem key={i} name={task.name} task={task} deleteTask={this.props.deleteTask} updateStateTask={this.props.updateStateTask}/>;
@@ -306,6 +309,26 @@ var Tasks = React.createClass({
 	    return <TaskContent loadTasks={this.props.loadTasks} key={i} task={task} />;
 	}, this);
     },
+    addTask: function(){
+	var name = this.state.taskName.trim();
+	if (!name){
+	    return;
+	}
+	$.ajax({
+	    url: "/api/task/add",
+	    dataType: 'json',
+	    type: 'POST',
+	    data: {taskName: this.state.taskName},
+	    success: function(data) {
+	        this.setState({message: data["message"]});
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error(this.props.url, status, err.toString());
+	    }.bind(this)
+	});
+	this.loadTasks();
+    },
+
     render: function(){
 	var Grid = Semantify.Grid;
 	var Menu = Semantify.Menu;

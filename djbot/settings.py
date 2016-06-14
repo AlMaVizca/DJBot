@@ -1,5 +1,8 @@
 import base64
 import random
+import os
+
+
 
 class Config(object):
     TESTING = True
@@ -9,4 +12,5 @@ class Config(object):
     DATABASE = 'djbot.db'
     USERNAME = 'admin'
     PASSWORD = 'admin'
-    SQLALCHEMY_ECHO=True
+    SQLALCHEMY_ECHO = True
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///'+ os.path.basename(DATABASE)

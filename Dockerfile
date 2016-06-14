@@ -8,13 +8,13 @@ RUN apt-get install -yqq nodejs
 
 WORKDIR /usr/src/app/djbot
 
-RUN npm install
+RUN npm install -g bower
 
-
-RUN gulp
 WORKDIR /usr/src/app/djbot/static
 RUN bower install --allow-root
 
+WORKDIR /usr/src/app/djbot/static/scripts
+RUN cat src/*.jsx > build/main.js;                                                                                      
 
 RUN apt-get remove --purge -yqq nodejs\
      && rm -rf /var/lib/apt/lists/*
