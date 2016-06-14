@@ -1,0 +1,19 @@
+body {
+    background-color: #FFFFFF;
+}
+
+#content {
+    height: 100%;
+    padding-top: 3em;
+}
+
+#sortable {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+}
+
+.grid.centered{
+    margin-top: 1em;
+}
