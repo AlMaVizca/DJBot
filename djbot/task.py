@@ -42,8 +42,7 @@ class Task():
     def parameter_add(self, modulekey, options, app):
         new_args = ArgsTable(name=options[0], value=options[1])
         for each in self.db.modules:
-            app.logger.info(modulekey)
-            app.logger.info(each.key)
+            app.logger.info(new_args)
             if int(modulekey) == each.key:
                 each.args.append(new_args)
         db_session.add(self.db)

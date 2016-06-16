@@ -7,8 +7,10 @@ from ansible.playbook.play import Play
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.plugins.callback import CallbackBase
 from threading import Thread
+from task import Task
 import json
 import os
+
 
 Options = namedtuple('Options', ['connection','module_path', 'forks',
                                  'remote_user','private_key_file',
@@ -83,10 +85,13 @@ class Runner(object):
 
     def add_plays(self, name='undefined', hosts=[], tasks=[]):
         """ add tasks to play"""
+        execution_tasks = []
+        for each in tasks:
+            execution_tasks.append(dict(action=each))
         self.play_source =  dict(
             name = name,
             hosts = ', '.join(hosts),
-            tasks = tasks
+            tasks = execution_tasks
         )
         self.plays[name] = Play().load(self.play_source, variable_manager=self.variable_manager, loader=self.loader)
 
@@ -113,18 +118,23 @@ class ThreadRunner(Thread):
         Thread.__init__(self)
         self.execution_name = execution_name
         self.rooms = rooms
-        self.tasks = tasks
         self.user = user
         self.playbook = Runner(self.rooms, self.user)
         self.playbook.add_setup(self.rooms)
+        self.tasks = tasks
+        for each in tasks:
+            for module in each['modules']:
+                self.playbook.add_plays(each['name'], self.rooms, module)
+
 
     def run(self):
         self.playbook.run()
         results = self.playbook.callback.get_all()
-        name = os.getenv('PWD')+'/prueba.json'
+        name = os.getenv('LOGS') + self.execution_name + '.json'
         with open(name, 'w') as record:
             json.dump(results, record)
-        
+        with open('/tmp/prueba.tareas','w') as tareas:
+            json.dump(self.tasks, tareas)
 
                 
 if __name__ == '__main__':

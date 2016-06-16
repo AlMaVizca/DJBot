@@ -11,6 +11,8 @@ from models import Room
 from task import Task
 from querys import *
 from ansibleapi import ThreadRunner
+from scripts import config_ssh, generate_RSA
+import os
 
 csrf = CsrfProtect()
 
@@ -20,6 +22,15 @@ app.config.from_object('settings.Config')
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.debug = app.config['DEBUG']
 toolbar = DebugToolbarExtension(app)
+
+ssh_config = config_ssh.SshConfig()
+ssh_config.set_defaults()
+ssh_config.write_settings()
+
+if not os.path.isfile('/root/.ssh/id_rsa'):
+    generate_RSA()
+    
+
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
@@ -115,6 +126,7 @@ def parameter_add(id):
     form = ParameterFormAdd(request.form)
     if form.validate():
         task = Task(id)
+        app.logger.info(task)
         saved = task.parameter_add(form.modulekey.data, (form.parameter.data, form.value.data), app)
         if saved:
             return jsonify({'message': 'saved'})
@@ -137,16 +149,38 @@ def run():
     rooms = [ int(each) for each in request.form.getlist('rooms[]')]
     tasks = [ int (each) for each in request.form.getlist('tasks[]')]
 
-    
-    rooms = get_machines(rooms)
+    rooms, room_names = get_machines(rooms)
+    tasks, task_names = execution_taks(tasks) 
 
-    app.logger.info(rooms)
-    ansible_playbook = ThreadRunner(rooms, tasks, 'avizcaino', 'prueba')
+    name_log = '-'.join(task_names) + '@' +  '-'.join(room_names)
+
+    ansible_playbook = ThreadRunner(rooms, tasks, 'root', name_log)
     ansible_playbook.start()
-
     if True:
         return jsonify({'message': 'Task is running!'})
     return jsonify({'message': 'receive'})
+
+    
+@app.route('/api/results', methods=['GET'])
+def results():
+    dirs = os.listdir(os.getenv('LOGS'))
+    results = []
+    for each in dirs:
+        results.append({'name': each})
+    return jsonify({'results': results })
+
+    
+@app.route('/api/results', methods=['POST'])
+def a_result():
+    form = ResultForm(request.form)
+    if form.validate():
+        name = os.getenv('LOGS') + form.result.data
+        app.logger.info(name)
+        result = get_result(name)
+        app.logger.info(result)
+    return jsonify({'result': result})
+    
+        
 
 if __name__ == '__main__':
     init_db()

@@ -1,6 +1,7 @@
 from models import RoomTable, Room
 from models import TaskTable
 from task import Task
+import yaml
 
 def get_rooms():
     rooms = RoomTable().query.all()
@@ -20,7 +21,32 @@ def get_tasks():
 
 def get_machines(rooms):
     hosts = []
+    names = []
     for each in rooms:
-        aRoom = Room(each)
-        hosts.extend(aRoom.discover_hosts())
-    return hosts
+        a_room = Room(each)
+        names.append(a_room.name)
+        hosts.extend(a_room.discover_hosts())
+    return hosts, names
+
+def execution_taks(tasks):
+    execution_tasks = []
+    names = []
+    for each in tasks:
+        a_task = Task(each).get_setup()
+        names.append(a_task['name'])
+        task = {'name': a_task['name'], 'modules':[]}
+        for module in a_task['modules']:
+            parameters = [{arg['name']:arg['value']} for arg in module['options']]
+            task['modules'].append((dict(action=dict(module=module['name'], args=parameters))))
+        execution_tasks.append(task)
+    return execution_tasks, names
+
+
+def get_result(filename):
+    result = {'data': 'Not Found!'}
+    try:
+        with open(filename, 'r') as fp:
+            result = yaml.load(fp)
+    except:
+        pass
+    return result

@@ -1,21 +1,10 @@
-from ansibleapi import *
 from database import Base, db_session
-from context import Host
 from flask import jsonify
 from helpers import room_properties
 from scripts import proxy, config_ssh
 from sqlalchemy import Column, Integer, SmallInteger, String
 from sqlalchemy import Table, Column, ForeignKey
 from sqlalchemy.orm import relationship
-
-
-run_room = Table('run_room', Base.metadata,
-                           Column('run', Integer, ForeignKey('run.key')),
-                           Column('room', Integer, ForeignKey('room.key')))
-
-run_task = Table('run_task', Base.metadata,
-                           Column('run', Integer, ForeignKey('run.key')),
-                           Column('task', Integer, ForeignKey('task.key')))
 
 
 class TaskTable(Base):
@@ -35,6 +24,10 @@ class ModuleTable(Base):
     args = relationship("ArgsTable", cascade="all, delete-orphan")
     task = Column(Integer, ForeignKey('task.key'))
 
+    def __repr__(self):
+        return '<ModuleTable %r %r %r %r>' % (self.key, self.name, self.args, self.task)
+    
+
 
 class ArgsTable(Base):
     __tablename__ = 'parameter'
@@ -43,6 +36,9 @@ class ArgsTable(Base):
     value = Column(String(50), nullable=False)
     filename = Column(String(50))
     module = Column(Integer, ForeignKey('module.key'))
+
+    def __repr__(self):
+        return '<ArgsTable %r %r %r>' % (self.key, self.name, self.value)
 
 
 class RoomTable(Base):
@@ -59,14 +55,6 @@ class RoomTable(Base):
                                           self.name, self.machines,
                                           self.network, self.proxy)
 
-        
-class RunTable(Base):
-    __tablename__ = 'run'
-    key = Column(Integer, primary_key=True, autoincrement=True)
-    rooms = relationship("RoomTable", secondary=run_room)
-    tasks = relationship("TaskTable", secondary=run_task)
-    user = Column(String(20), nullable=False)
-        
         
 class ComputerTable(Base):
     __tablename__ = 'computer'

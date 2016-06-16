@@ -16,7 +16,7 @@ class RoomFormAdd(Form):
     name = StringField('name', [validators.DataRequired()])
     network = StringField('network', [validators.DataRequired(), validators.IPAddress()])
     netmask = IntegerField('netmask', [validators.NumberRange(min=8,max=30)])
-    machines = IntegerField('machines', [validators.NumberRange(min=1,max=50)])
+    machines = IntegerField('machines')
 
     
 class RoomFormDelete(Form):
@@ -46,3 +46,8 @@ class ModuleFormDelete(Form):
 class RunForm(Form):
     roomKeys = []
     taskKeys = []
+
+
+class ResultForm(Form):
+    result = StringField('result', [validators.DataRequired()])
+    

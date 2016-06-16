@@ -63,7 +63,6 @@
         restart_policy: always
         volumes:
           - "{{ ansible_user_dir }}/Repositories/djbot/:/usr/src/app"
-          - "{{ ansible_user_dir }}/Repositories/djbot/keys/:/root/.ssh/"
         env:
           MODE: "dev"
           VIRTUAL_HOST: "dev.djbot.local"
