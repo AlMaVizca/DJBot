@@ -5,7 +5,7 @@ mkdir /tmp/DJBot
 pushd /tmp/DJBot
 
 
-wget https://github.com/krahser/DJBot/blob/dev/docker-compose.yml
+wget https://raw.githubusercontent.com/krahser/DJBot/dev/docker-compose.yml
 
 curl -L https://github.com/docker/compose/releases/download/1.7.1/docker-compose-`uname -s`-`uname -m` > docker-compose
 chmod +x docker-compose
