@@ -1,0 +1,5 @@
+---
+version: '2'
+services:
+  computer:
+    image: itscaro/debian-ssh
