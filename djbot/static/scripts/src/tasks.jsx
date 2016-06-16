@@ -2,6 +2,8 @@ var ModuleArgs = React.createClass({
     parameterDelete: function(){
 	this.props.parameterDelete(this.props.parameterKey);
     },
+    componentWillReceiveProps: function(){
+    },
     render: function(){
 	var Button = Semantify.Button;
 	var Icon = Semantify.Icon;
@@ -65,6 +67,9 @@ var ModuleItem = React.createClass({
 });
 
 var ModuleContent = React.createClass({
+    getInitialState: function(){
+	return {parameter: '', value:''}
+    },
     componentDidMount: function(){
 	this.props.moduleUpdate(this.props.module.key);
     },
@@ -74,17 +79,34 @@ var ModuleContent = React.createClass({
 	    options = this.props.module.options.map(function(option, i){
 		return <ModuleArgs key={i} option={option.name} value={option.value} parameterKey={option.key} parameterDelete={this.props.parameterDelete}/>;}, this);
 	}
-
+    },
+    parameterAdd: function(){
+	this.props.parameterAdd(this.props.module.key, this.state.parameter, this.state.value);
+    },
+    parameterChange: function(e) {
+	this.setState({parameter: e.target.value});
+    },
+    valueChange: function(e) {
+	this.setState({value: e.target.value});
     },
     render: function(){
+	var Button = Semantify.Button;
+	var Icon = Semantify.Icon;	
+	var Input = Semantify.Input;
 	var Table = Semantify.Table;
+	
+	console.log(this.props);
 	var options = [];
 	if (this.props.module.options){
 	    options = this.props.module.options.map(function(option, i){
 		return <ModuleArgs key={i} option={option.name} value={option.value} parameterKey={option.key} parameterDelete={this.props.parameterDelete}/>;}, this);
 	}
+	var argClasses = classNames('ui', 'tab', 'segment');
+	if (this.props.key == 1){
+	    argClasses = classNames(argClasses, 'active')
+	}
 	return(
-		<div className="ui tab segment" data-tab={this.props.keyname}>
+		<div className={argClasses} data-tab={this.props.keyname}>
 		<Table className="blue">
 		<thead>
 		<tr>
@@ -96,6 +118,23 @@ var ModuleContent = React.createClass({
 		<tbody>
 
 	    {options}
+	        <tr>
+		<td>
+		<Input className="fluid">
+	    	<input placeholder={this.state.parameter} type="text" onChange={this.parameterChange} />
+		</Input>
+		</td>
+		<td>
+		<Input className="fluid">
+	    	<input placeholder={this.state.value} type="text" onChange={this.valueChange} />
+		</Input>
+		</td>
+		<td>
+		<Button className="icon basic green" onClick={this.parameterAdd}>
+		<Icon className="add" />
+		</Button>
+		</td>
+		</tr>
 	    </tbody>
 		</Table>
 	    </div>
@@ -153,8 +192,10 @@ var TaskItem = React.createClass({
     componentDidMount: function(){
 	$('.vertical.tabular .item').tab();
     },
+    componentWillReceiveProps: function(){
+	$('.vertical.tabular .item').tab();
+    },
     taskDelete: function(){
-	console.log(this.props);
 	$.ajax({
 	    url: "/api/task/delete",
 	    dataType: 'json',
@@ -173,11 +214,15 @@ var TaskItem = React.createClass({
 	var Button = Semantify.Button;
 	var Icon = Semantify.Icon;
 	return(
-		<div className="item" data-tab={this.props.name}>
+		<div className="item blue" data-tab={this.props.tab}>
+		<div className="ui grid">
+		<div className="row middle aligned content">
 		<Button className="icon red basic" onClick={this.taskDelete}>
 		<Icon className="trash" />
 		</Button>
-		{this.props.name}
+		<span>{this.props.name}</span>
+		</div>
+		</div>		
 		</div>
 	);
     }
@@ -195,7 +240,6 @@ var TaskContent = React.createClass({
 	}
 	this.setState({keys: keys})
 	}
-
     },
     moduleAdd: function(){
 	var url = '/api/task/' + this.props.task.key + '/module/add'
@@ -231,13 +275,13 @@ var TaskContent = React.createClass({
 	this.setState({moduleKey: moduleKey});
 	this.props.tasksReload()
     },
-    parameterAdd: function(){
+    parameterAdd: function(moduleKey, parameter, value){
 	var url = '/api/task/' + this.props.task.key + '/parameter/add'
         $.ajax({
 	    url: url,
 	    type: 'POST',
 	    dataType: 'json',
-	    data: {parameter: this.state.parameter, value: this.state.value, modulekey: this.state.moduleKey},
+	    data: {parameter: parameter, value: value, modulekey: moduleKey},
 	    success: function(data) {
 	        this.setState({message: data["message"]});
 	    }.bind(this),
@@ -245,7 +289,8 @@ var TaskContent = React.createClass({
 	        console.error(url, status, err.toString());
 	    }.bind(this)
 	});
-	this.props.tasksReload()
+	console.log(this.state.message);
+	this.props.tasksReload();
     },
     parameterDelete: function(parameterKey){
 	var url = '/api/task/' + this.props.task.key + '/parameter/delete'
@@ -270,12 +315,6 @@ var TaskContent = React.createClass({
     moduleChange: function(e) {
 	this.setState({moduleName: e.target.value});
     },
-    parameterChange: function(e) {
-	this.setState({parameter: e.target.value});
-    },
-    valueChange: function(e) {
-	this.setState({value: e.target.value});
-    },
     componentWillReceiveProps: function(){
 	if (this.props.task.modules){
 	    var keyname = '';
@@ -286,13 +325,15 @@ var TaskContent = React.createClass({
 	this.moduleArgs = this.props.task.modules.map(function(module, i){
 	    keyname = this.state.keys[i];
 	    return <ModuleContent {...this.props} key={i}
-	    module={module} keyname={keyname} moduleUpdate={this.moduleUpdate} parameterDelete={this.parameterDelete}/>;}, this);
+	    module={module} keyname={keyname} moduleUpdate={this.moduleUpdate} parameterDelete={this.parameterDelete} parametarAdd={this.parameterAdd}/>;}, this);
+	    $('.module.ui .item').tab();
 	}},
     render: function(){
 	var Button = Semantify.Button;
 	var Fields = Semantify.Fields;
 	var Field = Semantify.Field;
 	var Grid = Semantify.Grid;
+	var Header = Semantify.Header;	
 	var Icon = Semantify.Icon;
 	var Input = Semantify.Input;
 	var Label = Semantify.Label;
@@ -306,10 +347,10 @@ var TaskContent = React.createClass({
 	    return <ModuleItem {...this.props} key={i} modkey={module.key} name={module.name} keyname={keyname} moduleDelete={this.moduleDelete}/>;}, this);
 	var moduleParameters = this.props.task.modules.map(function(module, i){
 	    keyname = this.state.keys[i];
-	    return <ModuleContent {...this.props} key={module.key} moduleUpdate={this.moduleUpdate} parameterDelete={this.parameterDelete} module={module} keyname={keyname} />;}, this);
+	    return <ModuleContent key={module.key} moduleUpdate={this.moduleUpdate} parameterDelete={this.parameterDelete} parameterAdd={this.parameterAdd} module={module} keyname={keyname} />;}, this);
 	}
 	return(
-	<div className="ui tab segment" data-tab={this.props.task.name}>
+	<div className="ui tab segment" data-tab={this.props.tab}>
 	 <Grid>
 	  <div className="six wide stretched column">
 		<Menu className="vertical tabular fluid module">
@@ -320,20 +361,8 @@ var TaskContent = React.createClass({
 		</Menu>
 		</div>
 		<div className="eight wide stretched column">
+		<Header>Parameters</Header>
 		{moduleParameters}
-	    	<div className='row'>
-		<div className="ui segment">
-		<Input>
-	    	<input placeholder={this.state.parameter} type="text" onChange={this.parameterChange} />
-		</Input>
-		<Input>
-	    	<input placeholder={this.state.value} type="text" onChange={this.valueChange} />
-		</Input>
-		</div>
-		</div>
-		<Button className="icon basic green" onClick={this.parameterAdd}>
-		<Icon className="add" />
-		</Button>
 	  </div>
 	 </Grid>
        </div>
@@ -344,29 +373,50 @@ var TaskContent = React.createClass({
 
 
 var Tasks = React.createClass({
+    getInitialState: function(){
+	return {keys: []}
+    },
+    componentDidMount: function(){
+	if (this.props.tasks){
+	var keys = []
+	for(var i=0;i< this.props.tasks.length+10;i++){
+	    keys.push(Math.random().toString(36).substring(4));
+	}
+	this.setState({keys: keys})
+	}
+
+    },
     componentWillReceiveProps: function(){
+	var keys = ''
 	this.tasks = this.props.tasks.map(function(task, i){
-	    return <TaskItem key={i} name={task.name} task={task} tasksReload={this.props.tasksReload} />;
+	    keys = this.state.keys[i];
+	    return <TaskItem key={i} name={task.name} task={task} tasksReload={this.props.tasksReload} tab={keys}/>;
 	}, this);
 	this.modules = this.props.tasks.map(function(task, i){
-	    return <TaskContent tasksReload={this.props.tasksReload} key={i} task={task} />;
+	    keys = this.state.keys[i];
+	    return <TaskContent tasksReload={this.props.tasksReload} key={i} task={task} tab={keys}/>;
 	}, this);
     },
     render: function(){
 	var Grid = Semantify.Grid;
+	var Header = Semantify.Header;
 	var Menu = Semantify.Menu;
 	var Row = Semantify.Row;
+	var keys ='';
 	var tasks = this.props.tasks.map(function(task, i){
-	    return <TaskItem key={i} name={task.name} task={task} tasksReload={this.props.tasksReload}/>;
+	    keys = this.state.keys[i];
+	    return <TaskItem key={i} name={task.name} task={task} tasksReload={this.props.tasksReload} tab={keys}/>;
 	}, this);
 	var modules = this.props.tasks.map(function(task, i){
-	      return <TaskContent key={i} task={task} tasksReload={this.props.tasksReload} />;
+	    keys = this.state.keys[i];
+	    return <TaskContent key={i} task={task} tasksReload={this.props.tasksReload} tab={keys}/>;
 	}, this);
 	return(
 	<div className="ui bottom attached tab" data-tab="tasks">
 	<Grid>
 	 <div className="four wide column">
-	  <Menu className="vertical tabular fluid">
+	  <Menu className="vertical tabular fluid tasks">
+	  	<Header>Tasks</Header>
 		{tasks}
 		<Row>
 		<Task tasksReload={this.props.tasksReload}/>
@@ -374,6 +424,7 @@ var Tasks = React.createClass({
           </Menu>
 	</div>
 	<div className="eleven wide stretched column">
+	     <Header>Modules</Header>
 		{modules}
 	    </div>
 	</Grid>

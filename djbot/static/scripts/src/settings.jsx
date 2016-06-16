@@ -1,8 +1,7 @@
 var Room = React.createClass({
     getInitialState: function(){
-	return {name: "Room name", network: '127.0.0.0', netmask: '30', machines: '1'}
+	return {name: "Room name", network: '127.0.0.0', netmask: '24', machines: '1'}
     },
-
     roomCancel: function(){
 	$('.add.basic').modal({closable: true}).modal('hide');
 	return true
@@ -34,7 +33,9 @@ var Room = React.createClass({
 	this.props.roomsReload();
 	$('.add.basic').modal({closable: true}).modal('hide');
     },
-
+    resetState: function(){
+	this.setState({name: "Room name", network: '127.0.0.0', netmask: '24', machines: '1'});
+    },
     changeName: function(e) {
 	this.setState({name: e.target.value});
     },
@@ -46,6 +47,9 @@ var Room = React.createClass({
     },
     changeMachines: function(e) {
 	this.setState({machines: e.target.value});
+    },
+    componentWillReceiveProps: function(){
+	this.resetState();
     },
     render: function(){
 	var Button = Semantify.Button;
