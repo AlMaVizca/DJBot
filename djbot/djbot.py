@@ -11,7 +11,7 @@ from models import Room
 from task import Task
 from querys import *
 from ansibleapi import ThreadRunner
-from scripts import config_ssh, generate_RSA
+from scripts import config_ssh
 import os
 
 csrf = CsrfProtect()
@@ -26,10 +26,6 @@ toolbar = DebugToolbarExtension(app)
 ssh_config = config_ssh.SshConfig()
 ssh_config.set_defaults()
 ssh_config.write_settings()
-
-if not os.path.isfile('/root/.ssh/id_rsa'):
-    generate_RSA()
-    
 
 
 @app.teardown_appcontext

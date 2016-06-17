@@ -21,6 +21,7 @@ RUN go get -u github.com/moul/advanced-ssh-config/cmd/assh
 
 RUN rm -rf /usr/local/go
 RUN mkdir -p /root/.ssh
-
+RUN touch /root/.ssh/.none
+RUN ssh-keygen -q -t rsa -N '' -f /root/.ssh/id_rsa
 WORKDIR /usr/src/app
 CMD ["gunicorn", "--config=gunicorn.py", "djbot:app"]
