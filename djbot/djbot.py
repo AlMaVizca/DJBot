@@ -62,20 +62,20 @@ def login():
         user = User.query.filter(User.username == form.username.data).first()
         if user and user_manager.verify_password(form.pw.data, user):
             flask_login.login_user(user)
-            return redirect(url_for('index'))
-    return redirect(url_for('login'))
+            return redirect(url_for('index', _external=True))
+    return redirect(url_for('login', _external=True))
             
             
 @app.route('/logout')
 def logout():
     flask_login.logout_user()
-    return redirect(url_for('login'))
+    return redirect(url_for('login', _external=True))
 
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
     flash('You must log in.')
-    return redirect(url_for('login'))
+    return redirect(url_for('login', _external=True))
 
 
 @app.route('/', methods=['GET'])
@@ -215,7 +215,7 @@ def run():
 
     rooms, room_names = get_machines(rooms)
     tasks, task_names = execution_taks(tasks)
-    app.logger.info(tasks)
+
     name_log = '-'.join(task_names) + '@' +  '-'.join(room_names) 
     name_log += '@' + current_user.username
     ansible_playbook = ThreadRunner(rooms, tasks, 'root', name_log,app)
@@ -240,7 +240,6 @@ def results():
 @app.route('/api/results', methods=['POST'])
 @roles_required('user')
 def a_result():
-    app.logger.info(request.form)
     form = ResultForm(request.form)
     if form.validate():
         filename = os.getenv('LOGS') + form.result.data
@@ -317,9 +316,7 @@ def user_change_password():
 @roles_required('admin')
 def user_delete():
     form = UserDeleteForm(request.form)
-    app.logger.info(request.form)
     if form.validate():
-    
         user = User.query.get(form.key.data)
         db_session.delete(user)
         db_session.commit()
