@@ -1,6 +1,0 @@
----
-- hosts: djbot_demo
-  tasks:
-    - apt:
-        name: emacs
-        state: present
