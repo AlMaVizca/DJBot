@@ -3,7 +3,7 @@ var Room = React.createClass({
 	return {name: "Room name", network: '127.0.0.0', netmask: '24', machines: '1'}
     },
     roomCancel: function(){
-	$('.add.basic').modal({closable: true}).modal('hide');
+	$('.room.basic').modal({closable: true}).modal('hide');
 	return true
     },
     roomSave: function(){
@@ -31,10 +31,11 @@ var Room = React.createClass({
 	    }.bind(this)
 	});
 	this.props.roomsReload();
-	$('.add.basic').modal({closable: true}).modal('hide');
+	$('.room.basic').modal({closable: true}).modal('hide');
+	this.resetState()
     },
     resetState: function(){
-	this.setState({name: "Room name", network: '127.0.0.0', netmask: '24', machines: '1'});
+	this.setState({name: "Room Name", network: '127.0.0.0', netmask: '24', machines: '1'});
     },
     changeName: function(e) {
 	this.setState({name: e.target.value});
@@ -62,7 +63,7 @@ var Room = React.createClass({
 	var Label = Semantify.Label;
 	var Modal = Semantify.Modal;
 	return (
-		<Modal className='add basic' init={this.props.modal}>
+		<Modal className='room basic' init={this.props.modal}>
 		<Header className="inverted grey">{this.state.name}</Header>
 		<Grid className="center aligned">
 		<Form>
@@ -154,6 +155,12 @@ var RoomItem = React.createClass({
 
 
 var RemoveButton = React.createClass({
+    togglePopup: function(){
+	$('.visible.button').popup('toggle');
+    },
+    componentDidMount: function(){
+	$('.button.red').popup({on: 'click', inline: true});
+    },
     render: function(){
 	var Button = Semantify.Button;
 	var Grid = Semantify.Grid;
@@ -161,7 +168,18 @@ var RemoveButton = React.createClass({
     	return(
 		<Grid className="right aligned">
 		<div className="right aligned column">
-		<Button className="inverted red basic circular" onClick={this.props.roomDelete}><Icon className="inverted red circle trash"/></Button>
+		<Button className="inverted red basic circular"><Icon className="inverted red circle trash"/></Button>
+		<div className="ui fluid popup top left transition hidden">
+		<div className="ui one column divided center aligned grid">
+		<div className="">Are you sure?</div>
+		<div className="">
+		<Button className="blue" onClick={this.togglePopup}>No</Button>
+		</div>
+		<div className="">
+		<Button className="red" onClick={this.props.roomDelete}>Yes</Button>
+		</div>		
+		</div>
+		</div>
 		</div>
 		</Grid>
 	);
@@ -172,7 +190,7 @@ var Settings = React.createClass({
     componentDidMount: function(){
     },
     roomAdd: function(){
-	$('.add.basic').modal({closable: false,
+	$('.room.basic').modal({closable: false,
 			 onApprove: function () {
 			     console.log('Approve');
 			 },
@@ -203,8 +221,7 @@ var Settings = React.createClass({
 		<Table className="blue">
 		<thead>
 		<tr>
-		<th className="five wide">
-		<Icon className="sitemap"/>Name</th>
+		<th className="five wide">Name</th>
 		<th className="one wide">Machines</th>
 		<th className="four wide">
 		<Icon className="sitemap"/>Network</th>

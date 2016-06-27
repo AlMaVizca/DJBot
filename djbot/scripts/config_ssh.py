@@ -2,7 +2,24 @@ import yaml
 import os
 import subprocess
 from ipaddress import IPv4Address, IPv4Network
+from Crypto.PublicKey import RSA
 
+def generate_key():
+    key = RSA.generate(2048)
+    with open("/root/.ssh/id_rsa", 'w') as content_file:
+        os.chmod("/root/.ssh/id_rsa", 0600)
+        content_file.write(key.exportKey('PEM'))
+        content_file.write("\n")
+
+    pubkey = key.publickey()
+    with open("/root/.ssh/id_rsa.pub", 'w') as content_file:
+        content_file.write(pubkey.exportKey('OpenSSH'))
+        content_file.write("\n")
+
+    subprocess.call(['cp', '/root/.ssh/id_rsa.pub', '/root/.ssh/pub_key/'])
+    subprocess.call(['cp', '/usr/src/app/djbot/scripts/config', '/root/.ssh/'])
+
+    
 
 class SshConfig():
     def __init__(self):
@@ -31,7 +48,7 @@ class SshConfig():
             yaml.dump({'defaults': self.defaults},
                       fp, default_flow_style=False)
         with open(os.getenv('HOME')+'/.ssh/config','w') as fp:
-            fp.write(subprocess.check_output(['assh', 'build']))
+            fp.write(subprocess.check_output(['assh', '-f', 'build']))
 
     def read_settings(self):
         with open(self.conf_file, 'r') as fp:
@@ -52,13 +69,10 @@ class SshConfig():
     def add_room(self, network, proxy, user = None):
         network = IPv4Network(unicode(network))
         regex = IPv4Address(unicode(self.hosts[proxy]['Hostname']))
-
-        
         ip_str = str(network.network_address + 1).split('.')
         base = '.'.join(ip_str[0:3])
         wild = '.*'
         regex = base + wild
-        
 
         self.hosts[regex] = { 'User': user, 'Gateways': [proxy]}
 

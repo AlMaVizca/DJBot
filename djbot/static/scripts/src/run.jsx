@@ -20,7 +20,6 @@ var Run = React.createClass({
 	this.tasksClear();
     },
     roomsClear: function(){
-	console.log('yit');
 	this.setState({rooms: []});
     },
     tasksClear: function(){
@@ -34,7 +33,6 @@ var Run = React.createClass({
 	    data: {tasks: this.state.tasks, rooms: this.state.rooms },
 	    success: function(data) {
 	        this.setState({message: data["message"]});
-		console.log(this.state.message);
 	    }.bind(this),
 	    error: function(xhr, status, err) {
 	        console.error(this.props.url, status, err.toString());
@@ -70,11 +68,11 @@ var Run = React.createClass({
 	var Steps = Semantify.Steps;
         var Step = Semantify.Step;
 	return(
-	    <div className="ui bottom attached tab active" data-tab="run">
+	    <div className="ui bottom attached tab active " data-tab="run">
 		<Steps className="fluid top attached">
-		    <Step active={this.state.active[0]} data-tab='where'>Where are we working?</Step>
-		    <Step active={this.state.active[1]} data-tab='what'>What are we doing?</Step>
-		    <Step active={this.state.active[2]} data-tab='when'>Confirm</Step>
+		    <Step active={this.state.active[0]} data-tab='where'>Rooms<br/>Where are you working?</Step>
+		    <Step active={this.state.active[1]} data-tab='what'>Tasks <br/>What are you doing?</Step>
+		    <Step active={this.state.active[2]} data-tab='when'>Confirmation <br/> Are you sure?</Step>
 		</Steps>
 		<Segment className='action'>
 		<SelectRooms active={this.state.active[0]} next={this.nextStep} rooms={this.props.rooms} edit={this.roomList}/>
@@ -100,7 +98,7 @@ var ItemList = React.createClass({
 	return(
 	    <tr>
 		<td>
-		<div className="ui checkbox toggle" onClick={this.updateList}>
+		<div className="ui checkbox" onClick={this.updateList}>
 		<input name="select" type="checkbox"/>
 		</div>
 	        </td>
@@ -130,9 +128,8 @@ var CheckList = React.createClass({
 		<Table className="blue">
 		<thead>
 		<tr>
-		<th className="two wide">Add to work</th>
-		<th className="Ten wide">
-		<Icon className="sitemap"/>Name</th>
+		<th className="two wide">Checklist</th>
+		<th className="Ten wide">Name</th>
 		</tr>
 		</thead>
 	       <tbody>
@@ -157,7 +154,7 @@ var SelectTask  = React.createClass({
 		   <Grid className="right aligned">
 		   <div className="sixteen wide column">
 		   <div className="ui animated fade red button" tabindex="0" onClick={this.props.reset}>
-		   <div className="hidden content">reset</div>
+		   <div className="hidden content">back</div>
 		   <div className="visible content">
 	           <Icon className="angle double left"/>
 		   </div>
@@ -240,13 +237,13 @@ var Schedule  = React.createClass({
 		   <Grid className="right aligned">
 	       <div className="sixteen wide column">
 	       <div className="ui animated fade red button" tabindex="0" onClick={this.props.reset}>
-		   <div className="hidden content">reset</div>
+		   <div className="hidden content">back</div>
 	       <div className="visible content">
 	       <Icon className="angle double left"/>
 	       </div>
 		   </div>
 	       <div className="ui animated fade blue button" tabindex="0" onClick={this.props.next}>
-		   <div className="hidden content">Run</div>
+		   <div className="hidden content">run</div>
 	       <div className="visible content">
 	       <Icon className="terminal"/>
 	       </div>

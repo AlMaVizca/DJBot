@@ -1,7 +1,7 @@
 # requirements.txt
 #factory
-flask
-flask-debugtoolbar
+#advanced-ssh-config
+Flask
 Flask-User
 FLask-Mail
 FLask-Login
@@ -10,5 +10,6 @@ flask-SQLAlchemy
 gunicorn
 ipaddress
 nose
+PyYAML
 SQLAlchemy
-#wtforms
+ssh-authorizer

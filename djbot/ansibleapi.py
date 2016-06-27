@@ -6,8 +6,7 @@ from ansible.inventory import Inventory
 from ansible.playbook.play import Play
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.plugins.callback import CallbackBase
-from threading import Thread
-from task import Task
+import threading
 import json
 import os
 
@@ -27,12 +26,17 @@ class ResultsCollector(CallbackBase):
         self.host_ok     = {}
         self.host_unreachable = {}
         self.host_failed = {}
+        self.condition = threading.Semaphore(0)
         
     def v2_runner_on_unreachable(self, result):
         self.host_unreachable[result._host.get_name()] = result._result
 
     def v2_runner_on_ok(self, result,  *args, **kwargs):
-        self.host_ok[result._host.get_name()] = result._result['ansible_facts']
+        try:
+            self.host_ok[result._host.get_name()]
+        except:
+            self.host_ok[result._host.get_name()] = []
+        self.host_ok[result._host.get_name()].append(result._result)
 
     def v2_runner_on_failed(self, result,  *args, **kwargs):
         self.host_failed[result._host.get_name()] = result._result
@@ -69,9 +73,6 @@ class Runner(object):
         self.hosts_results = {}
 
 
-    def clean_callback():
-        self.callback = ResultsCollector()
-
     def add_setup(self, hosts):
         self.play_source =  dict(
             name = 'setup',
@@ -85,13 +86,10 @@ class Runner(object):
 
     def add_plays(self, name='undefined', hosts=[], tasks=[]):
         """ add tasks to play"""
-        execution_tasks = []
-        for each in tasks:
-            execution_tasks.append(dict(action=each))
         self.play_source =  dict(
             name = name,
             hosts = ', '.join(hosts),
-            tasks = execution_tasks
+            tasks = tasks
         )
         self.plays[name] = Play().load(self.play_source, variable_manager=self.variable_manager, loader=self.loader)
 
@@ -113,18 +111,19 @@ class Runner(object):
                 tqm.cleanup()
 
 
-class ThreadRunner(Thread):
-    def __init__(self, rooms, tasks, user, execution_name):
-        Thread.__init__(self)
+class ThreadRunner(threading.Thread):
+    def __init__(self, rooms, tasks, user, execution_name, app):
+        threading.Thread.__init__(self)
+
         self.execution_name = execution_name
         self.rooms = rooms
         self.user = user
         self.playbook = Runner(self.rooms, self.user)
         self.playbook.add_setup(self.rooms)
         self.tasks = tasks
+        self.tasks_count = len(tasks)
         for each in tasks:
-            for module in each['modules']:
-                self.playbook.add_plays(each['name'], self.rooms, module)
+            self.playbook.add_plays(each['name'], self.rooms, each['modules'])
 
 
     def run(self):
@@ -138,9 +137,24 @@ class ThreadRunner(Thread):
 
                 
 if __name__ == '__main__':
-    inventory = ['127.0.0.1']
-    ansible_api = Runner(inventory, 'krahser')
+    inventory = ['172.18.0.3']
+    ansible_api = Runner(inventory, 'root')
     ansible_api.add_setup(inventory)
+    
+    ansible_api.add_plays('shell ls',inventory,[
+
+        {'action':
+         {'args':
+          {
+              u'repo': u'deb http://172.18.0.1:3142/httpredir.debian.org/debian jessie main',
+              u'state': u'present'
+          },
+        'module': u'apt_repository'
+      }
+     }
+    ])
     ansible_api.run()
+    ansible_api.callback.get_all()
+    
 
             

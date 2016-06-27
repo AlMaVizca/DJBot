@@ -10,10 +10,3 @@ proxycommand = assh connect %h --port=%p
 pubkeyauthentication = yes
 user = avizcaino
 visualhostkey = yes
-
-[proxy1]
-forwardagent = yes
-hostname = 163.10.78.1
-port = 22
-user = avizcaino
-

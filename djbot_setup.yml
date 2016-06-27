@@ -37,7 +37,20 @@
       tags:
         - build
         - restart
+        - dev
 
+    - name: Remove prod container
+      docker:
+        name: djbot_prod
+        image: "{{ ansible_user_id }}/djbot"
+        state: absent
+      ignore_errors: yes        
+      tags:
+        - build
+        - restart
+        - prod
+
+        
     - name: delete old image
       docker_image:
         path: "{{ ansible_user_dir}}/Repositories/djbot"
@@ -58,6 +71,7 @@
     - name: create containers
       docker:
         name: djbot
+        hostname: djbot
         image: "{{ ansible_user_id }}/djbot"
         state: started
         restart_policy: always
@@ -66,6 +80,24 @@
         env:
           MODE: "dev"
           VIRTUAL_HOST: "dev.djbot.local"
+          TZ: America/Argentina/Buenos_Aires
       tags:
         - build
         - restart
+        - dev
+
+
+    - name: create containers
+      docker:
+        name: djbot_prod
+        image: "{{ ansible_user_id }}/djbot"
+        state: absent
+        restart_policy: always
+        env:
+          VIRTUAL_HOST: "prod.djbot.local"
+          TZ: America/Argentina/Buenos_Aires
+      tags:
+        - build
+        - restart
+        - prod
+        

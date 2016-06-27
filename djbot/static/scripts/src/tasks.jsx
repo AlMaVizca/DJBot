@@ -4,6 +4,12 @@ var ModuleArgs = React.createClass({
     },
     componentWillReceiveProps: function(){
     },
+    componentDidMount: function(){
+	$('.icon.red').popup({on: 'click', inline: true});
+    },
+    togglePopup: function(){
+	$('.visible.button').popup('toggle');
+    },
     render: function(){
 	var Button = Semantify.Button;
 	var Icon = Semantify.Icon;
@@ -12,9 +18,19 @@ var ModuleArgs = React.createClass({
 		<td>{this.props.option}</td>
 	    	<td>{this.props.value}</td>
 		<td>
-		<Button className="icon red basic" onClick={this.parameterDelete}>
-		<Icon className="trash" />
-		</Button>
+		<Button className="icon red basic">
+		<Icon className="trash" /></Button>
+		<div className="ui fluid popup top left transition hidden">
+		<div className="ui one column divided center aligned grid">
+		<div className="">Are you sure?</div>
+		<div className="">
+		<Button className="blue" onClick={this.togglePopup}>No</Button>
+		</div>
+		<div className="">
+		<Button className="red" onClick={this.parameterDelete}>Yes</Button>
+		</div>		
+		</div>
+		</div>
 		</td>
 	    </tr>
 	);
@@ -51,16 +67,31 @@ var ModuleItem = React.createClass({
     },
     componentDidMount: function(){
 	$('.module.ui .item').tab();
+	$('.icon.red').popup({on: 'click', inline: true});
+    },
+    togglePopup: function(){
+	$('.visible.button').popup('toggle');
     },
     render: function(){
 	var Button = Semantify.Button;
 	var Icon = Semantify.Icon;
 	return(
 		<div className="module item" data-tab={this.props.keyname}>
-		<Button className="icon red basic" onClick={this.moduleDelete}>
-		<Icon className="trash" />
-		</Button>
-		{this.props.name}
+		<Button className="icon red basic">
+		<Icon className="trash" /></Button>
+		<div className="ui fluid popup top left transition hidden">
+		<div className="ui one column divided center aligned grid">
+		<div className="">Are you sure?</div>
+		<div className="">
+		<Button className="blue" onClick={this.togglePopup}>No</Button>
+		</div>
+		<div className="">
+		<Button className="red" onClick={this.moduleDelete}>Yes</Button>
+		</div>		
+		</div>
+		</div>
+
+	    {this.props.name}
 		</div>
 	);
     }
@@ -95,13 +126,12 @@ var ModuleContent = React.createClass({
 	var Input = Semantify.Input;
 	var Table = Semantify.Table;
 	
-	console.log(this.props);
 	var options = [];
 	if (this.props.module.options){
 	    options = this.props.module.options.map(function(option, i){
 		return <ModuleArgs key={i} option={option.name} value={option.value} parameterKey={option.key} parameterDelete={this.props.parameterDelete}/>;}, this);
 	}
-	var argClasses = classNames('ui', 'tab', 'segment');
+	var argClasses = classNames('ui', 'tab');
 	if (this.props.key == 1){
 	    argClasses = classNames(argClasses, 'active')
 	}
@@ -191,9 +221,11 @@ var Task = React.createClass({
 var TaskItem = React.createClass({
     componentDidMount: function(){
 	$('.vertical.tabular .item').tab();
+	$('.icon.red').popup({on: 'click', inline: true});
     },
     componentWillReceiveProps: function(){
 	$('.vertical.tabular .item').tab();
+	$('.icon.red').popup({on: 'click', inline: true});
     },
     taskDelete: function(){
 	$.ajax({
@@ -210,6 +242,10 @@ var TaskItem = React.createClass({
 	});
 	this.props.tasksReload();	
     },
+    togglePopup: function(){
+	$('.visible.button').popup('toggle');
+    },
+
     render: function(){
 	var Button = Semantify.Button;
 	var Icon = Semantify.Icon;
@@ -217,9 +253,19 @@ var TaskItem = React.createClass({
 		<div className="item blue" data-tab={this.props.tab}>
 		<div className="ui grid">
 		<div className="row middle aligned content">
-		<Button className="icon red basic" onClick={this.taskDelete}>
-		<Icon className="trash" />
-		</Button>
+		<Button className="icon red basic">
+		<Icon className="trash" /></Button>
+		<div className="ui fluid popup top left transition hidden">
+		<div className="ui one column divided center aligned grid">
+		<div className="">Are you sure?</div>
+		<div className="">
+		<Button className="blue" onClick={this.togglePopup}>No</Button>
+		</div>
+		<div className="">
+		<Button className="red" onClick={this.taskDelete}>Yes</Button>
+		</div>		
+		</div>
+		</div>
 		<span>{this.props.name}</span>
 		</div>
 		</div>		
@@ -289,7 +335,6 @@ var TaskContent = React.createClass({
 	        console.error(url, status, err.toString());
 	    }.bind(this)
 	});
-	console.log(this.state.message);
 	this.props.tasksReload();
     },
     parameterDelete: function(parameterKey){
@@ -301,7 +346,6 @@ var TaskContent = React.createClass({
 	    data: {key: parameterKey},
 	    success: function(data) {
 	        this.setState({message: data["message"]});
-		console.log(this.state.message);
 	    }.bind(this),
 	    error: function(xhr, status, err) {
 	        console.error(url, status, err.toString());
@@ -350,9 +394,10 @@ var TaskContent = React.createClass({
 	    return <ModuleContent key={module.key} moduleUpdate={this.moduleUpdate} parameterDelete={this.parameterDelete} parameterAdd={this.parameterAdd} module={module} keyname={keyname} />;}, this);
 	}
 	return(
-	<div className="ui tab segment" data-tab={this.props.tab}>
+	<div className="ui tab" data-tab={this.props.tab}>
 	 <Grid>
-	  <div className="six wide stretched column">
+		<div className="six wide stretched column">
+		<Header>Modules</Header>
 		<Menu className="vertical tabular fluid module">
 		{modules}
 	    	<Row>
@@ -361,7 +406,6 @@ var TaskContent = React.createClass({
 		</Menu>
 		</div>
 		<div className="eight wide stretched column">
-		<Header>Parameters</Header>
 		{moduleParameters}
 	  </div>
 	 </Grid>
@@ -424,7 +468,6 @@ var Tasks = React.createClass({
           </Menu>
 	</div>
 	<div className="eleven wide stretched column">
-	     <Header>Modules</Header>
 		{modules}
 	    </div>
 	</Grid>

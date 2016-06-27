@@ -7,6 +7,13 @@ body {
     padding-top: 3em;
 }
 
+
+.grid.login{
+    margin-top: 2em;
+}
+
+
+
 #sortable {
     list-style-type: none;
     margin: 0;
@@ -16,4 +23,8 @@ body {
 
 .grid.centered{
     margin-top: 1em;
+}
+
+.popup.visible{
+    width: 200px !important;
 }
