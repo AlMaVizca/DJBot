@@ -1,0 +1,121 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Arch Linux)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: DJBot.aux
+The style file: unsrtnat.bst
+Database file #1: DJBot.bib
+Warning--entry type for "djbotv1" isn't style-file defined
+--line 1 of file DJBot.bib
+Warning--entry type for "parallel-ssh" isn't style-file defined
+--line 10 of file DJBot.bib
+Warning--entry type for "Python" isn't style-file defined
+--line 18 of file DJBot.bib
+Warning--entry type for "Fabric" isn't style-file defined
+--line 26 of file DJBot.bib
+Warning--entry type for "Redis" isn't style-file defined
+--line 33 of file DJBot.bib
+Warning--entry type for "RQ" isn't style-file defined
+--line 41 of file DJBot.bib
+Warning--entry type for "Django" isn't style-file defined
+--line 48 of file DJBot.bib
+Warning--entry type for "Ansible" isn't style-file defined
+--line 56 of file DJBot.bib
+Warning--entry type for "Chef" isn't style-file defined
+--line 64 of file DJBot.bib
+Warning--entry type for "Docker" isn't style-file defined
+--line 71 of file DJBot.bib
+Warning--entry type for "Kubernetes" isn't style-file defined
+--line 79 of file DJBot.bib
+Warning--entry type for "Otter" isn't style-file defined
+--line 86 of file DJBot.bib
+Warning--entry type for "Puppet" isn't style-file defined
+--line 93 of file DJBot.bib
+Warning--entry type for "SALTSTACK" isn't style-file defined
+--line 100 of file DJBot.bib
+Warning--entry type for "SQLalchemy" isn't style-file defined
+--line 107 of file DJBot.bib
+Warning--entry type for "SQLite" isn't style-file defined
+--line 114 of file DJBot.bib
+Warning--entry type for "Flask" isn't style-file defined
+--line 121 of file DJBot.bib
+Warning--entry type for "React" isn't style-file defined
+--line 128 of file DJBot.bib
+Warning--entry type for "Emacs" isn't style-file defined
+--line 135 of file DJBot.bib
+Warning--entry type for "Lihuen" isn't style-file defined
+--line 142 of file DJBot.bib
+Warning--entry type for "JavaScript" isn't style-file defined
+--line 149 of file DJBot.bib
+Warning--entry type for "SemanticUI" isn't style-file defined
+--line 156 of file DJBot.bib
+Warning--entry type for "apt-cacher" isn't style-file defined
+--line 163 of file DJBot.bib
+Warning--entry type for "Org-mode" isn't style-file defined
+--line 171 of file DJBot.bib
+Warning--empty year in djbotv1
+Warning--empty year in Lihuen
+Warning--empty year in Python
+Warning--empty year in Fabric
+Warning--empty year in Redis
+Warning--empty year in Django
+Warning--empty year in Ansible
+Warning--empty year in Chef
+Warning--empty year in Docker
+Warning--empty year in Kubernetes
+Warning--empty year in Otter
+Warning--empty year in Puppet
+Warning--empty year in SALTSTACK
+Warning--empty year in SQLalchemy
+Warning--empty year in Flask
+Warning--empty year in React
+Warning--empty year in Emacs
+Warning--empty year in JavaScript
+Warning--empty year in SemanticUI
+Warning--empty year in SQLite
+Warning--empty year in apt-cacher
+Warning--empty year in parallel-ssh
+Warning--empty year in RQ
+Warning--empty year in Org-mode
+Warning--empty journal in HTD
+Warning--empty journal in AID
+You've used 27 entries,
+            2481 wiz_defined-function locations,
+            668 strings with 6593 characters,
+and the built_in function-call counts, 7177 in all, are:
+= -- 615
+> -- 189
+< -- 28
++ -- 108
+- -- 54
+* -- 302
+:= -- 1098
+add.period$ -- 105
+call.type$ -- 27
+change.case$ -- 53
+chr.to.int$ -- 27
+cite$ -- 53
+duplicate$ -- 391
+empty$ -- 807
+format.name$ -- 81
+if$ -- 1559
+int.to.chr$ -- 1
+int.to.str$ -- 28
+missing$ -- 4
+newline$ -- 167
+num.names$ -- 81
+pop$ -- 393
+preamble$ -- 1
+purify$ -- 27
+quote$ -- 0
+skip$ -- 250
+stack$ -- 0
+substring$ -- 54
+swap$ -- 53
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 186
+warning$ -- 26
+while$ -- 54
+width$ -- 0
+write$ -- 354
+(There were 50 warnings)

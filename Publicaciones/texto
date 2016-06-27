@@ -1,0 +1,11 @@
+ Existen aplicaciones para Microsoft Windows y OS X que hacen funcionar la plataforma docker mediante la virtualizacion de un kernel Linux.
+
+
+Cuando hablamos de construir, envalar y ejecutar estamos haciendo referencia a contenedores.
+
+
+La aplicacion permite ejecutar cualquier distribucion GNU/Linux, ademas. Docker, ademas, posee un sistema de versiones que permite empaquetar el software para poder compartir y asegurarse de que funcione exactamente de la misma manera.
+
+
+ En la actualidad python se encuentra disponible en muchas distribuciones de GNU/Linux desde el momento de la instalacion, por lo que el unico requisito real es configurar un servidor ssh en cada maquina de la sala, situacion que fue resuelta en las soluciones presentadas anteriormente.
+
