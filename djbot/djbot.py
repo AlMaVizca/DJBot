@@ -82,7 +82,10 @@ def unauthorized_handler():
 @flask_login.login_required
 @roles_required('user')
 def index():
-    return render_template('dashboard.html' )
+    public_key = ''
+    with open('/root/.ssh/id_rsa.pub') as pub:
+        public_key = pub.read()
+    return render_template('dashboard.html', public_key=public_key)
 
 
 @app.route('/api/room/', methods=['GET'])
@@ -243,7 +246,7 @@ def a_result():
     form = ResultForm(request.form)
     if form.validate():
         filename = os.getenv('LOGS') + form.result.data
-        result = get_result(filename, app)
+        result = get_result(filename)
     return jsonify(result)
 
 

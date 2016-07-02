@@ -1,6 +1,16 @@
 {% extends "layout.html" %}
 {% block header %}
-DJBot
+<div class="header item">
+    <a href="/">DJBot</a>
+</div>
+<div class="item">
+<Label id="pubkey">Public Key</Label>
+<div class="ui fluid popup bottom left transition hidden">
+    <textarea id="popupPubkey" rows="10" cols="70">
+	{{ public_key }}
+    </textarea>
+</div>
+</div>
 {% endblock %}
 {% block nav %}
 <div class="item">
@@ -17,12 +27,9 @@ DJBot
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-semantify/0.5.1/react-semantify.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
-
-
-
-
-
-
 <script type="text/babel" src="{{ url_for('static', filename='scripts/build/main.js')}}"></script>
-</script>
+    </script>
+    <script>
+     	$('#pubkey').popup({on: 'click', position: 'bottom left', inline: true});
+    </script>
 {% endblock %}

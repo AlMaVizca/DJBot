@@ -2,12 +2,6 @@ body {
     background-color: #FFFFFF;
 }
 
-#content {
-    height: 100%;
-    padding-top: 3em;
-}
-
-
 .grid.login{
     margin-top: 2em;
 }

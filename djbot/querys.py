@@ -32,7 +32,7 @@ def get_machines(rooms):
     return hosts, names
 
 
-def get_result(filename,app):
+def get_result(filename):
     result = {'data': 'Not Found!'}
     with open(filename, 'r') as fp:
         result = json.load(fp)

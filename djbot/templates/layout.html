@@ -3,7 +3,9 @@
 <html>
 <head>
     <title>DjBot</title>
-    {% block head %}{% endblock %}
+    <div class="ui inverted menu">
+	{% block head %}{% endblock %}
+    </div>
     <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bower_components/semantic/dist/semantic.min.css')}}"> -->
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
