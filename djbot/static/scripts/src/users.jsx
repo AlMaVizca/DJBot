@@ -14,6 +14,21 @@ var UserItem = React.createClass({
 	});
 	this.props.usersReload();
     },
+    userAdmin: function(){
+	$.ajax({
+	    url: '/api/user/change_admin',
+	    dataType: 'json',
+	    type: 'POST',
+	    data: {key: this.props.id},
+	    success: function(data) {
+		this.setState({message: data['message']});
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error('/api/user/change_admin', status, err.toString());
+	    }.bind(this)
+	});
+	this.props.usersReload();
+    },
     userEdit: function(){
 	this.props.updateItem(this.props.id);
 	$('.pass.add').modal({closable: false,}).modal('toggle');
@@ -49,7 +64,7 @@ var UserItem = React.createClass({
 	return(
 		<tr>
 		<td>
-	    	<div className={classToggle} onClick={this.updateList}>
+	    	<div className={classToggle} onClick={this.userAdmin}>
 		<input name="select" type="checkbox"/>
 		</div>
 		</td>

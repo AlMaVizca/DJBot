@@ -300,6 +300,18 @@ def user_change():
     return jsonify({'message': 'failed'})
     
 
+@app.route('/api/user/change_admin', methods=['POST'])
+@roles_required('admin')
+def user_change_admin():
+    form = UserDeleteForm(request.form)
+    if form.validate():
+        user = User.query.get(form.key.data)
+        user.change_admin()
+        db_session.commit()
+        return jsonify({'message': 'deleted'})
+    return jsonify({'message': 'failed'})
+
+    
 @app.route('/api/user/change_password', methods=['POST'])
 @roles_required('admin')
 def user_change_password():
