@@ -90,24 +90,24 @@ var Facts = React.createClass({
 
 var ModulePopup = React.createClass({
     componentWillReceiveProps: function(){
-	this.keys = Object.keys(this.props.module_args);
+	this.keys = Object.keys(this.props.args);
 	if (this.keys){
 	    this.parameters = this.keys.map(function(prop,i){
-	    if (this.props.module_args[prop] != null){
-		this.value = this.props.module_args[prop].toString();
+	    if (this.props.args[prop] != null){
+		this.value = this.props.args[prop].toString();
 		return <Description key={i} name={prop} value={this.value} />
 	    }
 	},this);
 	}
     },
     render: function(){
-	var keys = Object.keys(this.props.module_args);
-	var parameters;
+	var keys = Object.keys(this.props.args);
+	var parameters = '';
 	var value;
-	if (this.keys){
-	    this.parameters = this.keys.map(function(prop,i){
-		if (this.props.module_args[prop] != null ){
-		    this.value = this.props.module_args[prop];
+	if (keys){
+	    this.parameters = keys.map(function(prop,i){
+		if (this.props.args[prop] != null ){
+		    this.value = this.props.args[prop];
 		    return <Description key={i} name={prop} value={this.value} />
 		}
 	},this);
@@ -148,17 +148,18 @@ var TaskCard = React.createClass({
 	var facts;
 	var color = classNames('green');
 	if (this.props.changed){
-	    color = classNames('yellow');
+	    this.color = classNames('yellow');
 	}
-	color = classNames(color, 'column');
+	this.color = classNames(color, 'column');
 
 	if (this.props.ansible_facts){
-	    facts = <Facts ansible_facts={this.props.ansible_facts} />;
+	    this.facts = <Facts ansible_facts={this.props.ansible_facts} />;
 	}
-	if (this.props.module_args){
+
+	if (this.props.invocation.module_args){
 	    this.module_args = <ModulePopup args={this.props.invocation.module_args} />;
 	}
-	
+
 	return(
 	<div className="ui segment grid">
 		<div className="column">
@@ -171,7 +172,7 @@ var TaskCard = React.createClass({
 		{this.facts}
 
 	    </div>
-			</div>
+		</div>
 	    </div>
 	</div>
 	);
@@ -270,10 +271,25 @@ var ResultItem = React.createClass({
 
 var ResultContent = React.createClass({
     getInitialState: function(){
+	return({aResult: { ok: '', failed: '', unreachable:'', datetime:''}});
     },
     componentDidMount: function(){
+	this.getResult();
     },
-    componentWillReceiveProps: function(){
+    getResult: function(){
+    	$.ajax({
+	    url: "/api/results",
+	    dataType: 'json',
+	    type: 'POST',
+	    dataType: 'json',
+	    data: {result: this.props.name},
+	    success: function(data) {
+		this.setState({aResult: data});
+	    }.bind(this),
+	    error: function(xhr, status, err) {
+	        console.error(this.props.url, status, err.toString());
+	    }.bind(this)
+	});
     },
     render: function(){
 	var Card = Semantify.Card;
@@ -282,16 +298,16 @@ var ResultContent = React.createClass({
 	return(
                 <div className="ui tab segments" data-tab={this.props.tab}>
 		<Segment>
-		Results - Date: {this.props.aResult.datetime}
+		Results - Date: {this.state.aResult.datetime}
 		</Segment>
 		<Segment className="green">
-		<ComputerList computers={this.props.aResult.ok} />
+		<ComputerList computers={this.state.aResult.ok} />
 	    </Segment>
 		<Segment className="red">
-		<ComputerList computers={this.props.aResult.failed} />
+		<ComputerList computers={this.state.aResult.failed} />
 		</Segment>
 		<Segment className="yellow">
-		<ComputerList computers={this.props.aResult.unreachable} />
+		<ComputerList computers={this.state.aResult.unreachable} />
 	    </Segment>
 		</div>
 	);
@@ -301,7 +317,7 @@ var ResultContent = React.createClass({
 
 var Results = React.createClass({
     getInitialState: function(){
-	return({keys:[], aResult: { ok: '', failed: '', unreachable:'', datetime:''}});
+	return({keys:[]});
     },
     componentDidMount: function() {
 	if (this.props.results){
@@ -314,21 +330,6 @@ var Results = React.createClass({
 	$('.results.tabular .item').tab()
 	$('.results.dropdown').dropdown();
     },
-    getResult: function(name){
-    	$.ajax({
-	    url: "/api/results",
-	    dataType: 'json',
-	    type: 'POST',
-	    dataType: 'json',
-	    data: {result: name},
-	    success: function(data) {
-		this.setState({aResult: data});
-	    }.bind(this),
-	    error: function(xhr, status, err) {
-	        console.error(this.props.url, status, err.toString());
-	    }.bind(this)
-	});
-    },
     componentWillReceiveProps: function(){
 	var keys = '';
 	if (this.props.results.length > 0){
@@ -338,8 +339,7 @@ var Results = React.createClass({
 	    }, this);
 	    this.executionResults = this.props.results.map(function(result, i){
 		keys = this.state.keys[i];
-		this.getResult(result.name);
-		return <ResultContent key={i} name={result.name} tab={keys} results={this.state.aResult}/>;
+		return <ResultContent key={i} name={result.name} tab={keys}/>;
 	    }, this);
 	}
 	$('.results.tabular .item').tab()
@@ -375,7 +375,7 @@ var Results = React.createClass({
 		<i className="dropdown icon"></i>
 		<span className="text">Select Results</span>
 		<div className="menu">
-		{executionNames}
+		{this.executionNames}
 	    </div>
 	    </Dropdown>
 
@@ -386,7 +386,7 @@ var Results = React.createClass({
 		</div>
 		</div>
 	    </Menu>
-		{executionResults}
+		{this.executionResults}
 	    </div>
 	    </Grid>
 		</div>
