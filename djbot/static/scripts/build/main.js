@@ -1715,6 +1715,9 @@ var User = React.createClass({
 	var Label = Semantify.Label;
 	return(
 		<div>
+		<div className="ui message">
+		<p>{this.props.message}</p>
+		</div>
 		<Grid className="center aligned">
 		<Form>
 		<Field>
@@ -1751,7 +1754,7 @@ var User = React.createClass({
 		<Input>
 		<div className="ui labeled input">
 		<Label>
-		Passwordn
+		Password
 	    </Label>
 		<input id="password" placeholder='' type="password" />
 		</div>
@@ -1771,7 +1774,7 @@ var User = React.createClass({
 		</Grid>		
 		<Grid>
 		<div className="right aligned column">
-		<Button className="inverted green basic active approve" onClick={this.userSave}>Save</Button>
+		<Button className="inverted green basic active approve" onClick={this.props.userSave}>Save</Button>
 		</div>
 		</Grid>
 		</div>
@@ -1837,8 +1840,8 @@ var UserList = React.createClass({
 	    }.bind(this)
 	});
 
-	document.getElementById('#newpass').value='';
-	document.getElementById('#oldpass').value='';
+	document.getElementById('newpass').value='';
+	document.getElementById('oldpass').value='';
 	$('.pass.add').modal({closable: true}).modal('toggle');
     },
     render: function(){
@@ -1912,7 +1915,7 @@ var UserList = React.createClass({
 
 var Users = React.createClass({
     getInitialState: function(){
-	return {key: 999, username: "", email: "", old: "", password:"", replypw:"", admin: true}
+	return {key: 999, username: "", email: "", old: "", password:"", replypw:"", admin: true, message: ''}
     },
     updateUser: function(){
 	if (this.props.user){
@@ -2004,7 +2007,7 @@ var Users = React.createClass({
 		</div>
 	    	<div className="twelve wide stretched column">
 		 <div className="ui attached tab active" data-tab="user">
-		<User username={this.state.username} email={this.state.email} key={this.state.key} userSave={this.userSave} changeName={this.changeName} changeEmail={this.changeEmail} />
+		<User username={this.state.username} email={this.state.email} key={this.state.key} userSave={this.userSave} changeName={this.changeName} changeEmail={this.changeEmail} message={this.state.message}/>
 	    </div>
 		{users}
 		</div>
