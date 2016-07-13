@@ -13,7 +13,7 @@ sudo mv docker-compose /usr/local/bin
 
 docker-compose up -d
 
-docker-compose scale computer=10
+docker-compose scale computer=5
 
 
 echo "The network is:"
