@@ -8,7 +8,7 @@ echo 'deb https://apt.dockerproject.org/repo debian-jessie main' > /etc/apt/sour
 echo '### apt-get update ---> this may take a while...'
 apt-get update -qq
 echo '### apt-get install docker-engine ---> this may take a while...'
-apt-get install docker-engine -yqq
+apt-get install docker-engine -yqq --force-yes
 echo '### systemctl enable docker && systemctl start docker'
 systemctl enable docker
 systemctl start docker
