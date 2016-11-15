@@ -3,7 +3,7 @@ EXPOSE 80
 VOLUME /usr/src/app
 
 #Install ansible
-RUN pip install git+git://github.com/ansible/ansible.git@stable-2.1
+RUN pip install git+git://github.com/ansible/ansible.git@stable-2.2
 
 #Logs
 RUN mkdir -p /var/log/djbot
