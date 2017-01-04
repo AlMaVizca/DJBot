@@ -3,6 +3,7 @@
 *.pyc
 *.sql
 *.retry
+*.db
 env
 */__pycache__/*
 djbot/static/bower_components
