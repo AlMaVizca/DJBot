@@ -1,13 +1,27 @@
 ---
 - hosts: localhost
   gather_facts: yes
+  vars:
+    path_repositories: "{{ ansible_user_dir }}/Repositories"
   tasks:
     - setup:
         filter: "ansible_*"
       tags:
         - build
         - restart
-        
+
+    - file:
+        path: "{{ path_repositories}}"
+        state: directory
+        mode: 0750
+        owner: "{{ ansible_user_id }}"
+
+    # - git:
+    #     repo: git@github.com:krahser/djbot.git
+    #     dest: "{{ path_repositories}}/DJBot"
+    #     accept_hostkey: yes
+    #     force: yes
+
     - name: requirements
       pip:
         name: docker-py
@@ -17,70 +31,71 @@
       tags:
         - build
 
-        
+
     - name: requirements
       pacman:
         name: python2-docker-py
         state: present
       become: yes
-      when: ansible_distribution == "Archlinux"      
+      when: ansible_distribution == "Archlinux"
       tags:
         - build
 
 
     - name: Remove old container
-      docker:
-        name: djbot
+      docker_container:
+        name: DJBot
         image: "{{ ansible_user_id }}/djbot"
         state: absent
-      ignore_errors: yes        
+      ignore_errors: yes
       tags:
         - build
         - restart
         - dev
 
     - name: Remove prod container
-      docker:
+      docker_container:
         name: djbot_prod
         image: "{{ ansible_user_id }}/djbot"
         state: absent
-      ignore_errors: yes        
+      ignore_errors: yes
       tags:
         - build
         - restart
         - prod
 
-        
-    - name: delete old image
-      docker_image:
-        path: "{{ ansible_user_dir}}/Repositories/djbot"
-        name: "{{ ansible_user_id }}/djbot"
-        state: absent
-      ignore_errors: yes
-      tags:
-        - build
+    # - name: delete old image
+    #   docker_image:
+    #     path: "{{ path_repositories}}/DJBot"
+    #     name: "{{ ansible_user_id }}/djbot"
+    #     state: absent
+    #   ignore_errors: yes
+    #   tags:
+    #     - build
 
-    - name: create new image
-      docker_image:
-        path: "{{ ansible_user_dir}}/Repositories/djbot"
-        name: "{{ ansible_user_id }}/djbot"
-        state: present
-      tags:
-        - build
+    # - name: create new image
+    #   docker_image:
+    #     path: "{{ path_repositories }}/DJBot"
+    #     name: "{{ ansible_user_id }}/djbot"
+    #     state: present
+    #   tags:
+    #     - build
 
     - name: create containers
-      docker:
-        name: djbot
-        hostname: djbot
+      docker_container:
+        name: DJBot
+        hostname: DJBot
         image: "{{ ansible_user_id }}/djbot"
         state: started
         restart_policy: always
+        ports:
+          - "8000:80"
         volumes:
-          - "{{ ansible_user_dir }}/Repositories/djbot/:/usr/src/app"
+          - "{{ path_repositories }}/DJBot/:/usr/src/app"
         env:
           MODE: "dev"
           VIRTUAL_HOST: "dev.djbot.local"
-          TZ: America/Argentina/Buenos_Aires
+          TZ: Asia/Shanghai
       tags:
         - build
         - restart
@@ -88,8 +103,8 @@
 
 
     - name: create containers
-      docker:
-        name: djbot_prod
+      docker_container:
+        name: DJBot_prod
         image: "{{ ansible_user_id }}/djbot"
         state: absent
         restart_policy: always

@@ -1,3 +1,5 @@
+var React = require("react");
+
 var RoomChoice = React.createClass({
     render: function(){
 	var Icon = Semantify.Icon;
@@ -54,7 +56,6 @@ var Blackboard = React.createClass({
 		<Button className="discover" color="red" onClick={this._onClick} active={this.state.active}>Discover</Button>
 		</div>
 	    <div className="ui cards three column inverted grid" id="sortable">
-		
 
 
 	    </div>
@@ -63,3 +64,5 @@ var Blackboard = React.createClass({
 	);
     }
 });
+
+module.exports = Blackboard;

@@ -1,3 +1,5 @@
+var React = require("react");
+
 var Description = React.createClass({
     render: function(){
 	return(
@@ -328,3 +330,4 @@ var Results = React.createClass({
     }
 });
 
+module.exports = Result;

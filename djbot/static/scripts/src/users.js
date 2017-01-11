@@ -1,3 +1,5 @@
+var React = require("react");
+
 var UserItem = React.createClass({
     userDelete: function(){
 	$.ajax({
@@ -550,3 +552,4 @@ var UserTabList = React.createClass({
     }
 });
 
+module.exports = Users;

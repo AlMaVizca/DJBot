@@ -1,3 +1,17 @@
+var React = require("react");
+var ReactDom = require("react-dom");
+
+// var Blackboard = require("./blackboard");
+// var Result = require("./result");
+// var Rooms = require("./rooms");
+// var Run = require("./run");
+// var Settings = require("./settings");
+// var Tasks = require("./tasks");
+
+var Users = require("./users");
+
+
+
 var Main = React.createClass({
     getInitialState: function() {
         return {tasks : [{ key: 0, name: 'your connection is not working', modules: [{ key :1, name: 'failed', options: [{ key: 1, name: "let's hand some work", value: 'yeah!', }]}]}], rooms: [{name:'your conecction is not working', machines: 0, network: '127.0.0.1', netmask:'24'}], results: [], user: {}, users:[]}},
@@ -131,4 +145,3 @@ ReactDOM.render(
      <Main />,
      document.getElementById('content')
  );
- 
