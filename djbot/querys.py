@@ -39,7 +39,7 @@ def get_result(filename):
     result['datetime'] = time.strftime("%m/%d/%Y %I:%M:%S %p",time.localtime(os.path.getmtime(filename)))
     return result
 
-    
+
 def get_rooms():
     rooms = Room().query.all()
     rooms_info = {'rooms': []}
@@ -48,7 +48,7 @@ def get_rooms():
         rooms_info['rooms'].append(each_room.get_setup())
     return rooms_info
 
-    
+
 def get_tasks():
     tasks = Task().query.all()
     tasks_info = {'tasks': []}
@@ -64,4 +64,3 @@ def get_users():
         user = User.query.filter(User.username==each.username).first()
         users_info['users'].append(user.get_setup())
     return users_info
-    

@@ -41,7 +41,6 @@ if not os.path.isfile('/root/.ssh/id_rsa'):
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-    
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
@@ -64,8 +63,8 @@ def login():
             flask_login.login_user(user)
             return redirect(url_for('index', _external=True))
     return redirect(url_for('login', _external=True))
-            
-            
+
+
 @app.route('/logout')
 def logout():
     flask_login.logout_user()
@@ -92,11 +91,10 @@ def index():
 @roles_required('user')
 def api_rooms():
     return jsonify(get_rooms())
-    
 
 
 @app.route('/api/room/add', methods=['POST'])
-@roles_required('user')    
+@roles_required('user')
 def room_add():
     form = RoomFormAdd(request.form)
     if form.validate():
@@ -108,7 +106,7 @@ def room_add():
 
 
 @app.route('/api/room/delete', methods=['POST'])
-@roles_required('user')    
+@roles_required('user')
 def room_delete():
     form = RoomFormDelete(request.form)
     if form.validate():
@@ -119,7 +117,7 @@ def room_delete():
 
 
 @app.route('/api/room/discover', methods=['POST'])
-@roles_required('user')    
+@roles_required('user')
 def room_ssh():
     room = RoomFormDelete(request.form)
     if room.validate():
@@ -128,10 +126,10 @@ def room_ssh():
         return jsonify(hosts)
     else:
         return redirect(url_for('index'))
-        
+
 
 @app.route('/api/task/', methods=['GET'])
-@roles_required('user')    
+@roles_required('user')
 def api_tasks():
     return jsonify(get_tasks())
 
@@ -147,7 +145,7 @@ def task_add():
         return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})
 
-    
+
 @app.route('/api/task/delete', methods=['POST'])
 @roles_required('user')
 def task_delete():
@@ -159,8 +157,8 @@ def task_delete():
         return jsonify({'message': 'deleted'})
     return jsonify({'message': 'failed'})
 
-    
-@roles_required('user')    
+
+@roles_required('user')
 @app.route('/api/task/<id>/module/add', methods=['POST'])
 def module_add(id):
     form = ModuleFormAdd(request.form)
@@ -171,7 +169,6 @@ def module_add(id):
             return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})
 
-    
 
 @app.route('/api/task/<id>/module/delete', methods=['POST'])
 @roles_required('user')
@@ -184,7 +181,7 @@ def module_delete(id):
             return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})
 
-    
+
 @app.route('/api/task/<id>/parameter/add', methods=['POST'])
 @roles_required('user')
 def parameter_add(id):
@@ -208,7 +205,6 @@ def parameter_delete(id):
             return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})
 
-    
 
 @app.route('/api/run', methods=['POST'])
 @roles_required('user')
@@ -227,8 +223,6 @@ def run():
         return jsonify({'message': 'Task is running!'})
     return jsonify({'message': 'receive'})
 
-    
-    
 @app.route('/api/results', methods=['GET'])
 @roles_required('user')
 def results():
@@ -238,8 +232,6 @@ def results():
         results.append({'name': each})
     return jsonify({'results': results })
 
-    
-    
 @app.route('/api/results', methods=['POST'])
 @roles_required('user')
 def a_result():
@@ -250,9 +242,13 @@ def a_result():
     return jsonify(result)
 
 
-
-
 @app.route('/api/user', methods=['GET'])
+@roles_required('user')
+def user():
+    user = User.query.filter(User.username==current_user.username).first()
+    return jsonify(user.get_setup())
+
+@app.route('/api/users', methods=['GET'])
 @roles_required('admin')
 def users():
     users = {}
@@ -264,8 +260,6 @@ def users():
     users['user'] = user.get_setup()
     return jsonify(users)
 
-    
-    
 @app.route('/api/user/add', methods=['POST'])
 @roles_required('admin')
 def user_add():
@@ -298,7 +292,7 @@ def user_change():
             return jsonify({'message': 'saved'})
         return jsonify({'message': 'wrong password!'})
     return jsonify({'message': 'failed'})
-    
+
 
 @app.route('/api/user/change_admin', methods=['POST'])
 @roles_required('admin')
@@ -311,7 +305,7 @@ def user_change_admin():
         return jsonify({'message': 'deleted'})
     return jsonify({'message': 'failed'})
 
-    
+
 @app.route('/api/user/change_password', methods=['POST'])
 @roles_required('admin')
 def user_change_password():
@@ -326,7 +320,7 @@ def user_change_password():
         return jsonify({'message': 'wrong password!'})
     return jsonify({'message': 'failed'})
 
-    
+
 @app.route('/api/user/delete', methods=['POST'])
 @roles_required('admin')
 def user_delete():
@@ -338,8 +332,6 @@ def user_delete():
         return jsonify({'message': 'deleted'})
     return jsonify({'message': 'failed'})
 
-
-        
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

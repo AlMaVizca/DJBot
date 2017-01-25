@@ -7,18 +7,22 @@
     "test": "test"
   },
   "dependencies": {
+    "axios": "^0.15.3",
     "classnames": "^2.2.5",
-    "jquery": "^3.1.1",
-    "jquery-ui": "^1.12.1",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
+    "react-router": "^3.0.0",
     "react-semantify": "^0.6.0",
-    "semantic": "0.0.1"
+    "semantic-ui-css": "^2.2.4",
+    "semantic-ui-react": "^0.64.3"
   },
   "devDependencies": {
     "babel-core": "^6.21.0",
     "babel-loader": "^6.2.10",
     "babel-preset-react": "^6.16.0",
+    "gulp": "^3.9.1",
+    "gulp-clean": "^0.3.2",
+    "gulp-livereload": "^3.8.1",
     "html-webpack-plugin": "^2.26.0",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"

@@ -18,7 +18,7 @@ var Blackboard = React.createClass({
     },
     getInitialState: function() {
 	return {hosts: [ {hostname: 'localhost', lsb: 'lsb', id: 2}]};
-    },	
+    },
     render: function(){
 	var Button = Semantify.Button;
 	var Grid = Semantify.Grid;
@@ -26,7 +26,6 @@ var Blackboard = React.createClass({
 	var roomNodes = this.state.hosts.map(function(host) {
 	    return (
 		<RoomCard hostname={host.hostname} lsb={host.lsb} key={host.id} />
-
 	    );
 	});
 	var keys = [];

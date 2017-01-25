@@ -5,7 +5,7 @@ var path = require('path');
 module.exports = {
   cache: true,
   entry: [
-    './static/scripts/src/main.js'
+    './static/scripts/src/index.js'
   ],
   output: {
     path: path.join(__dirname, 'static', 'scripts', 'build'),

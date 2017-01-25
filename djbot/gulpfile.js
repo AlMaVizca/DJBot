@@ -1,10 +1,9 @@
 var fs = require('fs');
 var path = require('path');
 var gulp = require('gulp');
-var concat = require('gulp-concat');
-var livereload = require('livereload');
-var gutil = require('gulp-util');
 var clean = require('gulp-clean');
+var gutil = require('gulp-util');
+var livereload = require('gulp-livereload');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 
@@ -17,25 +16,20 @@ var buildPath = 'static/scripts/build';
 // Default
 // =====================================
 
-gulp.task('default', ['watch'], function() {});
+gulp.task('default', ['clean', 'webpack:build' ], function() {});
 
 // Clean
 // =====================================
 
 gulp.task('clean', function() {
-  gulp.src('dist', {read: false})
+  gulp.src(buildPath, {read: false})
     .pipe(clean());
 });
 
 // Build
 // =====================================
 
-gulp.task('build', ['copy', 'webpack:build'], function() {});
-
-gulp.task('copy', function() {
-  gulp.src('src/index.html')
-    .pipe(gulp.dest('dist'));
-});
+gulp.task('build', ['webpack:build'], function() {});
 
 gulp.task('webpack:build', function(callback) {
   // Modify some webpack config options
@@ -70,35 +64,7 @@ gulp.task('webpack:build', function(callback) {
 });
 
 
-
-function getFolders(dir) {
-    return fs.readdirSync(dir)
-      .filter(function(file) {
-        return fs.statSync(path.join(dir, file)).isDirectory();
-      });
-}
-
-
-gulp.task('default', ['webpack-dev-server'], function() {
-  new WebpackDevServer(webpack(webpackConfig), {
-    contentBase: 'src/index.html',
-    publicPath: '/' + webpackConfig.output.publicPath
-  }).listen(8080, 'localhost', function(err) {
-    if (err) {
-      throw new gutil.PluginError('webpack-dev-server', err);
-    }
-    
-    return gulp.src(path.join(scriptsPath, '/*.jsx'))
-        .pipe(concat('main.js'))
-        .pipe(gulp.dest(buildPath));
-        // minify
-        // .pipe(uglify())    
-        // // rename to folder.min.js
-        // .pipe(rename('main.min.js'))
-        // // write to output again
-        // .pipe(gulp.dest(buildPath));
-});
-gulp.task('watch', function() {
+gulp.task('watch', ['default'], function() {
     livereload.listen();
-    gulp.watch(path.join(scriptsPath, '/*.jsx'), ['default']);
+    gulp.watch(path.join(scriptsPath, '/*/*.js'), ['default']);
 });

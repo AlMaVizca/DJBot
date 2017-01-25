@@ -1,35 +1,12 @@
 {% extends "layout.html" %}
-{% block header %}
-<div class="header item">
-    <a href="/">DJBot</a>
-</div>
-<div class="item">
-<Label id="pubkey">Public Key</Label>
-<div class="ui fluid popup bottom left transition hidden">
-    <textarea id="popupPubkey" rows="10" cols="70">
-	{{ public_key }}
-    </textarea>
-</div>
-</div>
-{% endblock %}
-{% block nav %}
-<div class="item">
-    <a href="/logout"> Logout</a>
-</div>
-{% endblock %}
 {% block content %}
 {% endblock %}
 {% block scripts %}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/classnames/2.2.5/index.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-semantify/0.5.1/react-semantify.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
-<script type="text/babel" src="{{ url_for('static', filename='scripts/build/index_bundle.js')}}"></script>
+    <script src="{{ url_for('static', filename='dependencies/index.js')}}"></script>
+    <script src="{{ url_for('static', filename='dependencies/react-with-addons.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='dependencies/react-dom.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='dependencies/react-semantify.min.js')}}"></script>
+    <script src="{{ url_for('static', filename='scripts/build/index_bundle.js')}}"></script>
     </script>
-    <script>
-     	$('#pubkey').popup({on: 'click', position: 'bottom left', inline: true});
-    </script>
+    <script src="http://localhost:35729/livereload.js"></script>
 {% endblock %}
