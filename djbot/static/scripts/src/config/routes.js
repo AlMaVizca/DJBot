@@ -19,8 +19,12 @@ var Results = require("../containers/results");
 var Run = require("../containers/run");
 
 var Tasks = require("../containers/tasks");
+
+
 var UserContainer = require("../containers/userContainer");
+
 var UsersContainer = require("../containers/usersContainer")
+var UserNew = require("../components/userNew");
 
 var routes = (
   <Router history={hashHistory}>
@@ -30,6 +34,7 @@ var routes = (
       <Route path='/run' component={Run} />
       <Route path='/results' component={Results} />
       <Route path='/settings' component={Settings} />
+      <Route path='/settings/userNew' component={UserNew} />
       <Route path='/settings/user' component={UserContainer} />
       <Route path='/settings/users' component={UsersContainer} />
       <Route path='/settings/keys' component={Keys} />

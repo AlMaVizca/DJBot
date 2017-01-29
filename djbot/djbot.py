@@ -22,7 +22,6 @@ app = Flask(__name__)
 app.config.from_object('settings.Config')
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.debug = app.config['DEBUG']
-
 csrf = CsrfProtect()
 csrf.init_app(app)
 
@@ -57,7 +56,8 @@ def login():
     if request.method == 'GET':
         return render_template('login.html')
     form = LoginForm(request.form)
-    if form.validate():
+    print request.form
+    if form.validate_on_submit():
         user = User.query.filter(User.username == form.username.data).first()
         if user and user_manager.verify_password(form.pw.data, user):
             flask_login.login_user(user)
@@ -257,7 +257,7 @@ def users():
         users.update(get_users())
     else:
         users.update({'users':[]})
-    users['user'] = user.get_setup()
+    app.logger.info(users)
     return jsonify(users)
 
 @app.route('/api/user/add', methods=['POST'])
@@ -282,16 +282,17 @@ def user_add():
 @roles_required('user')
 def user_change():
     form = UserChangeForm(request.form)
-    if form.validate():
+    if form.validate_on_submit():
         user = User.query.get(form.key.data)
         if user_manager.verify_password(form.old.data, user):
             user.username = form.username.data
             user.email = form.email.data
-            user.password = user_manager.hash_password(form.password.data)
+            if form.password.data != '':
+                user.password = user_manager.hash_password(form.password.data)
             db_session.commit()
-            return jsonify({'message': 'saved'})
-        return jsonify({'message': 'wrong password!'})
-    return jsonify({'message': 'failed'})
+            return jsonify({'message': 0})
+        return jsonify({'message': 1 })
+    return jsonify({'message': 2})
 
 
 @app.route('/api/user/change_admin', methods=['POST'])
@@ -310,7 +311,7 @@ def user_change_admin():
 @roles_required('admin')
 def user_change_password():
     form = PassChangeForm(request.form)
-    if form.validate():
+    if form.validate_on_submit():
         user = User.query.filter(User.username == current_user.username).first()
         if user_manager.verify_password(form.old.data, user):
             user = User.query.get(form.key.data)
@@ -332,6 +333,9 @@ def user_delete():
         return jsonify({'message': 'deleted'})
     return jsonify({'message': 'failed'})
 
+@app.before_request
+def log_request():
+    app.logger.debug(request)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

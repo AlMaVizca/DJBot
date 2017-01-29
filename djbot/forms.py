@@ -1,82 +1,83 @@
-from wtforms import Form, StringField, IntegerField, validators, FieldList
+from flask_wtf import FlaskForm
+from wtforms import StringField, IntegerField, validators, FieldList
 
 identifier = IntegerField(default=0)
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     username = StringField('username', [validators.DataRequired()])
     pw = StringField('pw', [validators.DataRequired()])
 
 
-class ParameterFormAdd(Form):
+class ParameterFormAdd(FlaskForm):
     parameter = StringField('parameter', [validators.DataRequired()])
     value = StringField('value', [validators.DataRequired()])
     modulekey = StringField('modulekey', [validators.DataRequired()])
 
     
-class ParameterFormDelete(Form):
+class ParameterFormDelete(FlaskForm):
     key = IntegerField('key', [validators.DataRequired()])
 
 
-class ResultForm(Form):
+class ResultForm(FlaskForm):
     result = StringField('result', [validators.DataRequired()])
     
     
-class RoomFormAdd(Form):
+class RoomFormAdd(FlaskForm):
     name = StringField('name', [validators.DataRequired()])
     network = StringField('network', [validators.DataRequired(), validators.IPAddress()])
     netmask = IntegerField('netmask', [validators.NumberRange(min=8,max=30)])
     machines = IntegerField('machines')
 
     
-class RoomFormDelete(Form):
+class RoomFormDelete(FlaskForm):
     key = IntegerField('key', [validators.NumberRange(min=0,max=255)])
 
 
-class RunFormAdd(Form):
+class RunFormAdd(FlaskForm):
     rooms = FieldList('rooms[]',identifier)
     tasks = FieldList('tasks[]',identifier)    
 
     
-class RunForm(Form):
+class RunForm(FlaskForm):
     roomKeys = []
     taskKeys = []
 
 
-class TaskFormAdd(Form):
+class TaskFormAdd(FlaskForm):
     taskName = StringField('taskName', [validators.DataRequired()])
 
     
-class TaskFormDelete(Form):
+class TaskFormDelete(FlaskForm):
     key = IntegerField('key', [validators.DataRequired()])
 
 
-class ModuleFormAdd(Form):
+class ModuleFormAdd(FlaskForm):
     module = StringField('module', [validators.DataRequired()])
 
     
-class ModuleFormDelete(Form):
+class ModuleFormDelete(FlaskForm):
     key = IntegerField('key', [validators.DataRequired()])
 
 
-    
-class UserAddForm(Form):
+
+class UserAddForm(FlaskForm):
     username = StringField('username', [validators.DataRequired()])
     email = StringField('email', [validators.DataRequired()])
     password = StringField('password', [validators.DataRequired()])
 
 
-class UserChangeForm(Form):
+class UserChangeForm(FlaskForm):
     key = IntegerField('key', [validators.DataRequired()])
     username = StringField('username', [validators.DataRequired()])
     email = StringField('email', [validators.DataRequired()])
-    password = StringField('password', [validators.DataRequired()])
+    password = StringField('password')
     old = StringField('old', [validators.DataRequired()])
-    
-class UserDeleteForm(Form):
+
+class UserDeleteForm(FlaskForm):
     key = IntegerField('key', [validators.DataRequired()])
 
-class PassChangeForm(Form):
+class PassChangeForm(FlaskForm):
     key = IntegerField('key', [validators.DataRequired()])
     password = StringField('password', [validators.DataRequired()])
     old = StringField('old', [validators.DataRequired()])
-    
+

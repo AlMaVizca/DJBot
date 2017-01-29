@@ -122,7 +122,7 @@ var ModuleContent = React.createClass({
     },
     render: function(){
 	var Button = Semantify.Button;
-	var Icon = Semantify.Icon;	
+	var Icon = Semantify.Icon;
 	var Input = Semantify.Input;
 	var Table = Semantify.Table;
 	

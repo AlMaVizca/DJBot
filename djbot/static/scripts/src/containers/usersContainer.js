@@ -1,20 +1,22 @@
 var React = require("react");
-var axios = require("axios");
 var Users = require("../components/users");
 
 
 var UsersContainer = React.createClass({
   getInitialState: function(){
-    return {message: '', users:[]}
+    return {users:[]}
   },
   usersLoad: function(){
-    var _this = this;
-    axios.get('/api/users')
-      .then(function(response){
-        _this.setState(response.data);
-        })
-      .catch(function(error){
-        console.log(error);
+    $.ajax(
+      {
+        url:'/api/users',
+        dataType: 'json',
+        success: function(data){
+          this.setState(data);
+        }.bind(this),
+        error: function(xhr, status, err) {
+          console.error('/api/users', status, err.toString());
+        }.bind(this)
       });
   },
   componentDidMount: function(){
@@ -23,9 +25,8 @@ var UsersContainer = React.createClass({
   render: function() {
     return (
       <Users
-        message = {this.state.message}
         users = {this.state.users}
-        usersReload = {this.usersReload}
+        usersLoad = {this.usersLoad}
         />
     )
   }
