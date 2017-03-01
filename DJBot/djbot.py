@@ -6,7 +6,7 @@ from flask_login import current_user
 
 from flask_wtf.csrf import CSRFProtect
 from flask_user import UserManager, LoginManager, login_required, SQLAlchemyAdapter, roles_required
-from forms import *
+from forms import LoginForm
 from models import first_data
 from models.user import User, Role
 from querys import *
@@ -81,7 +81,7 @@ def unauthorized_handler():
 @flask_login.login_required
 @roles_required('user')
 def index():
-    return render_template('dashboard.html', public_key=public_key)
+    return render_template('dashboard.html')
 
 
 @app.before_request
