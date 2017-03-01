@@ -1,16 +1,14 @@
 from database import db_session
 from flask import Flask, render_template, request
 from flask import url_for, redirect
-from flask import jsonify
-from flask_login import current_user
+
 
 from flask_wtf.csrf import CSRFProtect
 from flask_user import UserManager, LoginManager, login_required, SQLAlchemyAdapter, roles_required
 from forms import LoginForm
 from models import first_data
 from models.user import User, Role
-from querys import *
-from ansibleapi import ThreadRunner
+
 from scripts import config_ssh
 import flask_login
 import os
