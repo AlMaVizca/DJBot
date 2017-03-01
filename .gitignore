@@ -6,6 +6,6 @@
 *.db
 env
 */__pycache__/*
-djbot/static/bower_components
 */node_modules/*
-
+*/instance/*
+*/.ipynb_checkpoints/*
