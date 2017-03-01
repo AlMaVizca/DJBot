@@ -19,7 +19,7 @@ import os
 
 app = Flask(__name__)
 
-app.config.from_object('settings.Config')
+app.config.from_object('config')
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.debug = app.config['DEBUG']
 csrf = CsrfProtect()
