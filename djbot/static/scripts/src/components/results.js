@@ -49,11 +49,6 @@ var ResultItem = React.createClass({
 
 
 function Results(props){
-  var Button = Semantify.Button;
-  var Dropdown = Semantify.Dropdown;
-  var Icon = Semantify.Icon;
-  var Grid = Semantify.Grid;
-  var Menu = Semantify.Menu;
   var executionResults = '';
   var executionNames = '';
   var keys = '';
@@ -68,28 +63,21 @@ function Results(props){
     });
   }
   return(
-    <div className="ui grid bottom attached tab" data-tab="results">
-      <Grid>
+    <div>
 	<div className="ui sixteen wide column">
-	  <Menu>
-	    <Dropdown className="fluid results tabular">
 	      <input type="hidden" name="result" />
 	      <i className="dropdown icon"></i>
 	      <span className="text">Select Results</span>
 	      <div className="menu">
 		{executionNames}
 	      </div>
-	    </Dropdown>
 	    <div className="ui animated fade blue button" tabindex="0" onClick={props.resultsReload}>
 	      <div className="hidden content">update</div>
 	      <div className="visible content">
-		<Icon className="history"/>
 	      </div>
 	    </div>
-	  </Menu>
 	  {executionResults}
 	</div>
-      </Grid>
     </div>
   );
 };

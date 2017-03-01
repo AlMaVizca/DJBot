@@ -29,17 +29,28 @@ var AppMenu = React.createClass({
     return (
       <Segment inverted>
         <Menu inverted pointing secondary>
-          <Menu.Item name="DJBot" active={activeItem === 'DJBot'} onClick={this.handleItemClick} as={Link} to="/"/>
-          <Menu.Item name="settings" active={activeItem === 'settings'} onClick={this.handleItemClick} as={Link} to="/settings">
+          <Menu.Item name="DJBot" active={activeItem === 'DJBot'}
+                     onClick={this.handleItemClick} as={Link} to="/"/>
+          <Menu.Item name="settings" active={activeItem === 'settings'}
+                     onClick={this.handleItemClick} as={Link}
+                     to="/settings">
             <Icon name="settings" />
-              Settings
+            Settings
           </Menu.Item>
-          <Menu.Item name="tasks" active={activeItem === 'tasks'} onClick={this.handleItemClick} as={Link} to="/tasks" />
-          <Menu.Item name="run" active={activeItem === 'run'} onClick={this.handleItemClick} as={Link} to="/run" />
-          <Menu.Item name="results" active={activeItem === 'results'} onClick={this.handleItemClick} as={Link} to="/results" />
+          <Menu.Item name="playbooks" active={activeItem === 'playbooks'}
+                     onClick={this.handleItemClick} as={Link}
+                     to="/playbooks" />
+          <Menu.Item name="run" active={activeItem === 'run'}
+                     onClick={this.handleItemClick} as={Link} to="/run" />
+          <Menu.Item name="results" active={activeItem === 'results'}
+                     onClick={this.handleItemClick} as={Link}
+                     to="/results" />
           <Menu.Menu position='right'>
-            <Menu.Item name="profile" active={activeItem === 'profile'} onClick={this.handleItemClick} as={Link} to="/settings/user" />
-            <Menu.Item name='logout' active={activeItem === 'logout'} as={Link} to="/logout" />
+            <Menu.Item name="profile" active={activeItem === 'profile'}
+                       onClick={this.handleItemClick} as={Link}
+                       to="/settings/user" />
+            <Menu.Item name='logout' active={activeItem === 'logout'}
+                       as='a' href="/logout" />
           </Menu.Menu>
         </Menu>
       </Segment>

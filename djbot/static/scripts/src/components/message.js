@@ -8,19 +8,28 @@ var ShowMessage = React.createClass({
     text: PropTypes.string
   },
   getInitialState: function(){
-    return ({message: <Message hidden/>});
+    return ({
+      success: false,
+      error: false,
+      hidden: true
+    });
   },
   componentWillReceiveProps: function(){
-    var message;
     switch(this.props.mode)
     {
-      case 0: this.setState({message: <Message success>Changes saved</Message>});
+      case 0: this.setState({
+        success: true,
+        error: false,
+        hidden: false
+      });
       break;
-      case 1: this.setState({message: <Message error>Wrong password</Message>});
+      case 1: this.setState({
+        error: true,
+        success: false,
+        hidden: false
+      });
       break;
-      case 2: this.setState({message: <Message color="red">Failed to save changes</Message>});
-      break;
-      default: this.setState({message: <Message hidden/>});
+      default: this.setState({hidden: true});
       }
   },
   getDefaultProps: function() {
@@ -30,9 +39,10 @@ var ShowMessage = React.createClass({
   },
   render: function(){
     return (
-      <div>
-        {this.state.message}
-      </div>
+      <Message error={this.state.error} success={this.state.success}
+               hidden={this.state.hidden}>
+        {this.props.text}
+      </Message>
     )
   }
 });

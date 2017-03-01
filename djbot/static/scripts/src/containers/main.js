@@ -18,19 +18,6 @@ var MainContainer = React.createClass({
     //         }.bind(this)
     //     });
     // },
-    // tasksReload: function() {
-    //     $.ajax({
-    //         url: "/api/task/",
-    //         dataType: 'json',
-    //         cache: false,
-    //         success: function(data) {
-    //             this.setState({tasks: data["tasks"]});
-    //         }.bind(this),
-    //         error: function(xhr, status, err) {
-    //             console.error(this.props.url, status, err.toString());
-    //         }.bind(this)
-    //     });
-    // },
     // discover: function(){
     //     $.ajax({
     //         url: "/api/room/discover",

@@ -13,18 +13,6 @@ var UserList = React.createClass({
       usersLoad={this.props.usersLoad}/>;
     }, this);
   },
-  userAdd: function(){
-    $('.user.basic').modal({closable: false,
-                            onApprove: function () {
-                              console.log('Approve');
-                            },
-                            onHide: function(){
-                              return false
-                            },
-                            onShow: function(){
-                            },
-                           }).modal('toggle');
-  },
   passSave: function(){
     $.ajax({
       url: '/api/user/change_password',
@@ -84,7 +72,7 @@ var UserItem = React.createClass({
   userEdit: function(){
   },
   userDelete: function(){
-    this.setState({open: false})
+    this.setState({open: false});
     $.ajax({
       url: '/api/user/delete',
       dataType: 'json',

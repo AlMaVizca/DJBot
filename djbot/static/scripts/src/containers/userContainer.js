@@ -1,5 +1,5 @@
 var React = require("react");
-var User = require("../components/user");
+var User = require("../components/user/user");
 
 var UserContainer = React.createClass({
   getInitialState: function(){
@@ -8,7 +8,9 @@ var UserContainer = React.createClass({
       username: "",
       email: "",
       old: "",
-      password: ""
+      password: "",
+      messageMode: 10,
+      messageText: ''
     });
   },
   componentDidMount: function(){
@@ -54,8 +56,7 @@ var UserContainer = React.createClass({
         type: 'POST',
         data: user,
         success: function(data) {
-          console.log(data);
-          this.setState({message: data['message']});
+          this.setState(data);
         }.bind(this),
         error: function(xhr, status, err) {
           console.error('/api/user/change', status, err.toString());
@@ -71,7 +72,8 @@ var UserContainer = React.createClass({
         email = {this.state.email}
         password = {this.state.password}
         old = {this.state.old}
-        message = {this.state.message}
+        messageMode = {this.state.messageMode}
+        messageText = {this.state.messageText}
         changeEmail = {this.changeEmail}
         changePassword = {this.changePassword}
         changeOldPassword = {this.changeOldPassword}
