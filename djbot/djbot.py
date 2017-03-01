@@ -4,7 +4,7 @@ from flask import url_for, redirect
 from flask import jsonify, flash
 from flask_login import current_user
 from flask_sqlalchemy import SQLAlchemy
-from flask_wtf.csrf import CsrfProtect
+from flask_wtf.csrf import CSRFProtect
 from flask_user import UserManager, LoginManager, login_required, SQLAlchemyAdapter, roles_required
 from forms import *
 from models import first_data
@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.config.from_object('config')
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.debug = app.config['DEBUG']
-csrf = CsrfProtect()
+csrf = CSRFProtect()
 csrf.init_app(app)
 
 db_adapter = SQLAlchemyAdapter(db_session, User)
