@@ -34,7 +34,7 @@ try:
 except:
     first_data(user_manager)
 
-if not os.path.isfile('/root/.ssh/id_rsa'):
+if not os.path.isfile(os.getenv("HOME") +'/.ssh/id_rsa'):
     config_ssh.generate_key()
 
 login_manager = LoginManager()

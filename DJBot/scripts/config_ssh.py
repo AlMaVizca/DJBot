@@ -6,27 +6,27 @@ from Crypto.PublicKey import RSA
 
 def generate_key():
     key = RSA.generate(2048)
-    with open("/root/.ssh/id_rsa", 'w') as content_file:
-        os.chmod("/root/.ssh/id_rsa", 0600)
+    key_path = os.getenv("HOME")+"/.ssh/id_rsa"
+    with open(key_path, 'w') as content_file:
+        os.chmod(key_path, 0600)
         content_file.write(key.exportKey('PEM'))
         content_file.write("\n")
 
     pubkey = key.publickey()
-    with open("/root/.ssh/id_rsa.pub", 'w') as content_file:
+    with open(key_path + ".pub", 'w') as content_file:
         content_file.write(pubkey.exportKey('OpenSSH'))
         content_file.write("\n")
 
     subprocess.call(['cp', '/root/.ssh/id_rsa.pub', '/root/.ssh/pub_key/'])
     subprocess.call(['cp', '/usr/src/app/djbot/scripts/config', '/root/.ssh/'])
 
-    
 
 class SshConfig():
     def __init__(self):
         self.conf_file = os.getenv('HOME')+'/.ssh/assh.yml'
         self.hosts = {}
         self.defaults = {}
-    
+
     def set_defaults(self, user = 'root', key='~/.ssh/id_rsa',
                      fw_agent= 'yes'):
 
@@ -79,7 +79,7 @@ class SshConfig():
 
 if __name__ == '__main__':
     my_config = SshConfig()
-    my_config.set_defaults()    
+    my_config.set_defaults()
     my_config.add_proxy('proxy1','163.10.78.1','avizcaino','22')
     my_config.add_room('163.10.78.0/25', 'proxy1','avizcaino')
     my_config.write_settings()
