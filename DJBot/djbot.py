@@ -1,9 +1,9 @@
 from database import db_session
 from flask import Flask, render_template, request
 from flask import url_for, redirect
-from flask import jsonify, flash
+from flask import jsonify
 from flask_login import current_user
-from flask_sqlalchemy import SQLAlchemy
+
 from flask_wtf.csrf import CSRFProtect
 from flask_user import UserManager, LoginManager, login_required, SQLAlchemyAdapter, roles_required
 from forms import *
@@ -74,7 +74,6 @@ def logout():
 
 @login_manager.unauthorized_handler
 def unauthorized_handler():
-    flash('You must log in.')
     return redirect(url_for('login', _external=True))
 
 
@@ -82,9 +81,6 @@ def unauthorized_handler():
 @flask_login.login_required
 @roles_required('user')
 def index():
-    public_key = ''
-    with open('/root/.ssh/id_rsa.pub') as pub:
-        public_key = pub.read()
     return render_template('dashboard.html', public_key=public_key)
 
 
