@@ -1,16 +1,17 @@
 from database import db_session
 from flask import Flask, render_template, request
 from flask import url_for, redirect
-
-
 from flask_wtf.csrf import CSRFProtect
-from flask_user import UserManager, LoginManager, login_required, SQLAlchemyAdapter, roles_required
+
+from flask_security import Security, SQLAlchemySessionUserDatastore, \
+    login_required, roles_required
+
 from forms import LoginForm
 from models import first_data
 from models.user import User, Role
 
 from scripts import config_ssh
-import flask_login
+
 import os
 
 from views import register_api
@@ -25,43 +26,23 @@ app.debug = app.config['DEBUG']
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-db_adapter = SQLAlchemyAdapter(db_session, User)
-user_manager = UserManager(db_adapter, app)
+user_datastore = SQLAlchemySessionUserDatastore(db_session, User, Role)
+security = Security(app, user_datastore)
 
 
 try:
     User.query.all()
 except:
-    first_data(user_manager)
+    first_data(user_datastore)
 
 if not os.path.isfile(os.getenv("HOME") +'/.ssh/id_rsa'):
     config_ssh.generate_key()
 
-login_manager = LoginManager()
-login_manager.init_app(app)
 register_api(app)
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
-
-
-@login_manager.user_loader
-def user_loader(username):
-    return  User(username)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-    form = LoginForm(request.form)
-    if form.validate_on_submit():
-        user = User.query.filter(User.username == form.username.data).first()
-        if user and user_manager.verify_password(form.pw.data, user):
-            flask_login.login_user(user)
-            return redirect(url_for('index', _external=True))
-    return redirect(url_for('login', _external=True))
 
 
 @app.route('/logout')
@@ -70,13 +51,8 @@ def logout():
     return redirect(url_for('login', _external=True))
 
 
-@login_manager.unauthorized_handler
-def unauthorized_handler():
-    return redirect(url_for('login', _external=True))
-
-
 @app.route('/', methods=['GET'])
-@flask_login.login_required
+@login_required
 @roles_required('user')
 def index():
     return render_template('dashboard.html')
