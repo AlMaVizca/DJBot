@@ -1,17 +1,18 @@
 from database import Base, db_session
 from flask import jsonify
-from flask_user import UserMixin
+from flask_security import UserMixin, RoleMixin
 from sqlalchemy import Boolean, DateTime, Column, Integer, SmallInteger, String
 from sqlalchemy import Table, Column, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 
 
 # Define Role model
-class Role(Base):
+class Role(Base, RoleMixin):
     __tablename__ = 'role'
-    key = Column(Integer(), primary_key=True)
+    id = Column(Integer(), primary_key=True)
     name = Column(String(50), unique=True)
+    description = Column(String(50))
 
     def __repr__(self):
         return self.name
@@ -20,14 +21,14 @@ class Role(Base):
 # Define UserRoles model
 class UserRoles(Base):
     __tablename__ = 'user_roles'
-    key = Column(Integer(), primary_key=True)
-    user_id = Column(Integer(), ForeignKey('user.key', ondelete='CASCADE'))
-    role_id = Column(Integer(), ForeignKey('role.key', ondelete='CASCADE'))
+    id = Column(Integer(), primary_key=True)
+    user_id = Column(Integer(), ForeignKey('user.id', ondelete='CASCADE'))
+    role_id = Column(Integer(), ForeignKey('role.id', ondelete='CASCADE'))
 
-    
-class User(Base):
+
+class User(Base, UserMixin):
     __tablename__ = 'user'
-    key = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
     username = Column(String(50), nullable=True, unique=True)
     password = Column(String(255), nullable=False, server_default='')
     reset_password_token = Column(String(100), nullable=False, server_default='')
@@ -41,33 +42,33 @@ class User(Base):
     first_name = Column(String(100), nullable=False, server_default='')
     last_name = Column(String(100), nullable=False, server_default='')
     roles = relationship('Role', secondary='user_roles',
-                         backref='users', lazy='dynamic')
+                         backref=backref('users', lazy='dynamic'))
 
     def __repr__(self):
         return '%r %r' % (self.username, self.email)
 
-        
-    def __init__(self, username=None, password=None, email=None, active=None, key=None):
-        self.key = key
+
+    def __init__(self, username=None, password=None, email=None, active=None, id=None):
+        self.id = id
         self.username = username
         self.password = password
         self.email = email
         self.active = active
 
-        
+
     def authenticate(self, password):
         if (password ==  self.password):
             self.is_authenticated = True
             return True
         return False
-  
+
     def get_id(self):
         return unicode(self.username)
-        
+
     def get_setup(self):
-        return dict(key=self.key, username=self.username, \
+        return dict(key=self.id, username=self.username, \
                     email=self.email, admin=self.is_admin())
-            
+
     def has_roles(self, *role_names):
         return True
 
@@ -90,7 +91,7 @@ class User(Base):
             self.roles.remove(admin)
         else:
             self.roles.append(admin)
-            
+
     def is_admin(self):
         roles = self.roles.all()
         roles = [each.name for each in roles]
