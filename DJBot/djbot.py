@@ -33,7 +33,7 @@ security = Security(app, user_datastore)
 try:
     User.query.all()
 except:
-    first_data(user_datastore)
+    first_data(app, user_datastore)
 
 if not os.path.isfile(os.getenv("HOME") +'/.ssh/id_rsa'):
     config_ssh.generate_key()
@@ -61,6 +61,7 @@ def index():
 @app.before_request
 def log_request():
     app.logger.debug(request)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
