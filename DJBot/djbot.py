@@ -1,16 +1,14 @@
 from database import db_session
 from flask import Flask, render_template, request
-from flask import url_for, redirect
 from flask_wtf.csrf import CSRFProtect
 
 from flask_security import Security, SQLAlchemySessionUserDatastore, \
     login_required, roles_required
 
-from forms import LoginForm
 from models import first_data
 from models.user import User, Role
 
-from scripts import config_ssh
+from utils import config_ssh
 
 import os
 
@@ -35,20 +33,15 @@ try:
 except:
     first_data(app, user_datastore)
 
-if not os.path.isfile(os.getenv("HOME") +'/.ssh/id_rsa'):
+if not os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa'):
     config_ssh.generate_key()
 
 register_api(app)
 
+
 @app.teardown_appcontext
 def shutdown_session(exception=None):
     db_session.remove()
-
-
-@app.route('/logout')
-def logout():
-    flask_login.logout_user()
-    return redirect(url_for('login', _external=True))
 
 
 @app.route('/', methods=['GET'])
@@ -65,5 +58,3 @@ def log_request():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
-
-
