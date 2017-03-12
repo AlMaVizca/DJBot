@@ -27,20 +27,6 @@
         name: docker-py
         state: present
       become: yes
-      when: ansible_distribution == "Debian"
-      tags:
-        - build
-
-
-    - name: requirements
-      pacman:
-        name: python2-docker-py
-        state: present
-      become: yes
-      when: ansible_distribution == "Archlinux"
-      tags:
-        - build
-
 
     - name: Remove old container
       docker_container:

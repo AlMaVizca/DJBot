@@ -1,4 +1,4 @@
-FROM python:2-onbuild
+FROM python:2
 EXPOSE 80
 VOLUME /usr/src/app
 
@@ -16,4 +16,7 @@ RUN touch /root/.ssh/.none
 VOLUME /root/.ssh/pub_key
 
 WORKDIR /usr/src/app
+COPY gunicorn.py pytest.ini setup.py setup.cfg DJBot /usr/src/app/
+RUN python setup.py install
+RUN pip install --upgrade git+git://github.com/inveniosoftware/flask-security-fork.git
 CMD ["gunicorn", "--forwarded-allow-ips=*", "--config=gunicorn.py", "djbot:app"]
