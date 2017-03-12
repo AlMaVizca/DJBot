@@ -1,35 +1,34 @@
 from database import Base, db_session
-from flask import jsonify
-from sqlalchemy import Boolean, DateTime, Column, Integer, SmallInteger, String
-from sqlalchemy import Table, Column, ForeignKey
+from utils import proxy
+
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
-from scripts import proxy
 
 class Room(Base):
-    __tablename__ = 'room'
+    __tablename__ = "room"
     key = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
-    machines = Column(SmallInteger, nullable=False)
+    machines = Column(Integer, nullable=False)
     network = Column(String, nullable=False)
-    hosts = relationship("ComputerTable", cascade="all, delete-orphan")
+    hosts = relationship("Computer", cascade="all, delete-orphan")
 
-            
+
     def __repr__(self):
-        return '<Room %r %r %r %r>' % (self.key,
+        return "<Room %r %r %r %r>" % (self.key,
                                           self.name, self.machines,
                                           self.network)
 
     def _set_network(self, network=None, netmask=None):
         if network and netmask:
-            return network + '/' + str(netmask)
-        
+            return network + "/" + str(netmask)
+
     def _get_network(self):
         try:
-            address = self.network.split('/')
+            address = self.network.split("/")
         except:
-            address = ['127.0.0.1','8']
+            address = ["127.0.0.1","8"]
         return address[0], address[1]
-        
+
     def get_setup(self):
         network, netmask = self._get_network()
         return dict(name=self.name,
@@ -68,7 +67,7 @@ class Room(Base):
         ansible_game = Runner(self.hosts, self.username)
         ansible_game.add_setup(self.hosts)
         ansible_game.run()
-        facts = ansible_game.callback.get_all()['ok']
+        facts = ansible_game.callback.get_all()["ok"]
         hosts = []
         for host_data in facts.keys():
             host = None
@@ -77,7 +76,7 @@ class Room(Base):
                     "hostname": facts[host_data]["ansible_hostname"],
                     "memory": facts[host_data]["ansible_memory_mb"]["real"]["free"],
                     "lsb": facts[host_data]["ansible_lsb"]["description"],
-                    "key": host_data.split('.')[3]
+                    "key": host_data.split(".")[3]
                 }
             except:
                 host = {
@@ -89,13 +88,11 @@ class Room(Base):
             hosts.append(host)
         return 	{"hosts": hosts}
 
-        
-class ComputerTable(Base):
-    __tablename__ = 'computer'
+
+class Computer(Base):
+    __tablename__ = "computer"
     key = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50), nullable=False)
     mac = Column(String(50), nullable=False)
-    location = Column(SmallInteger, nullable=False)
-    task_key = Column(Integer, ForeignKey('room.key'))
-
-            
+    location = Column(Integer, nullable=False)
+    task_key = Column(Integer, ForeignKey("room.key"))

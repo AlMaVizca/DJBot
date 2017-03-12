@@ -1,8 +1,8 @@
-__all__ = ["user", "room", "task"]
+__all__ = ["user", "room", "playbook"]
 
 import user
 import room
-import task
+from playbook import Task, Parameter, Playbook
 from database import db_session, init_db
 from flask_security.utils import encrypt_password
 from user import User, Role

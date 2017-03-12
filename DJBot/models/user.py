@@ -53,14 +53,13 @@ class User(Base, UserMixin):
 
     def change_admin(self):
         admin = Role.query.filter(Role.name == 'admin').first()
-        if admin in self.roles.all():
+        if admin in self.roles:
             self.roles.remove(admin)
         else:
             self.roles.append(admin)
 
     def is_admin(self):
-        roles = self.roles.all()
-        roles = [each.name for each in roles]
+        roles = [each.name for each in self.roles]
         if 'admin' in roles:
             return True
         return False
