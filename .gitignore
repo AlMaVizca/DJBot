@@ -9,3 +9,4 @@ env
 */node_modules/*
 */instance/*
 */.ipynb_checkpoints/*
+DJBot/static/scripts/build/index_bundle.js
