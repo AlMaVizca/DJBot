@@ -1,11 +1,11 @@
 #!/usr/bin/python2
-import json
-from ansibleapi import *
+from ansibleapi import Runner
+
 
 class Host():
     def __init__(self, address='127.0.0.1'):
         self.address = address
-    
+
     def get_setup(self):
         inventory = [self.address]
         ansible_game = Runner(inventory, 'avizcaino')
@@ -22,10 +22,3 @@ class Host():
             "devices": devices,
         }
         return host
-        
-
-
-
-
-
-

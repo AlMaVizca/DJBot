@@ -1,8 +1,9 @@
 from database import Base, db_session
 from utils import proxy
-
+from ansibleapi import Runner
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
 
 class Room(Base):
     __tablename__ = "room"
@@ -12,11 +13,10 @@ class Room(Base):
     network = Column(String, nullable=False)
     hosts = relationship("Computer", cascade="all, delete-orphan")
 
-
     def __repr__(self):
         return "<Room %r %r %r %r>" % (self.key,
-                                          self.name, self.machines,
-                                          self.network)
+                                       self.name, self.machines,
+                                       self.network)
 
     def _set_network(self, network=None, netmask=None):
         if network and netmask:
@@ -26,16 +26,16 @@ class Room(Base):
         try:
             address = self.network.split("/")
         except:
-            address = ["127.0.0.1","8"]
+            address = ["127.0.0.1", "8"]
         return address[0], address[1]
 
     def get_setup(self):
         network, netmask = self._get_network()
         return dict(name=self.name,
-                 machines=self.machines,
-                 network=network,
-                 netmask=netmask,
-                 key=self.key)
+                    machines=self.machines,
+                    network=network,
+                    netmask=netmask,
+                    key=self.key)
 
     def discover_hosts(self):
         hosts = proxy.check_network(unicode(self.network))
@@ -51,7 +51,7 @@ class Room(Base):
         """save in database"""
         self.name = name
         self.machines = machines
-        self.network = self._set_network(network,netmask)
+        self.network = self._set_network(network, netmask)
         db_session.add(self)
         db_session.commit()
         return True
@@ -63,7 +63,6 @@ class Room(Base):
 
     def get_hosts(self):
         """run ansible setup on hosts"""
-        ssh_extra_args = None
         ansible_game = Runner(self.hosts, self.username)
         ansible_game.add_setup(self.hosts)
         ansible_game.run()
@@ -74,7 +73,8 @@ class Room(Base):
             try:
                 host = {
                     "hostname": facts[host_data]["ansible_hostname"],
-                    "memory": facts[host_data]["ansible_memory_mb"]["real"]["free"],
+                    "memory": facts[host_data]
+                    ["ansible_memory_mb"]["real"]["free"],
                     "lsb": facts[host_data]["ansible_lsb"]["description"],
                     "key": host_data.split(".")[3]
                 }
@@ -86,7 +86,7 @@ class Room(Base):
                     "key": 999
                 }
             hosts.append(host)
-        return 	{"hosts": hosts}
+        return {"hosts": hosts}
 
 
 class Computer(Base):

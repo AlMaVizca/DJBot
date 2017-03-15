@@ -1,9 +1,11 @@
 from database import db_session
 from flask import Blueprint, jsonify, request
-from flask_user import roles_required
+from flask_security import roles_required
+from querys import get_playbooks
+from models.playbook import Playbook
+from forms import PlaybookFormAdd, PlaybookFormSelect
 
-
-playbook_bp = Blueprint('playbook', __name__ )
+playbook_bp = Blueprint('playbook', __name__)
 
 
 @playbook_bp.route('/playbooks', methods=['GET'])
@@ -18,7 +20,7 @@ def playbook_add():
     form = PlaybookFormAdd(request.form)
     if form.validate():
         play = Playbook(name=form.name.data,
-                    description=form.description.data)
+                        description=form.description.data)
         db_session.add(play)
         db_session.commit()
         return jsonify({'messageMode': '0',
@@ -40,6 +42,7 @@ def playbook_delete():
     return jsonify({'messageMode': 1,
                     'messageText': 'There was an error deleting the playbook'})
 
+
 @playbook_bp.route('/get', methods=['POST'])
 @roles_required('user')
 def playbook_get():
@@ -56,9 +59,6 @@ def playbook_get():
 def playbook_save():
     form = PlaybookFormSelect(request.form)
     if form.validate_on_submit():
-        playbook_bplogger.info(request.form)
-        playbook_bplogger.info(form.name.data)
-        playbook_bplogger.info(form.description.data)
         playbook = Playbook.query.get(form.key.data)
         playbook.name = form.name.data
         playbook.description = form.description.data

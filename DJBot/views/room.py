@@ -1,7 +1,10 @@
 from flask import Blueprint, jsonify, request
+from forms import RoomFormAdd, RoomFormDelete
+from models.room import Room
+from querys import get_rooms
 
+room_bp = Blueprint('room', __name__)
 
-room_bp = Blueprint('room', __name__ )
 
 @room_bp.route('/', methods=['GET'])
 def api_rooms():
@@ -13,7 +16,8 @@ def room_add():
     form = RoomFormAdd(request.form)
     if form.validate():
         room = Room()
-        saved = room.save(form.name.data, form.network.data, form.netmask.data, form.machines.data)
+        saved = room.save(form.name.data, form.network.data,
+                          form.netmask.data, form.machines.data)
         if saved:
             return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})

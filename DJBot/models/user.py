@@ -1,10 +1,8 @@
-from database import Base, db_session
-from flask import jsonify
+from database import Base
 from flask_security import UserMixin, RoleMixin
-from sqlalchemy import Boolean, DateTime, Column, Integer, SmallInteger, String
-from sqlalchemy import Table, Column, ForeignKey
+from sqlalchemy import Boolean, DateTime, Column, ForeignKey, Integer, \
+    String
 from sqlalchemy.orm import relationship, backref
-
 
 
 # Define Role model
@@ -42,13 +40,11 @@ class User(Base, UserMixin):
     roles = relationship('Role', secondary='roles_users',
                          backref=backref('users', lazy='dynamic'))
 
-
     def __repr__(self):
         return '%r %r' % (self.username, self.email)
 
-
     def get_setup(self):
-        return dict(key=self.id, username=self.username, \
+        return dict(key=self.id, username=self.username,
                     email=self.email, admin=self.is_admin())
 
     def change_admin(self):

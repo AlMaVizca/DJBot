@@ -1,23 +1,27 @@
 from models.room import Room
 from models.user import User
-from models.task import Task
+from models.playbook import Playbook, Task
 import json
 import os
 import time
 
 
-def execution_taks(tasks):
+def execution_tasks(tasks):
     execution_tasks = []
     names = []
     for each in tasks:
         a_task = Task.query.get(each).get_setup()
         names.append(a_task['name'])
-        task = {'name': a_task['name'], 'modules':[]}
+        task = {'name': a_task['name'], 'modules': []}
         parameters = {}
         for module in a_task['modules']:
             for arg in module['options']:
                 parameters[arg['name']] = arg['value']
-            task['modules'].append((dict(action=dict(module=module['name'], args=parameters))))
+            task['modules'].append((dict(
+                action=dict(
+                    module=module['name'],
+                    args=parameters)
+            )))
         execution_tasks.append(task)
     return execution_tasks, names
 
@@ -36,7 +40,9 @@ def get_result(filename):
     result = {'data': 'Not Found!'}
     with open(filename, 'r') as fp:
         result = json.load(fp)
-    result['datetime'] = time.strftime("%m/%d/%Y %I:%M:%S %p",time.localtime(os.path.getmtime(filename)))
+    result['datetime'] = time.strftime("%m/%d/%Y %I:%M:%S %p",
+                                       time.localtime(
+                                           os.path.getmtime(filename)))
     return result
 
 
@@ -49,18 +55,18 @@ def get_rooms():
     return rooms_info
 
 
-def get_tasks():
-    tasks = Task().query.all()
-    tasks_info = {'tasks': []}
-    for each in tasks:
-        tasks_info['tasks'].append(each.get_setup())
-    return tasks_info
+def get_playbooks():
+    playbooks = Playbook().query.all()
+    playbooks_info = {'playbooks': []}
+    for each in playbooks:
+        playbooks_info['playbooks'].append(each.get_setup())
+    return playbooks_info
 
 
 def get_users():
     users = User().query.all()
     users_info = {'users': []}
     for each in users:
-        user = User.query.filter(User.username==each.username).first()
+        user = User.query.filter(User.username == each.username).first()
         users_info['users'].append(user.get_setup())
     return users_info

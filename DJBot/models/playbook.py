@@ -38,7 +38,6 @@ class Playbook(Base):
     description = Column(String(150), nullable=False)
     tasks = relationship("Task", cascade="all, delete-orphan")
 
-
     def get_setup(self):
         return dict(name=self.name, description=self.description,
                     key=self.key, tasks=self._get_tasks())

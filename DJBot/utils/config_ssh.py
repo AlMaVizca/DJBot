@@ -4,6 +4,7 @@ import subprocess
 from ipaddress import IPv4Address, IPv4Network
 from Crypto.PublicKey import RSA
 
+
 def generate_key():
     key = RSA.generate(2048)
     key_path = os.getenv("HOME")+"/.ssh/id_rsa"
@@ -27,8 +28,8 @@ class SshConfig():
         self.hosts = {}
         self.defaults = {}
 
-    def set_defaults(self, user = 'root', key='~/.ssh/id_rsa',
-                     fw_agent= 'yes'):
+    def set_defaults(self, user='root', key='~/.ssh/id_rsa',
+                     fw_agent='yes'):
 
         self.defaults = {
             'IdentityFile': key,
@@ -47,7 +48,7 @@ class SshConfig():
                       fp, default_flow_style=False)
             yaml.dump({'defaults': self.defaults},
                       fp, default_flow_style=False)
-        with open(os.getenv('HOME')+'/.ssh/config','w') as fp:
+        with open(os.getenv('HOME')+'/.ssh/config', 'w') as fp:
             fp.write(subprocess.check_output(['assh', '-f', 'build']))
 
     def read_settings(self):
@@ -64,9 +65,7 @@ class SshConfig():
             'User': user,
         }
 
-
-
-    def add_room(self, network, proxy, user = None):
+    def add_room(self, network, proxy, user=None):
         network = IPv4Network(unicode(network))
         regex = IPv4Address(unicode(self.hosts[proxy]['Hostname']))
         ip_str = str(network.network_address + 1).split('.')
@@ -74,12 +73,12 @@ class SshConfig():
         wild = '.*'
         regex = base + wild
 
-        self.hosts[regex] = { 'User': user, 'Gateways': [proxy]}
+        self.hosts[regex] = {'User': user, 'Gateways': [proxy]}
 
 
 if __name__ == '__main__':
     my_config = SshConfig()
     my_config.set_defaults()
-    my_config.add_proxy('proxy1','163.10.78.1','avizcaino','22')
-    my_config.add_room('163.10.78.0/25', 'proxy1','avizcaino')
+    my_config.add_proxy('proxy1', '192.168.1.1', 'root', '22')
+    my_config.add_room('192.168.1.0/25', 'proxy1', 'root')
     my_config.write_settings()

@@ -1,7 +1,11 @@
 from flask import Blueprint, jsonify, request
-from flask_user import roles_required
+from flask_security import roles_required
+from forms import ModuleFormAdd, ModuleFormDelete, ParameterFormAdd, \
+    ParameterFormDelete
+from models.playbook import Task
 
 task_bp = Blueprint("task", __name__)
+
 
 @roles_required('user')
 @task_bp.route('/<id>/module/add', methods=['POST'])
@@ -9,7 +13,7 @@ def module_add(id):
     form = ModuleFormAdd(request.form)
     if form.validate():
         task = Task.query.get(id)
-        saved = task.module_add(form.module.data, app)
+        saved = task.module_add(form.module.data)
         if saved:
             return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})
@@ -33,7 +37,9 @@ def parameter_add(id):
     form = ParameterFormAdd(request.form)
     if form.validate():
         task = Task.query.get(id)
-        saved = task.parameter_add(form.modulekey.data, (form.parameter.data, form.value.data))
+        saved = task.parameter_add(
+            form.modulekey.data, (form.parameter.data, form.value.data)
+        )
         if saved:
             return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})
