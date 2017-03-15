@@ -9,13 +9,13 @@ var UsersContainer = React.createClass({
   usersLoad: function(){
     $.ajax(
       {
-        url:'/api/users',
+        url:'/api/user/users',
         dataType: 'json',
         success: function(data){
           this.setState(data);
         }.bind(this),
         error: function(xhr, status, err) {
-          console.error('/api/users', status, err.toString());
+          console.error('/api/user/users', status, err.toString());
         }.bind(this)
       });
   },

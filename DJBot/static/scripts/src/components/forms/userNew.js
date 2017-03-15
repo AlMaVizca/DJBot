@@ -3,16 +3,15 @@ var PropTypes = React.PropTypes;
 
 import { Form, Input } from "semantic-ui-react";
 
-var userNew = React.createClass({
+var formUser = React.createClass({
   propTypes: {
     username: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
     password: PropTypes.string.isRequired,
-    rptPassword: PropTypes.string.isRequired,
+    rptPassword: PropTypes.string,
     changeUsername: PropTypes.func.isRequired,
     changeEmail: PropTypes.func.isRequired,
     changePassword: PropTypes.func.isRequired,
-    checkPassword: PropTypes.func.isRequired
   },
   render: function(){
     return (
@@ -41,4 +40,4 @@ var userNew = React.createClass({
   }
 });
 
-module.exports = userNew;
+module.exports = formUser;

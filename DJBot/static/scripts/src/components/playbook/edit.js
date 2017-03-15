@@ -103,8 +103,8 @@ var PlaybookEdit = React.createClass({
     description: PropTypes.string,
     tasks: PropTypes.array,
     changeName: PropTypes.func.isRequired,
-    changeDescription: PropTypes.string.isRequired,
-    saveAction: PropTypes.string.isRequired
+    changeDescription: PropTypes.func.isRequired,
+    saveAction: PropTypes.func.isRequired
   },
   getDefaultProps: function(){
     return ({

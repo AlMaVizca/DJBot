@@ -29,7 +29,7 @@ var Task = React.createClass({
             <Header content="Task Definition" />
             A task is a special configuration of a module
             <Segment.Group>
-              <Segment textAlign="left" reised attached>
+              <Segment textAlign="left" raised attached>
                 <Input fluid transparent={this.props.transparent}
                        type="text" name="name" value={this.props.taskName}
                        label={{ribbon: true, color: "blue",

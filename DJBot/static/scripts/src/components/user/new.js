@@ -33,14 +33,8 @@ var UserNew = React.createClass({
     this.setState({rptPassword: e.target.value});
   },
   checkPassword: function(){
-    console.log("-");
-    console.log(this.state.rptPassword);
-    console.log(this.state.password);
-    console.log("-");
     if (this.state.rptPassword.length == this.state.password.length){
-      console.log("same size");
       if (this.state.rptPassword.trim() != this.state.password.trim()){
-        console.log("but different");
         this.setState({messageMode: 1, messageText: "Password mismatch"});
       }
       else this.userSave();
@@ -81,7 +75,7 @@ var UserNew = React.createClass({
         <Header icon="user" content="Add new user" />
         <Grid centered>
           <Grid.Column width={5}>
-            <Segment textAlign="left" reised attached>
+            <Segment textAlign="left" raised attached>
               <ShowMessage mode={this.state.messageMode}
                            text={this.state.messageText}/>
               <FormUserNew username={this.state.username}

@@ -37,7 +37,7 @@ var UserContainer = React.createClass({
           this.setState(data);
         }.bind(this),
         error: function(xhr, status, err) {
-          console.error('/api/user/change', status, err.toString());
+          console.error('/api/user', status, err.toString());
         }.bind(this)
       });
   },
