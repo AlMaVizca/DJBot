@@ -1,10 +1,10 @@
-from database import db_session
+from DJBot.database import db
 from flask import Blueprint, jsonify, request
 from flask_security import roles_required, current_user
 from flask_security.utils import encrypt_password, verify_password
-from forms import UserAddForm, UserChangeForm, UserDeleteForm, PassChangeForm
-from models.user import User, Role
-from querys import get_users
+from DJBot.forms import UserAddForm, UserChangeForm, UserDeleteForm, PassChangeForm
+from DJBot.models.user import User, Role
+from DJBot.querys import get_users
 
 user_bp = Blueprint('user', __name__)
 
@@ -40,8 +40,8 @@ def user_add():
         user.password = encrypt_password(form.password.data)
         role_user = Role.query.filter(Role.name == 'user').first()
         user.roles.append(role_user)
-        db_session.add(user)
-        db_session.commit()
+        db.session.add(user)
+        db.session.commit()
         return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})
 
@@ -57,7 +57,7 @@ def user_change():
             user.email = form.email.data
             if form.password.data != '':
                 user.password = (form.password.data)
-            db_session.commit()
+            db.session.commit()
             return jsonify({"messageMode": 0, "messageText": "Changes saved "})
         return jsonify({"messageMode": 1, "messageText": "Wrong password"})
     return jsonify({"messageMode": 1, "messageText": "Failed to save changes"})
@@ -70,7 +70,7 @@ def user_change_admin():
     if form.validate():
         user = User.query.get(form.key.data)
         user.change_admin()
-        db_session.commit()
+        db.session.commit()
         return jsonify({'message': 'deleted'})
     return jsonify({'message': 'failed'})
 
@@ -88,7 +88,7 @@ def user_change_password():
         if verify_password(form.old.data, user):
             user = User.query.get(form.key.data)
             user.password = encrypt_password(form.password.data)
-            db_session.commit()
+            db.session.commit()
             return jsonify({'message': 'saved'})
         return jsonify({'message': 'wrong password!'})
     return jsonify({'message': 'failed'})
@@ -100,7 +100,7 @@ def user_delete():
     form = UserDeleteForm(request.form)
     if form.validate():
         user = User.query.get(form.key.data)
-        db_session.delete(user)
-        db_session.commit()
+        db.session.delete(user)
+        db.session.commit()
         return jsonify({'message': 'deleted'})
     return jsonify({'message': 'failed'})

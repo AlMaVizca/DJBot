@@ -19,7 +19,7 @@ def generate_key():
         content_file.write("\n")
 
     subprocess.call(['cp', '/root/.ssh/id_rsa.pub', '/root/.ssh/pub_key/'])
-    subprocess.call(['cp', '/usr/src/app/djbot/utils/config', '/root/.ssh/'])
+    subprocess.call(['cp', '/usr/src/app/DJBot/utils/config', '/root/.ssh/'])
 
 
 class SshConfig():

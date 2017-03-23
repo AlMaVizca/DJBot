@@ -1,9 +1,9 @@
-from database import db_session
+from DJBot.database import db
 from flask import Blueprint, jsonify, request
 from flask_security import roles_required
-from querys import get_playbooks
-from models.playbook import Playbook
-from forms import PlaybookFormAdd, PlaybookFormSelect
+from DJBot.querys import get_playbooks
+from DJBot.models.playbook import Playbook
+from DJBot.forms import PlaybookFormAdd, PlaybookFormSelect
 
 playbook_bp = Blueprint('playbook', __name__)
 
@@ -21,8 +21,8 @@ def playbook_add():
     if form.validate():
         play = Playbook(name=form.name.data,
                         description=form.description.data)
-        db_session.add(play)
-        db_session.commit()
+        db.session.add(play)
+        db.session.commit()
         return jsonify({'messageMode': '0',
                         'messageText': 'Playbook saved'})
     return jsonify({'messageMode': '1',
@@ -35,8 +35,8 @@ def playbook_delete():
     form = PlaybookFormSelect(request.form)
     if form.validate():
         playbook = Playbook.query.get(form.key.data)
-        db_session.delete(playbook)
-        db_session.commit()
+        db.session.delete(playbook)
+        db.session.commit()
         return jsonify({'messageMode': 0,
                         'messageText': 'Playbook deleted'})
     return jsonify({'messageMode': 1,
@@ -62,7 +62,7 @@ def playbook_save():
         playbook = Playbook.query.get(form.key.data)
         playbook.name = form.name.data
         playbook.description = form.description.data
-        db_session.commit()
+        db.session.commit()
         return jsonify({'messageMode': '0',
                         'messageText': 'Playbook saved'})
     return jsonify({'messageMode': '1',
