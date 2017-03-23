@@ -19,4 +19,4 @@ WORKDIR /usr/src/app
 COPY gunicorn.py pytest.ini setup.py setup.cfg DJBot /usr/src/app/
 RUN python setup.py install
 RUN pip install --upgrade git+git://github.com/inveniosoftware/flask-security-fork.git
-CMD ["gunicorn", "--forwarded-allow-ips=*", "--config=gunicorn.py", "djbot:app"]
+CMD ["gunicorn", "--forwarded-allow-ips=*", "--config=gunicorn.py", "wsgi:app"]
