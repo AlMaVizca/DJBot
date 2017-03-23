@@ -1,44 +1,44 @@
-from database import Base
+from DJBot.database import db
 from flask_security import UserMixin, RoleMixin
-from sqlalchemy import Boolean, DateTime, Column, ForeignKey, Integer, \
-    String
-from sqlalchemy.orm import relationship, backref
 
 
 # Define Role model
-class Role(Base, RoleMixin):
+class Role(db.Model, RoleMixin):
     __tablename__ = 'role'
-    id = Column(Integer(), primary_key=True)
-    name = Column(String(50), unique=True)
-    description = Column(String(50))
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+    description = db.Column(db.String(50))
 
     def __repr__(self):
         return self.name
 
 
 # Define UserRoles model
-class RolesUsers(Base):
+class RolesUsers(db.Model):
     __tablename__ = 'roles_users'
-    id = Column(Integer(), primary_key=True)
-    user_id = Column(Integer(), ForeignKey('user.id', ondelete='CASCADE'))
-    role_id = Column(Integer(), ForeignKey('role.id', ondelete='CASCADE'))
+    id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer(),
+                        db.ForeignKey('user.id', ondelete='CASCADE'))
+    role_id = db.Column(db.Integer(),
+                        db.ForeignKey('role.id', ondelete='CASCADE'))
 
 
-class User(Base, UserMixin):
+class User(db.Model, UserMixin):
     __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    email = Column(String(255), unique=True)
-    username = Column(String(255))
-    password = Column(String(255))
-    last_login_at = Column(DateTime())
-    current_login_at = Column(DateTime())
-    last_login_ip = Column(String(100))
-    current_login_ip = Column(String(100))
-    login_count = Column(Integer)
-    active = Column(Boolean())
-    confirmed_at = Column(DateTime())
-    roles = relationship('Role', secondary='roles_users',
-                         backref=backref('users', lazy='dynamic'))
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(255), unique=True)
+    username = db.Column(db.String(255))
+    password = db.Column(db.String(255))
+    last_login_at = db.Column(db.DateTime())
+    current_login_at = db.Column(db.DateTime())
+    last_login_ip = db.Column(db.String(100))
+    current_login_ip = db.Column(db.String
+                                 (100))
+    login_count = db.Column(db.Integer)
+    active = db.Column(db.Boolean())
+    confirmed_at = db.Column(db.DateTime())
+    roles = db.relationship('Role', secondary='roles_users',
+                            backref=db.backref('users', lazy='dynamic'))
 
     def __repr__(self):
         return '%r %r' % (self.username, self.email)

@@ -9,13 +9,12 @@ readme = 'DJBot is a frontend for develop and run ansible playbooks'
 
 install_requires = [
     "Flask-Security-fork",
-    "Flask-Security",
     "Flask-WTF",
+    "Flask-SQLAlchemy",
     "Flask",
     "gunicorn",
     "ipaddress",
     "PyYAML",
-    "SQLAlchemy",
     "ssh-authorizer",
     "bcrypt",
 ]
@@ -36,9 +35,10 @@ tests_require = [
     'pytest-cache>=1.0',
     'pytest-cov>=2.4.0',
     'pytest-flakes>=1.0.1',
+    'pytest-flask>=0.10.0',
     'pytest-pep8>=1.0.6',
     'pytest>=3.0.5',
-    'sqlalchemy>=1.1.6',
+    'Flask-SQLAlchemy>=2.2',
 ]
 
 setup(

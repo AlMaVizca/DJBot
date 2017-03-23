@@ -3,14 +3,14 @@ __all__ = ["user", "room", "playbook"]
 import user
 import room
 from playbook import Task, Parameter, Playbook
-from database import db_session, init_db
+from DJBot.database import db
 from flask_security.utils import encrypt_password
 from user import User, Role
 
 
 def first_data(app, user_datastore):
     with app.app_context():
-        init_db()
+        db.create_all()
         role_admin = user_datastore.create_role(
             name='admin',
             description="administration user"
@@ -35,4 +35,4 @@ def first_data(app, user_datastore):
         user_datastore.add_role_to_user(user, role_user)
         user_datastore.add_role_to_user(admin, role_admin)
 
-        db_session.commit()
+        db.session.commit()

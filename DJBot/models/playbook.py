@@ -1,14 +1,12 @@
-from database import Base, db_session
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from DJBot.database import db
 
 
-class Task(Base):
+class Task(db.Model):
     __tablename__ = "task"
-    key = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
-    parameters = relationship("Parameter", cascade="all, delete-orphan")
-    playbook = Column(Integer, ForeignKey("playbook.key"))
+    key = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(50), nullable=False)
+    parameters = db.relationship("Parameter", cascade="all, delete-orphan")
+    playbook = db.Column(db.Integer, db.ForeignKey("playbook.key"))
 
     def __repr__(self):
         return "<Task %r %r %r %r>" % (self.key,
@@ -17,13 +15,13 @@ class Task(Base):
                                        self.playbook)
 
 
-class Parameter(Base):
+class Parameter(db.Model):
     __tablename__ = "paramenter"
-    key = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
-    value = Column(String(50), nullable=False)
-    filename = Column(String(50))
-    task = Column(Integer, ForeignKey("task.key"))
+    key = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(50), nullable=False)
+    value = db.Column(db.String(50), nullable=False)
+    filename = db.Column(db.String(50))
+    task = db.Column(db.Integer, db.ForeignKey("task.key"))
 
     def __repr__(self):
         return "<Parameter %r %r %r>" % (self.key,
@@ -31,12 +29,12 @@ class Parameter(Base):
                                          self.value)
 
 
-class Playbook(Base):
+class Playbook(db.Model):
     __tablename__ = "playbook"
-    key = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
-    description = Column(String(150), nullable=False)
-    tasks = relationship("Task", cascade="all, delete-orphan")
+    key = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(150), nullable=False)
+    tasks = db.relationship("Task", cascade="all, delete-orphan")
 
     def get_setup(self):
         return dict(name=self.name, description=self.description,
@@ -57,25 +55,25 @@ class Playbook(Base):
         for each in self.tasks:
             if int(taskkey) == each.key:
                 each.args.append(new_args)
-        db_session.commit()
+        db.session.commit()
         return True
 
     def parameter_delete(self, key):
         arg = Parameter.query.filter(Parameter.key == key).first()
-        db_session.delete(arg)
-        db_session.commit()
+        db.session.delete(arg)
+        db.session.commit()
         return True
 
     def module_add(self, name, app):
         new_task = Task(name=name, args=[])
         app.logger.info(self)
         self.tasks.append(new_task)
-        db_session.add(self)
-        db_session.commit()
+        db.session.add(self)
+        db.session.commit()
         return True
 
     def module_delete(self, key):
         task = Task.query.filter(Task.key == key).first()
-        db_session.delete(task)
-        db_session.commit()
+        db.session.delete(task)
+        db.session.commit()
         return True

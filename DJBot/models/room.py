@@ -1,17 +1,15 @@
-from database import Base, db_session
-from utils import proxy
-from ansibleapi import Runner
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from DJBot.database import db
+from DJBot.utils import proxy
+from DJBot.ansibleapi import Runner
 
 
-class Room(Base):
+class Room(db.Model):
     __tablename__ = "room"
-    key = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
-    machines = Column(Integer, nullable=False)
-    network = Column(String, nullable=False)
-    hosts = relationship("Computer", cascade="all, delete-orphan")
+    key = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(50), nullable=False)
+    machines = db.Column(db.Integer, nullable=False)
+    network = db.Column(db.String, nullable=False)
+    hosts = db.relationship("Computer", cascade="all, delete-orphan")
 
     def __repr__(self):
         return "<Room %r %r %r %r>" % (self.key,
@@ -52,14 +50,14 @@ class Room(Base):
         self.name = name
         self.machines = machines
         self.network = self._set_network(network, netmask)
-        db_session.add(self)
-        db_session.commit()
+        db.session.add(self)
+        db.session.commit()
         return True
 
     def delete(self):
         """delete on database"""
-        db_session.delete(self)
-        db_session.commit()
+        db.session.delete(self)
+        db.session.commit()
 
     def get_hosts(self):
         """run ansible setup on hosts"""
@@ -89,10 +87,10 @@ class Room(Base):
         return {"hosts": hosts}
 
 
-class Computer(Base):
+class Computer(db.Model):
     __tablename__ = "computer"
-    key = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(50), nullable=False)
-    mac = Column(String(50), nullable=False)
-    location = Column(Integer, nullable=False)
-    task_key = Column(Integer, ForeignKey("room.key"))
+    key = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(50), nullable=False)
+    mac = db.Column(db.String(50), nullable=False)
+    location = db.Column(db.Integer, nullable=False)
+    task_key = db.Column(db.Integer, db.ForeignKey("room.key"))
