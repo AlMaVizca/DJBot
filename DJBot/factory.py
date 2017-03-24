@@ -12,7 +12,7 @@ from flask_security import Security, SQLAlchemyUserDatastore, \
     login_required, roles_required
 
 
-def create_app(config='DJBot.config.Production', instance=True):
+def create_app(config='config.Production', instance=True):
 
     app = Flask(__name__, instance_relative_config=instance)
 

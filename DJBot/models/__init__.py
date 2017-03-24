@@ -3,7 +3,7 @@ __all__ = ["user", "room", "playbook"]
 import user
 import room
 from playbook import Task, Parameter, Playbook
-from DJBot.database import db
+from database import db
 from flask_security.utils import encrypt_password
 from user import User, Role
 

@@ -1,4 +1,4 @@
-from DJBot.database import db
+from database import db
 
 
 class Task(db.Model):

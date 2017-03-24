@@ -1,6 +1,6 @@
-from DJBot.database import db
-from DJBot.utils import proxy
-from DJBot.ansibleapi import Runner
+from database import db
+from utils import proxy
+from ansibleapi import Runner
 
 
 class Room(db.Model):

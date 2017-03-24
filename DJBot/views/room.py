@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
-from DJBot.forms import RoomFormAdd, RoomFormDelete
-from DJBot.models.room import Room
-from DJBot.querys import get_rooms
+from forms import RoomFormAdd, RoomFormDelete
+from models.room import Room
+from querys import get_rooms
 
 room_bp = Blueprint('room', __name__)
 

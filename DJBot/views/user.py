@@ -1,10 +1,11 @@
-from DJBot.database import db
+from database import db
 from flask import Blueprint, jsonify, request
 from flask_security import roles_required, current_user
 from flask_security.utils import encrypt_password, verify_password
-from DJBot.forms import UserAddForm, UserChangeForm, UserDeleteForm, PassChangeForm
-from DJBot.models.user import User, Role
-from DJBot.querys import get_users
+from forms import UserAddForm, UserChangeForm, UserDeleteForm,\
+    PassChangeForm
+from models.user import User, Role
+from querys import get_users
 
 user_bp = Blueprint('user', __name__)
 
