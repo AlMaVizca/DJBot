@@ -1,4 +1,7 @@
 from DJBot.database import db
+import json
+import os
+import time
 
 
 class Task(db.Model):
@@ -77,3 +80,41 @@ class Playbook(db.Model):
         db.session.delete(task)
         db.session.commit()
         return True
+
+
+def execution_tasks(tasks):
+    execution_tasks = []
+    names = []
+    for each in tasks:
+        a_task = Task.query.get(each).get_setup()
+        names.append(a_task['name'])
+        task = {'name': a_task['name'], 'modules': []}
+        parameters = {}
+        for module in a_task['modules']:
+            for arg in module['options']:
+                parameters[arg['name']] = arg['value']
+            task['modules'].append((dict(
+                action=dict(
+                    module=module['name'],
+                    args=parameters)
+            )))
+        execution_tasks.append(task)
+    return execution_tasks, names
+
+
+def get_result(filename):
+    result = {'data': 'Not Found!'}
+    with open(filename, 'r') as fp:
+        result = json.load(fp)
+    result['datetime'] = time.strftime("%m/%d/%Y %I:%M:%S %p",
+                                       time.localtime(
+                                           os.path.getmtime(filename)))
+    return result
+
+
+def get_playbooks():
+    playbooks = Playbook().query.all()
+    playbooks_info = {'playbooks': []}
+    for each in playbooks:
+        playbooks_info['playbooks'].append(each.get_setup())
+    return playbooks_info
