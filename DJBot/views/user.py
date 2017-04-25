@@ -1,10 +1,10 @@
 from DJBot.database import db
 from flask import Blueprint, jsonify, request
 from flask_security import roles_required, current_user
-from flask_security.utils import encrypt_password, verify_password
-from DJBot.forms import UserAddForm, UserChangeForm, UserDeleteForm, PassChangeForm
-from DJBot.models.user import User, Role
-from DJBot.querys import get_users
+from flask_security.utils import verify_password
+from DJBot.forms import UserAddForm, UserChangeForm, UserDeleteForm, \
+    PassChangeForm
+from DJBot.models.user import create_user, get_user, get_users
 
 user_bp = Blueprint('user', __name__)
 
@@ -12,7 +12,7 @@ user_bp = Blueprint('user', __name__)
 @user_bp.route('/', methods=['GET'])
 @roles_required('user')
 def user():
-    user = User.query.filter(User.username == current_user.username).first()
+    user = get_user(current_user.username)
     return jsonify(user.get_setup())
 
 
@@ -20,7 +20,7 @@ def user():
 @roles_required('admin')
 def users():
     users = {}
-    user = User.query.filter(User.username == current_user.username).first()
+    user = get_user(current_user.username)
     if user.is_admin():
         users.update(get_users())
     else:
@@ -33,15 +33,8 @@ def users():
 def user_add():
     form = UserAddForm(request.form)
     if form.validate():
-        user = User()
-        user.username = form.username.data
-        current_user.username = user.username
-        user.email = form.email.data
-        user.password = encrypt_password(form.password.data)
-        role_user = Role.query.filter(Role.name == 'user').first()
-        user.roles.append(role_user)
-        db.session.add(user)
-        db.session.commit()
+        create_user(form.username.data, form.email.data,
+                    form.password.data)
         return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})
 
@@ -81,9 +74,7 @@ def user_change_password():
     form = PassChangeForm(request.form)
     if form.validate_on_submit():
 
-        user = User.query.filter(
-            User.username == current_user.username
-        ).first()
+        user = get_user(current_user.username)
 
         if verify_password(form.old.data, user):
             user = User.query.get(form.key.data)

@@ -9,7 +9,7 @@ blueprints = {
     '/api/playbook': playbook_bp,
     '/api/room': room_bp,
     '/api/task': task_bp,
-    '/api/user': user_bp,
+
 }
 
 

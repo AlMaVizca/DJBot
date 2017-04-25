@@ -1,15 +1,14 @@
-from database import db
-from models import first_data
-from models.user import User, Role
-from utils import config_ssh
-from views import register_api
+from DJBot.database import db
+from DJBot.models import first_data
+from DJBot.models.user import get_datastore
+from DJBot.utils import config_ssh
+from DJBot.views import register_api
 import os
 
 from flask import Flask, render_template, request
 from flask_wtf.csrf import CSRFProtect
 
-from flask_security import Security, SQLAlchemyUserDatastore, \
-    login_required, roles_required
+from flask_security import Security, login_required, roles_required
 
 
 def create_app(config='DJBot.config.Production', instance=True):
@@ -25,13 +24,14 @@ def create_app(config='DJBot.config.Production', instance=True):
     register_api(app)
 
     db.init_app(app)
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
-    app.security = Security(app, user_datastore)
+    #user_datastore = get_datastore(db)
+    #app.security = Security(app, user_datastore)
 
     try:
         User.query.all()
     except:
-        first_data(app, user_datastore)
+        pass
+# first_data(app, user_datastore)
 
     if not os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa'):
         config_ssh.generate_key()
