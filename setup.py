@@ -2,7 +2,7 @@
 
 """DJBot."""
 
-from setuptools import setup
+from setuptools import find_packages, setup
 
 readme = 'DJBot is a frontend for develop and run ansible playbooks'
 # open('README.rst').read()
@@ -45,6 +45,8 @@ setup(
     name='DJBot',
     version='2',
     description=__doc__,
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     long_description=readme,
     keywords='ansible frontend',
     license='GPLv3',
