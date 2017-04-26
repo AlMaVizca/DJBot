@@ -4,7 +4,8 @@ from flask_security import roles_required, current_user
 from flask_security.utils import verify_password
 from DJBot.forms import UserAddForm, UserChangeForm, UserDeleteForm, \
     PassChangeForm
-from DJBot.models.user import create_user, get_user, get_users
+from DJBot.models.user import create_user, get_user, get_user_id, \
+    get_users
 
 user_bp = Blueprint('user', __name__)
 
@@ -44,7 +45,7 @@ def user_add():
 def user_change():
     form = UserChangeForm(request.form)
     if form.validate_on_submit():
-        user = User.query.get(form.key.data)
+        user = get_user_id(form.key.data)
         if verify_password(form.old.data, user.password):
             user.username = form.username.data
             user.email = form.email.data
@@ -61,7 +62,7 @@ def user_change():
 def user_change_admin():
     form = UserDeleteForm(request.form)
     if form.validate():
-        user = User.query.get(form.key.data)
+        user = get_user_id(form.key.data)
         user.change_admin()
         db.session.commit()
         return jsonify({'message': 'deleted'})
@@ -77,9 +78,8 @@ def user_change_password():
         user = get_user(current_user.username)
 
         if verify_password(form.old.data, user):
-            user = User.query.get(form.key.data)
-            user.password = encrypt_password(form.password.data)
-            db.session.commit()
+            user = get_user_id(form.key.data)
+            user.set_password(form.password.data)
             return jsonify({'message': 'saved'})
         return jsonify({'message': 'wrong password!'})
     return jsonify({'message': 'failed'})
@@ -90,7 +90,7 @@ def user_change_password():
 def user_delete():
     form = UserDeleteForm(request.form)
     if form.validate():
-        user = User.query.get(form.key.data)
+        user = get_user_id(form.key.data)
         db.session.delete(user)
         db.session.commit()
         return jsonify({'message': 'deleted'})

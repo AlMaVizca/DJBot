@@ -57,6 +57,10 @@ class User(db.Model, UserMixin):
             return True
         return False
 
+    def set_password(self, pwd):
+        self.password = hash_password(pwd)
+        db.session.commit()
+
 
 def create_user(username, email, password):
     user = User()
@@ -84,6 +88,10 @@ def get_users():
 
 def get_user(username):
     return User.query.filter(User.username == username).first()
+
+
+def get_user_id(id):
+    return User.query.get(id)
 
 
 def get_role(role_name='user'):
