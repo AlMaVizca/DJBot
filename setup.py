@@ -8,12 +8,14 @@ readme = 'DJBot is a frontend for develop and run ansible playbooks'
 # open('README.rst').read()
 
 install_requires = [
+    "ansible==2.1",
     "Flask-Security-fork",
     "Flask-WTF",
     "Flask-SQLAlchemy",
     "Flask",
     "gunicorn",
     "ipaddress",
+    'pycrypto>=2.6.1',
     "PyYAML",
     "ssh-authorizer",
     "bcrypt",
