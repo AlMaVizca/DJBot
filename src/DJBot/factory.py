@@ -27,16 +27,19 @@ def create_app(config='DJBot.config.Production', instance=True):
     user_datastore = get_datastore(db)
     app.security = Security(app, user_datastore)
 
-    try:
-        app.logger.info('Getting users...')
-        get_users()
-        app.logger.info('Success.')
-    except:
-        app.logger.error('Fail. We are gonna create the database')
-        first_data(app, user_datastore)
+    @app.before_first_request
+    def init_database():
+        """Check if the database doesn't exist and create it"""
+        try:
+            app.logger.info('Getting users...')
+            get_users()
+            app.logger.info('Success.')
+        except:
+            app.logger.error('Fail. We are gonna create the database')
+            first_data(app, user_datastore)
 
-    if not os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa'):
-        config_ssh.generate_key()
+        if not os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa'):
+            config_ssh.generate_key()
 
     @app.route('/', methods=['GET'])
     @login_required

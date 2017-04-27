@@ -2,6 +2,7 @@ from DJBot.database import db
 from flask_security import UserMixin, RoleMixin, SQLAlchemyUserDatastore
 from flask_security.utils import encrypt_password as hash_password
 
+
 # Define Role model
 class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer(), primary_key=True)
@@ -70,7 +71,6 @@ def create_user(username, email, password):
     user.roles.append(get_role())
     db.session.add(user)
     db.session.commit()
-
 
 
 def get_datastore(db):
