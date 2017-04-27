@@ -1,9 +1,8 @@
 from database import db
 from flask import Blueprint, jsonify, request
 from flask_security import roles_required
-from querys import get_playbooks
-from models.playbook import Playbook
-from forms import PlaybookFormAdd, PlaybookFormSelect
+from DJBot.models.playbook import Playbook, get_playbooks
+from DJBot.forms import PlaybookFormAdd, PlaybookFormSelect
 
 playbook_bp = Blueprint('playbook', __name__)
 

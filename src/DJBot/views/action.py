@@ -1,8 +1,9 @@
 from ansibleapi import ThreadRunner
 from flask import Blueprint, jsonify, request
 from flask_security import current_user, roles_required
-from forms import ResultForm
-from querys import get_machines, execution_tasks, get_result
+from DJBot.forms import ResultForm
+from DJBot.models.playbook import execution_tasks, get_result
+from DJBot.models.room import get_machines
 import os
 
 action_bp = Blueprint('action', __name__)

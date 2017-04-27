@@ -23,6 +23,7 @@ class Config():
     USER_APP_NAME = "DJBot"
     USER_ENABLE_REGISTRATION = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 class Production(Config):
@@ -40,3 +41,4 @@ class Testing(Config):
 
     DATABASE = path
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE
+    WTF_CSRF_ENABLED = False

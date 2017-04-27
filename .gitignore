@@ -6,7 +6,7 @@
 *.db
 env
 */__pycache__/*
-*/node_modules/*
-*/instance/*
-*/.ipynb_checkpoints/*
-DJBot/static/scripts/build/index_bundle.js
+src/DJBot/node_modules/*
+src/DJBot/instance/*
+src/DJBot/.ipynb_checkpoints/*
+src/DJBot/static/scripts/build/index_bundle.js

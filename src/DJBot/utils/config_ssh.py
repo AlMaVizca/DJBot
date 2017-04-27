@@ -17,9 +17,12 @@ def generate_key():
     with open(key_path + ".pub", 'w') as content_file:
         content_file.write(pubkey.exportKey('OpenSSH'))
         content_file.write("\n")
-
-    subprocess.call(['cp', '/root/.ssh/id_rsa.pub', '/root/.ssh/pub_key/'])
-    subprocess.call(['cp', '/usr/src/app/DJBot/utils/config', '/root/.ssh/'])
+    this_path = os.path.split(os.path.abspath(__file__))[0]
+    subprocess.call(['cp', '/root/.ssh/id_rsa.pub',
+                     '/root/.ssh/pub_key/'])
+    subprocess.call(['cp',
+                     this_path + '/config',
+                     '/root/.ssh/'])
 
 
 class SshConfig():

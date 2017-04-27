@@ -94,3 +94,22 @@ class Computer(db.Model):
     mac = db.Column(db.String(50), nullable=False)
     location = db.Column(db.Integer, nullable=False)
     task_key = db.Column(db.Integer, db.ForeignKey("room.key"))
+
+
+def get_rooms():
+    rooms = Room().query.all()
+    rooms_info = {'rooms': []}
+    for each in rooms:
+        each_room = Room.query.get(each.key)
+        rooms_info['rooms'].append(each_room.get_setup())
+    return rooms_info
+
+
+def get_machines(rooms):
+    hosts = []
+    names = []
+    for each in rooms:
+        a_room = Room.query.get(each)
+        names.append(a_room.name)
+        hosts.extend(a_room.discover_hosts())
+    return hosts, names

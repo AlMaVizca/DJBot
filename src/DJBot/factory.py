@@ -1,15 +1,14 @@
-from database import db
-from models import first_data
-from models.user import User, Role
-from utils import config_ssh
-from views import register_api
+from DJBot.database import db
+from DJBot.models import first_data
+from DJBot.models.user import get_datastore, get_users
+from DJBot.utils import config_ssh
+from DJBot.views import register_api
 import os
 
 from flask import Flask, render_template, request
 from flask_wtf.csrf import CSRFProtect
 
-from flask_security import Security, SQLAlchemyUserDatastore, \
-    login_required, roles_required
+from flask_security import Security, login_required, roles_required
 
 
 def create_app(config='config.Production', instance=True):
@@ -25,16 +24,22 @@ def create_app(config='config.Production', instance=True):
     register_api(app)
 
     db.init_app(app)
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+    user_datastore = get_datastore(db)
     app.security = Security(app, user_datastore)
 
-    try:
-        User.query.all()
-    except:
-        first_data(app, user_datastore)
+    @app.before_first_request
+    def init_database():
+        """Check if the database doesn't exist and create it"""
+        try:
+            app.logger.info('Getting users...')
+            get_users()
+            app.logger.info('Success.')
+        except:
+            app.logger.error('Fail. We are gonna create the database')
+            first_data(app, user_datastore)
 
-    if not os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa'):
-        config_ssh.generate_key()
+        if not os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa'):
+            config_ssh.generate_key()
 
     @app.route('/', methods=['GET'])
     @login_required
