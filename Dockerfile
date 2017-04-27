@@ -2,9 +2,6 @@ FROM python:2
 EXPOSE 80
 VOLUME /usr/src/app
 
-#Install ansible
-RUN pip install git+git://github.com/ansible/ansible.git@stable-2.1
-
 #Logs
 RUN mkdir -p /var/log/djbot
 ENV LOGS '/var/log/djbot/'
