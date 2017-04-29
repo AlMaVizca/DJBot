@@ -112,6 +112,10 @@ def get_result(filename):
     return result
 
 
+def get_playbook(id):
+    return Playbook.query.get(id)
+
+
 def get_playbooks():
     playbooks = Playbook().query.all()
     playbooks_info = {'playbooks': []}

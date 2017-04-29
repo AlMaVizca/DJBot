@@ -1,4 +1,4 @@
-from ansibleapi import ThreadRunner
+from DJBot.ansibleapi import ThreadRunner
 from flask import Blueprint, jsonify, request
 from flask_security import current_user, roles_required
 from DJBot.forms import ResultForm

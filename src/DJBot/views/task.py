@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 from flask_security import roles_required
-from forms import ModuleFormAdd, ModuleFormDelete, ParameterFormAdd, \
+from DJBot.forms import ModuleFormAdd, ModuleFormDelete, ParameterFormAdd, \
     ParameterFormDelete
-from models.playbook import Task
+from DJBot.models.playbook import get_playbook
 
 task_bp = Blueprint("task", __name__)
 
@@ -12,7 +12,7 @@ task_bp = Blueprint("task", __name__)
 def module_add(id):
     form = ModuleFormAdd(request.form)
     if form.validate():
-        task = Task.query.get(id)
+        task = get_playbook(id)
         saved = task.module_add(form.module.data)
         if saved:
             return jsonify({'message': 'saved'})
@@ -24,7 +24,7 @@ def module_add(id):
 def module_delete(id):
     form = ModuleFormDelete(request.form)
     if form.validate():
-        task = Task.query.get(id)
+        task = get_playbook(id)
         deleted = task.module_delete(form.key.data)
         if deleted:
             return jsonify({'message': 'saved'})
@@ -36,7 +36,7 @@ def module_delete(id):
 def parameter_add(id):
     form = ParameterFormAdd(request.form)
     if form.validate():
-        task = Task.query.get(id)
+        task = get_playbook(id)
         saved = task.parameter_add(
             form.modulekey.data, (form.parameter.data, form.value.data)
         )
@@ -50,7 +50,7 @@ def parameter_add(id):
 def parameter_delete(id):
     form = ParameterFormDelete(request.form)
     if form.validate():
-        task = Task.query.get(id)
+        task = get_playbook(id)
         deleted = task.parameter_delete(form.key.data)
         if deleted:
             return jsonify({'message': 'saved'})

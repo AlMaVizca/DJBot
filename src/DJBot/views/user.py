@@ -1,6 +1,6 @@
-from database import db
+from DJBot.database import db
 from flask import Blueprint, jsonify, request
-from flask_security import roles_required, current_user
+from flask_security import login_required, roles_required, current_user
 from flask_security.utils import verify_password
 from DJBot.forms import UserAddForm, UserChangeForm, UserDeleteForm, \
     PassChangeForm
@@ -11,16 +11,18 @@ from DJBot.models.user import create_user, get_user, get_user_id, \
 user_bp = Blueprint('user', __name__)
 
 
-@user_bp.route('/', methods=['GET'])
+@user_bp.route('/get', methods=['GET'])
+@login_required
 @roles_required('user')
-def user():
+def get():
     user = get_user(current_user.username)
     return jsonify(user.get_setup())
 
 
-@user_bp.route('/users', methods=['GET'])
+@user_bp.route('/get_users', methods=['GET'])
+@login_required
 @roles_required('admin')
-def users():
+def get_all():
     users = {}
     user = get_user(current_user.username)
     if user.is_admin():
@@ -31,8 +33,9 @@ def users():
 
 
 @user_bp.route('/add', methods=['POST'])
+@login_required
 @roles_required('admin')
-def user_add():
+def add():
     form = UserAddForm(request.form)
     if form.validate():
         create_user(form.username.data, form.email.data,
@@ -41,9 +44,10 @@ def user_add():
     return jsonify({'message': 'failed'})
 
 
-@user_bp.route('/change', methods=['POST'])
+@user_bp.route('/modify', methods=['POST'])
+@login_required
 @roles_required('user')
-def user_change():
+def modify():
     form = UserChangeForm(request.form)
     if form.validate_on_submit():
         user = get_user_id(form.key.data)
@@ -58,9 +62,10 @@ def user_change():
     return jsonify({"messageMode": 1, "messageText": "Failed to save changes"})
 
 
-@user_bp.route('/change_admin', methods=['POST'])
+@user_bp.route('/admin', methods=['POST'])
+@login_required
 @roles_required('admin')
-def user_change_admin():
+def change_admin():
     form = UserDeleteForm(request.form)
     if form.validate():
         user = get_user_id(form.key.data)
@@ -70,9 +75,10 @@ def user_change_admin():
     return jsonify({'message': 'failed'})
 
 
-@user_bp.route('/change_password', methods=['POST'])
+@user_bp.route('/password', methods=['POST'])
+@login_required
 @roles_required('admin')
-def user_change_password():
+def change_password():
     form = PassChangeForm(request.form)
     if form.validate_on_submit():
 
@@ -87,8 +93,9 @@ def user_change_password():
 
 
 @user_bp.route('/delete', methods=['POST'])
+@login_required
 @roles_required('admin')
-def user_delete():
+def delete():
     form = UserDeleteForm(request.form)
     if form.validate():
         user = get_user_id(form.key.data)

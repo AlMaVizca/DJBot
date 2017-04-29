@@ -18,6 +18,7 @@ class Config():
     SECURITY_TRACKABLE = True
     SECURITY_USER_IDENTITY_ATTRIBUTES = ['email', 'username']
     SECURITY_PASSWORD_SALT = "changeThisInInstanceConfiguration"
+    SECURITY_UNAUTHORIZED_VIEW = '/login'
 
     # Flask-User settings
     USER_APP_NAME = "DJBot"
