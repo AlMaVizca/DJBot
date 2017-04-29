@@ -45,7 +45,6 @@ tests_require = [
 
 setup(
     name='DJBot',
-    packages=['DJBot'],
     version='2',
     description=__doc__,
     packages=find_packages(where="src"),
