@@ -2,8 +2,7 @@ from DJBot.database import db
 from flask import Blueprint, jsonify, request
 from flask_security import login_required, roles_required, current_user
 from flask_security.utils import verify_password
-from DJBot.forms import UserAddForm, UserChangeForm, UserDeleteForm, \
-    PassChangeForm
+from DJBot.forms.user import Add, Change, Select
 from DJBot.models.user import create_user, get_user, get_user_id, \
     get_users
 
@@ -36,7 +35,7 @@ def get_all():
 @login_required
 @roles_required('admin')
 def add():
-    form = UserAddForm(request.form)
+    form = Add(request.form)
     if form.validate():
         create_user(form.username.data, form.email.data,
                     form.password.data)
@@ -48,14 +47,12 @@ def add():
 @login_required
 @roles_required('user')
 def modify():
-    form = UserChangeForm(request.form)
+    form = Change(request.form)
     if form.validate_on_submit():
         user = get_user_id(form.key.data)
-        if verify_password(form.old.data, user.password):
+        if verify_password(form.password.data, user.password):
             user.username = form.username.data
             user.email = form.email.data
-            if form.password.data != '':
-                user.password = (form.password.data)
             db.session.commit()
             return jsonify({"messageMode": 0, "messageText": "Changes saved "})
         return jsonify({"messageMode": 1, "messageText": "Wrong password"})
@@ -66,29 +63,12 @@ def modify():
 @login_required
 @roles_required('admin')
 def change_admin():
-    form = UserDeleteForm(request.form)
+    form = Select(request.form)
     if form.validate():
         user = get_user_id(form.key.data)
         user.change_admin()
         db.session.commit()
-        return jsonify({'message': 'deleted'})
-    return jsonify({'message': 'failed'})
-
-
-@user_bp.route('/password', methods=['POST'])
-@login_required
-@roles_required('admin')
-def change_password():
-    form = PassChangeForm(request.form)
-    if form.validate_on_submit():
-
-        user = get_user(current_user.username)
-
-        if verify_password(form.old.data, user):
-            user = get_user_id(form.key.data)
-            user.set_password(form.password.data)
-            return jsonify({'message': 'saved'})
-        return jsonify({'message': 'wrong password!'})
+        return jsonify({'message': 'saved'})
     return jsonify({'message': 'failed'})
 
 
@@ -96,7 +76,7 @@ def change_password():
 @login_required
 @roles_required('admin')
 def delete():
-    form = UserDeleteForm(request.form)
+    form = Select(request.form)
     if form.validate():
         user = get_user_id(form.key.data)
         db.session.delete(user)
