@@ -14,15 +14,18 @@ class Config():
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + DATABASE
 
     # Flask-security settings
+    SECURITY_CHANGEABLE = True
     SECURITY_PASSWORD_HASH = "bcrypt"
+    SECURITY_PASSWORD_SALT = "changeThisInInstanceConfiguration"
+    SECURITY_POST_CHANGE_VIEW = "/#/settings/user"
+    SECURITY_REGISTERABLE = False
     SECURITY_TRACKABLE = True
     SECURITY_USER_IDENTITY_ATTRIBUTES = ['email', 'username']
-    SECURITY_PASSWORD_SALT = "changeThisInInstanceConfiguration"
     SECURITY_UNAUTHORIZED_VIEW = '/login'
+    SECURITY_SEND_PASSWORD_CHANGE_EMAIL = False
 
     # Flask-User settings
     USER_APP_NAME = "DJBot"
-    USER_ENABLE_REGISTRATION = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
