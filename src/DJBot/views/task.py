@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_security import roles_required
-from DJBot.forms import ModuleFormAdd, ModuleFormDelete, ParameterFormAdd, \
-    ParameterFormDelete
+from DJBot.forms.todos import ModuleFormAdd, ModuleFormDelete, \
+    ParameterFormAdd, ParameterFormDelete
 from DJBot.models.playbook import get_playbook
 
 task_bp = Blueprint("task", __name__)
