@@ -26,11 +26,15 @@ def test_add_playbook(client):
         'name': 'Initial setup',
         'description': 'Hardening of the operative system'
     }).json
+    wrong = client.post('/api/playbook/new', data={
+        'description': 'Hardening of the operative system'
+    }).json
     logout(client)
     assert without_login.status_code == 302
     assert wrong_method.status_code == 405
     assert save['messageMode'] == 0
     assert save['messageText'] == 'Playbook saved'
+    assert wrong['messageMode'] == 1
 
 
 def test_get_playbook(client):
@@ -61,10 +65,16 @@ def test_save_playbook(client):
     check_pb = client.post('/api/playbook/get', data={
         'key': 1,
     }).json
+    wrong_id = client.post('/api/playbook/save', data={
+        'key': 0,
+        'name': 'Not Good',
+        'description': 'This is a test of a non valid id'
+    }).json
     logout(client)
     assert without_login.status_code == 302
     assert wrong_method.status_code == 405
     assert save_pb['messageMode'] == 0
+    assert wrong_id['messageMode'] == 1
     assert check_pb['name'] == 'Modified initial setup'
     assert check_pb['description'] == 'Modified description'
     assert isinstance(check_pb['tasks'], list)
@@ -80,8 +90,13 @@ def test_delete_playbook(client):
     check_pb = client.post('/api/playbook/get', data={
         'key': 1,
     }).json
+    not_exist_pb = client.post('/api/playbook/delete', data={
+        'key': 0,
+    }).json
+
     logout(client)
     assert without_login.status_code == 302
     assert wrong_method.status_code == 405
     assert delete_pb['messageMode'] == 0
     assert check_pb['messageMode'] == 1
+    assert not_exist_pb['messageMode'] == 1
