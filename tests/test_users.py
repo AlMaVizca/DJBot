@@ -9,10 +9,10 @@
 from utils import authenticate, logout
 
 
-def test_get_users(client):
-    without_login = client.get('/api/user/get_users')
+def test_get_all(client):
+    without_login = client.get('/api/user/all')
     authenticate(client)
-    user_login = client.get('/api/user/get_users')
+    user_login = client.get('/api/user/all')
     logout(client)
     users = user_login.json
     assert without_login.status_code == 302
@@ -62,11 +62,17 @@ def test_change_user(client):
     user_login['username'] = username
     user_login['password'] = 'password'
     client.post('/api/user/modify', data=user_login)
+    user_login['password'] = 'fakePassword'
+    wrong_password = client.post('/api/user/modify', data=user_login).json
+    user_login.pop('password')
+    form_not_valid = client.post('/api/user/modify', data=user_login).json
     user_login = client.get('/api/user/get').json
     logout(client)
     assert without_login.status_code == 302
     assert wrong_method.status_code == 405
     assert user_login['username'] == username
+    assert wrong_password['messageText'] == 'Wrong password'
+    assert form_not_valid['messageText'] == 'Failed to save changes'
 
 
 def test_change_password(client):
@@ -105,7 +111,7 @@ def test_change_admin(client):
     wrong_method = client.get('/api/user/admin?key=2')
     without_login = client.post('/api/user/admin')
     authenticate(client)
-    users = client.get('/api/user/get_users').json
+    users = client.get('/api/user/all').json
     user_id = None
     for each in users['users']:
         if not each['admin']:
@@ -126,7 +132,7 @@ def test_delete_user(client):
     wrong_method = client.get('/api/user/delete?key=2')
     without_login = client.post('/api/user/delete')
     authenticate(client)
-    users = client.get('/api/user/get_users').json
+    users = client.get('/api/user/all').json
     user_id = None
     for each in users['users']:
         if not each['admin']:

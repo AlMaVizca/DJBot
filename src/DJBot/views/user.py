@@ -2,7 +2,8 @@ from DJBot.database import db
 from flask import Blueprint, jsonify, request
 from flask_security import login_required, roles_required, current_user
 from flask_security.utils import verify_password
-from DJBot.forms.user import Add, Change, Select
+from DJBot.forms.user import Add, Change
+from DJBot.forms.generic import Select
 from DJBot.models.user import create_user, get_user, get_user_id, \
     get_users
 
@@ -18,7 +19,7 @@ def get():
     return jsonify(user.get_setup())
 
 
-@user_bp.route('/get_users', methods=['GET'])
+@user_bp.route('/all', methods=['GET'])
 @login_required
 @roles_required('admin')
 def get_all():
@@ -26,8 +27,6 @@ def get_all():
     user = get_user(current_user.username)
     if user.is_admin():
         users.update(get_users())
-    else:
-        users.update({'users': []})
     return jsonify(users)
 
 
