@@ -41,17 +41,6 @@ class RunForm(FlaskForm):
     playbookKeys = []
 
 
-class PlaybookFormAdd(FlaskForm):
-    name = StringField('playbookName', [validators.DataRequired()])
-    description = StringField('playbookDescription')
-
-
-class PlaybookFormSelect(FlaskForm):
-    key = IntegerField('key', [validators.DataRequired()])
-    name = StringField('name')
-    description = StringField('description')
-
-
 class ModuleFormAdd(FlaskForm):
     module = StringField('module', [validators.DataRequired()])
 
