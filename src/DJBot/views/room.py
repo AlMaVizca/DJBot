@@ -1,41 +1,57 @@
-from flask import Blueprint, jsonify, request
-from DJBot.forms.todos import RoomFormAdd, RoomFormDelete
+from DJBot.forms.room import Add, Select
 from DJBot.models.room import Room, get_rooms
+from flask import Blueprint, jsonify, request
+from flask_security import login_required, roles_required
 
 room_bp = Blueprint('room', __name__)
 
 
-@room_bp.route('/', methods=['GET'])
+@room_bp.route('/all', methods=['GET'])
+@login_required
+@roles_required('user')
 def api_rooms():
     return jsonify(get_rooms())
 
 
-@room_bp.route('/add', methods=['POST'])
+@room_bp.route('/new', methods=['POST'])
+@login_required
+@roles_required('user')
 def room_add():
-    form = RoomFormAdd(request.form)
+    form = Add(request.form)
     if form.validate():
         room = Room()
         saved = room.save(form.name.data, form.network.data,
                           form.netmask.data, form.machines.data)
         if saved:
-            return jsonify({'message': 'saved'})
-    return jsonify({'message': 'failed'})
+            return jsonify({'messageMode': 0,
+                            'message': 'saved'})
+    return jsonify({'messageMode': 1,
+                    'message': 'failed'})
 
 
 @room_bp.route('/delete', methods=['POST'])
+@login_required
+@roles_required('user')
 def room_delete():
-    form = RoomFormDelete(request.form)
+    form = Select(request.form)
     if form.validate():
-        room = Room.query.get(form.key.data)
-        room.delete()
-        return jsonify({'message': 'saved'})
-    return jsonify({'message': 'failed'})
+        try:
+            room = Room.query.get(form.key.data)
+            room.delete()
+            return jsonify({'messageMode': 0,
+                            'message': 'saved'})
+        except:
+            pass
+    return jsonify({'messageMode': 1,
+                    'message': 'failed'})
 
-
-@room_bp.route('/discover', methods=['POST'])
-def room_ssh():
-    room = RoomFormDelete(request.form)
-    if room.validate():
-        room.discover_hosts()
-        hosts = room.get_hosts()
-        return jsonify(hosts)
+# TODO: Auto discover machines
+# @room_bp.route('/discover', methods=['POST'])
+# @login_required
+# @roles_required('user')
+# def room_ssh():
+#     room = Select(request.form)
+#     if room.validate():
+#         room.discover_hosts()
+#         hosts = room.get_hosts()
+#         return jsonify(hosts)

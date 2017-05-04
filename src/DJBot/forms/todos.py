@@ -18,19 +18,6 @@ class ResultForm(FlaskForm):
     result = StringField('result', [validators.DataRequired()])
 
 
-class RoomFormAdd(FlaskForm):
-    name = StringField('name', [validators.DataRequired()])
-    network = StringField('network', [validators.DataRequired(),
-                                      validators.IPAddress()])
-    netmask = IntegerField('netmask',
-                           [validators.NumberRange(min=8, max=30)])
-    machines = IntegerField('machines')
-
-
-class RoomFormDelete(FlaskForm):
-    key = IntegerField('key', [validators.NumberRange(min=0, max=255)])
-
-
 class RunFormAdd(FlaskForm):
     rooms = FieldList('rooms[]', identifier)
     playbook = FieldList('playbook[]', identifier)
