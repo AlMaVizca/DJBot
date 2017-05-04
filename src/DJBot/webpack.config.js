@@ -5,10 +5,10 @@ var path = require('path');
 module.exports = {
   cache: true,
   entry: [
-    './static/scripts/src/index.js'
+    './ReactJS/index.js'
   ],
   output: {
-    path: path.join(__dirname, 'static', 'scripts', 'build'),
+    path: path.join(__dirname, 'static', 'scripts'),
     filename: 'index_bundle.js'
   },
   module: {
