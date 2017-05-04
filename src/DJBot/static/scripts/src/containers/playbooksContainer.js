@@ -17,14 +17,14 @@ var PlaybooksContainer = React.createClass({
   },
   playbooksLoad: function() {
     $.ajax({
-      url: "/api/playbook/playbooks",
+      url: "/api/playbook/all",
       dataType: 'json',
       cache: false,
       success: function(data) {
         this.setState(data);
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error("/api/playbook/playbooks", status, err.toString());
+        console.error("/api/playbook/all", status, err.toString());
       }.bind(this)
     });
   },
