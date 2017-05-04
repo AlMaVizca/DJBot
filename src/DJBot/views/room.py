@@ -1,4 +1,5 @@
-from DJBot.forms.room import Add, Select
+from DJBot.forms.room import Add
+from DJBot.forms.generic import Select
 from DJBot.models.room import Room, get_rooms
 from flask import Blueprint, jsonify, request
 from flask_security import login_required, roles_required

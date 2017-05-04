@@ -9,7 +9,3 @@ class Add(FlaskForm):
     netmask = IntegerField('netmask',
                            [validators.NumberRange(min=8, max=30)])
     machines = IntegerField('machines')
-
-
-class Select(FlaskForm):
-    key = IntegerField('key', [validators.NumberRange(min=0, max=255)])

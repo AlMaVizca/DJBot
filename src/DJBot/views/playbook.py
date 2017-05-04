@@ -1,6 +1,7 @@
 from DJBot.database import db
 from DJBot.models.playbook import Playbook, get_playbooks
-from DJBot.forms.playbook import Add, Select
+from DJBot.forms.playbook import Add, Change
+from DJBot.forms.generic import Select
 from flask import Blueprint, jsonify, request
 from flask_security import login_required, roles_required
 
@@ -64,7 +65,7 @@ def delete():
 @login_required
 @roles_required('user')
 def save():
-    form = Select(request.form)
+    form = Change(request.form)
     if form.validate_on_submit():
         playbook = Playbook.query.get(form.key.data)
         playbook.name = form.name.data

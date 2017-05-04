@@ -7,7 +7,18 @@ class Add(FlaskForm):
     description = StringField('playbookDescription')
 
 
-class Select(FlaskForm):
+class Change(FlaskForm):
     key = IntegerField('key', [validators.DataRequired()])
     name = StringField('name')
     description = StringField('description')
+
+
+class ParameterAdd(FlaskForm):
+    parameter = StringField('parameter', [validators.DataRequired()])
+    value = StringField('value', [validators.DataRequired()])
+    task = StringField('task', [validators.DataRequired()])
+
+
+class TaskAdd(FlaskForm):
+    playbook = IntegerField('playbook', [validators.DataRequired()])
+    module = StringField('module', [validators.DataRequired()])
