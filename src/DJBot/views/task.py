@@ -1,57 +1,60 @@
-from flask import Blueprint, jsonify, request
-from flask_security import roles_required
+from flask import Blueprint, request
+from flask_security import login_required, roles_required
 from DJBot.forms.playbook import TaskAdd, ParameterAdd
 from DJBot.forms.generic import Select
-from DJBot.models.playbook import get_playbook
+from DJBot.messages import msg_saved, msg_failed
+from DJBot.models.playbook import get_playbook, delete_parameter, delete_task
 
 task_bp = Blueprint("task", __name__)
 
 
+@task_bp.route('/add', methods=['POST'])
+@login_required
 @roles_required('user')
-@task_bp.route('/<id>/module/add', methods=['POST'])
-def module_add(id):
+def task_add():
     form = TaskAdd(request.form)
     if form.validate():
-        task = get_playbook(id)
-        saved = task.module_add(form.module.data)
+        playbook = get_playbook(form.playbook.data)
+        saved = playbook.task_add(form.task.data)
         if saved:
-            return jsonify({'message': 'saved'})
-    return jsonify({'message': 'failed'})
+            return msg_saved()
+    return msg_failed()
 
 
-@task_bp.route('/<id>/module/delete', methods=['POST'])
+@task_bp.route('/delete', methods=['POST'])
+@login_required
 @roles_required('user')
-def module_delete(id):
+def task_delete():
     form = Select(request.form)
     if form.validate():
-        task = get_playbook(id)
-        deleted = task.module_delete(form.key.data)
+        deleted = delete_task(form.key.data)
         if deleted:
-            return jsonify({'message': 'saved'})
-    return jsonify({'message': 'failed'})
+            return msg_saved()
+    return msg_failed()
 
 
-@task_bp.route('/<id>/parameter/add', methods=['POST'])
+@task_bp.route('/parameter/add', methods=['POST'])
+@login_required
 @roles_required('user')
-def parameter_add(id):
+def parameter_add():
     form = ParameterAdd(request.form)
     if form.validate():
-        task = get_playbook(id)
-        saved = task.parameter_add(
-            form.modulekey.data, (form.parameter.data, form.value.data)
+        playbook = get_playbook(form.playbook.data)
+        saved = playbook.parameter_add(
+            form.task.data, (form.parameter.data, form.value.data)
         )
         if saved:
-            return jsonify({'message': 'saved'})
-    return jsonify({'message': 'failed'})
+            return msg_saved()
+    return msg_failed()
 
 
-@task_bp.route('/<id>/parameter/delete', methods=['POST'])
+@task_bp.route('/parameter/delete', methods=['POST'])
+@login_required
 @roles_required('user')
-def parameter_delete(id):
+def parameter_delete():
     form = Select(request.form)
     if form.validate():
-        task = get_playbook(id)
-        deleted = task.parameter_delete(form.key.data)
+        deleted = delete_parameter(form.key.data)
         if deleted:
-            return jsonify({'message': 'saved'})
-    return jsonify({'message': 'failed'})
+            return msg_saved()
+    return msg_failed()

@@ -26,3 +26,16 @@ def logout(client, endpoint=None, **kwargs):
 def json_of_response(response):
     """Decode json from response"""
     return json.loads(response.data.decode('utf8'))
+
+
+def add_playbook(client):
+    client.post('/api/playbook/new', data={
+        'name': 'Initial setup',
+        'description': 'Hardening of the operative system'
+    })
+
+
+def delete_playbook(client):
+    client.post('/api/playbook/delete', data={
+        'key': 1
+    })
