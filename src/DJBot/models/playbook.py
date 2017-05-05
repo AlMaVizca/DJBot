@@ -55,29 +55,19 @@ class Playbook(db.Model):
 
     def parameter_add(self, taskkey, options):
         new_args = Parameter(name=options[0], value=options[1])
-        for each in self.tasks:
-            if int(taskkey) == each.key:
-                each.args.append(new_args)
-        db.session.commit()
-        return True
+        try:
+            for each in self.tasks:
+                if int(taskkey) == each.key:
+                    each.parameters.append(new_args)
+                    db.session.commit()
+                    return True
+        except:
+            return False
 
-    def parameter_delete(self, key):
-        arg = Parameter.query.filter(Parameter.key == key).first()
-        db.session.delete(arg)
-        db.session.commit()
-        return True
-
-    def module_add(self, name, app):
-        new_task = Task(name=name, args=[])
-        app.logger.info(self)
+    def task_add(self, name):
+        new_task = Task(name=name)
         self.tasks.append(new_task)
         db.session.add(self)
-        db.session.commit()
-        return True
-
-    def module_delete(self, key):
-        task = Task.query.filter(Task.key == key).first()
-        db.session.delete(task)
         db.session.commit()
         return True
 
@@ -122,3 +112,23 @@ def get_playbooks():
     for each in playbooks:
         playbooks_info['playbooks'].append(each.get_setup())
     return playbooks_info
+
+
+def delete_parameter(key):
+    try:
+        arg = Parameter.query.filter(Parameter.key == key).first()
+        db.session.delete(arg)
+        db.session.commit()
+        return True
+    except:
+        return False
+
+
+def delete_task(key):
+    try:
+        task = Task.query.filter(Task.key == key).first()
+        db.session.delete(task)
+        db.session.commit()
+        return True
+    except:
+        return False

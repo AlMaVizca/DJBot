@@ -14,11 +14,12 @@ class Change(FlaskForm):
 
 
 class ParameterAdd(FlaskForm):
+    playbook = IntegerField('playbook', [validators.DataRequired()])
     parameter = StringField('parameter', [validators.DataRequired()])
     value = StringField('value', [validators.DataRequired()])
-    task = StringField('task', [validators.DataRequired()])
+    task = IntegerField('task', [validators.DataRequired()])
 
 
 class TaskAdd(FlaskForm):
     playbook = IntegerField('playbook', [validators.DataRequired()])
-    module = StringField('module', [validators.DataRequired()])
+    task = StringField('task', [validators.DataRequired()])
