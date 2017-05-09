@@ -36,6 +36,8 @@ def add_playbook(client):
 
 
 def delete_playbook(client):
+    playbook = client.get('/api/playbook/all').json
+    first = playbook['playbooks'][0]
     client.post('/api/playbook/delete', data={
-        'key': 1
+        'key': first['key']
     })

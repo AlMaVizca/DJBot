@@ -29,7 +29,7 @@ def run():
 
 @action_bp.route('/results', methods=['GET'])
 @roles_required('user')
-def results():
+def get_results():
     dirs = os.listdir(os.getenv('LOGS'))
     results = []
     for each in dirs:
@@ -37,9 +37,9 @@ def results():
     return jsonify({'results': results})
 
 
-@action_bp.route('/results', methods=['POST'])
+@action_bp.route('/result', methods=['POST'])
 @roles_required('user')
-def a_result():
+def get_a_result():
     form = ResultForm(request.form)
     if form.validate():
         filename = os.getenv('LOGS') + form.result.data
