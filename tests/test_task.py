@@ -13,8 +13,9 @@ def test_add_task(client):
     without_login = client.post('/api/task/add')
     authenticate(client)
     add_playbook(client)
+    # Review playooks key
     save = client.post('/api/task/add', data={
-        'playbook': 1,
+        'playbook': 2,
         'task': 'Update package list',
     }).json
     form_incomplete = client.post('/api/task/add', data={
@@ -31,13 +32,13 @@ def test_add_parameter(client):
     authenticate(client)
 
     save = client.post('/api/task/parameter/add', data={
-        'playbook': 1,
+        'playbook': 2,
         'task': 1,
         'parameter': 'update_cache',
         'value': 'yes'
     }).json
     form_incomplete = client.post('/api/task/parameter/add', data={
-        'playbook': 1,
+        'playbook': 2,
         'parameter': 'update_cache',
         'value': 'yes'
     }).json
@@ -79,3 +80,27 @@ def test_delete_task(client):
     assert without_login.status_code == 302
     assert delete['messageMode'] == 0
     assert wrong_id['messageMode'] == 1
+
+
+def test_categories(client):
+    without_login = client.get('/api/task/categories')
+    authenticate(client)
+
+    categories = client.get('/api/task/categories').json
+
+    logout(client)
+    assert without_login.status_code == 302
+    assert isinstance(categories, list)
+
+
+def test_category(client):
+    without_login = client.post('/api/task/category')
+    authenticate(client)
+
+    category = client.post('/api/task/category',
+                           data={'name': 'cloud'}).json
+    not_valid_form = client.post('/api/task/category').json
+    logout(client)
+    assert without_login.status_code == 302
+    assert isinstance(category['cloud'], list)
+    assert isinstance(not_valid_form, dict)

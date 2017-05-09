@@ -1,9 +1,10 @@
-from flask import Blueprint, request
+from flask import Blueprint, jsonify, request
 from flask_security import login_required, roles_required
 from DJBot.forms.playbook import TaskAdd, ParameterAdd
-from DJBot.forms.generic import Select
+from DJBot.forms.generic import Select, SelectName
 from DJBot.messages import msg_saved, msg_failed
 from DJBot.models.playbook import get_playbook, delete_parameter, delete_task
+from DJBot.modules import ansible_docs
 
 task_bp = Blueprint("task", __name__)
 
@@ -58,3 +59,20 @@ def parameter_delete():
         if deleted:
             return msg_saved()
     return msg_failed()
+
+
+@task_bp.route('/categories', methods=['GET'])
+@login_required
+@roles_required('user')
+def get_categories():
+    return jsonify(ansible_docs.get_categories())
+
+
+@task_bp.route('/category', methods=['POST'])
+@login_required
+@roles_required('user')
+def get_category():
+    form = SelectName(request.form)
+    if form.validate():
+        return jsonify(ansible_docs.get_category(form.name.data))
+    return jsonify({})
