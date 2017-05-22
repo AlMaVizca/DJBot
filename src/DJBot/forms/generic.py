@@ -8,3 +8,4 @@ class Select(FlaskForm):
 
 class SelectName(FlaskForm):
     name = StringField('name', [validators.DataRequired()])
+    category = StringField('category')

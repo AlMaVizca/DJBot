@@ -1,7 +1,249 @@
 var React = require("react");
-var ShowMessage = require("../message");
 
-import { Button, Divider, Form, Grid, Header, Input, Segment, Select} from 'semantic-ui-react';
+import { Accordion, Button, Form, Grid, Header, Icon, Input, Item, Modal, Segment, Select} from 'semantic-ui-react';
+
+
+var Parameter = React.createClass({
+  componentDidMount: function(){
+    this.loadParams(this.props.param);
+  },
+  componentWillReceiveProps: function(nextProp){
+    this.loadParams(nextProp.param);
+  },
+  loadParams: function(param){
+    this.newInput = <Input fluid name={param} placeholder='' />
+    if(param['default']){
+      this.newInput = <Input fluid name={param} placeholder={param['default']} />
+    }
+    if(param['choices']){
+      this.options = param['choices'].map(function(opt){
+        return {key: opt, text: opt, value: opt}
+      });
+      this.newInput =  <Select fluid name={param} options={this.options}
+                               defaultValue={param['default']}  />
+    }
+    this.setState({input: this.newInput });
+
+  },
+  getInitialState: function(){
+    return({input: ''});
+  },
+  render: function(){
+    return(
+      <div>
+        {this.state.input}
+      </div>
+    )
+  }
+});
+
+var ListOptions = React.createClass({
+  componentDidMount: function(){
+    this.loadOptions(this.props.options)
+  },
+  componentWillReceiveProps: function(nextProps){
+    if(nextProps.options){
+      this.loadOptions(nextProps.options)
+    }
+  },
+  loadOptions: function(options){
+    if (options instanceof Array){
+      this.options = options;
+    }
+    else{
+      this.options = Object.keys(options)
+    }
+    this.options = this.options.map(function(option){
+      return <Item.Content>{option}</Item.Content>
+    });
+    this.setState({options: this.options})
+  },
+  getInitialState: function(){
+    return({options: ''})
+  },
+  render: function(){
+    return(
+      <Item>
+        {this.state.options}
+      </Item>
+    );
+  }
+});
+
+var AnExample = React.createClass({
+  componentDidMount: function(){
+    this.update(this.props.parameters);
+  },
+  componentWillReceiveProps: function(nextProps){
+    this.update(nextProps.parameters);
+  },
+  function(variable){
+
+  },
+  update: function(parameters){
+    this.keys = Object.keys(parameters);
+    this.exampleCode = this.keys.map(function(conf){
+      var value = parameters[conf];
+      if (function(value){return value === false || value === true}){
+        value = value.toString();
+      }
+      return <p> <b>{conf}:</b> <i>{value}</i></p>
+    });
+    this.setState({exampleCode: this.exampleCode});
+  },
+  getInitialState: function(){
+    return({exampleCode: ''});
+  },
+  render: function(){
+    return(
+      <Accordion>
+        <Accordion.Title>
+          <Icon name='dropdown' />
+          {this.props.name}
+        </Accordion.Title>
+        <Accordion.Content>
+          <Segment padded='very'>
+            {this.state.exampleCode}
+          </Segment>
+        </Accordion.Content>
+      </Accordion>
+    );
+  }
+});
+
+var Examples = React.createClass({
+  componentDidMount: function(){
+    this.update(this.props);
+  },
+  componentWillReceiveProps: function(nextProps){
+    this.update(nextProps);
+  },
+  update: function(props){
+    this.examples = props.examples.map(function(example){
+      return <AnExample name={example.name} module={props.module}
+      parameters={example[props.module]} />
+    });
+    this.setState({examples: this.examples});
+  },
+  getInitialState: function(){
+    return({
+      examples: '',
+    });
+  },
+  render: function(){
+    return(
+      <Accordion>
+        <Accordion.Title>
+          <Header as="h3" textAlign="centered"><Icon name='dropdown' />
+Examples</Header>
+        </Accordion.Title>
+        <Accordion.Content>
+          <Segment raised color='blue'>
+            {this.state.examples}
+          </Segment>
+        </Accordion.Content>
+        </Accordion>
+    );
+  }
+});
+
+
+var Parameters = React.createClass({
+  componentWillReceiveProps: function(nextProps){
+    if(nextProps.module_doc.options){
+      this.keys = Object.keys(nextProps.module_doc.options)
+      this.parameters = this.keys.map(function(param){
+        return (
+          <Grid.Row>
+            <Grid.Column width={5}>
+              <Form.Field required={nextProps.module_doc.options[param]['required']}>
+                <label>{param}</label>
+                <Parameter param={nextProps.module_doc.options[param]} />
+              </Form.Field>
+            </Grid.Column>
+            <Grid.Column width={11}>
+              {nextProps.module_doc.options[param]['description']}
+            </Grid.Column>
+          </Grid.Row>
+        )
+      });
+      this.setState({parameters: this.parameters});
+    }
+  },
+  getInitialState: function(){
+    return ({
+      parameters: "Please select a module and you will see here the parms"
+    })
+  },
+  render: function(){
+    return(
+      <Segment padded>
+        {this.props.module_doc.module &&
+          <Grid width={16}>
+              <Grid.Row>
+                  <Grid.Column>
+                      <Header as="h2" textAlign="centered">
+                          {this.props.module_doc.module}
+                        </Header>
+                    </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                    <Grid.Column width={14}>
+                        {this.props.module_doc.short_description}
+                      </Grid.Column>
+                      <Grid.Column width={1} textAlign="right">
+                          <Modal trigger={<Button icon="info"
+                                                    color="blue"
+                                                    inverted
+                                                    />} >
+                              <Modal.Header> {this.props.module_doc.module}</Modal.Header>
+                                <Modal.Content>
+                                    <ListOptions options={this.props.module_doc.description}/>
+                                  </Modal.Content>
+                            </Modal>
+                        </Grid.Column>
+                  </Grid.Row>
+            </Grid>
+          }
+          <Form>
+            {this.props.module_doc.examples &&
+              <Examples examples={this.props.module_doc.examples}
+                        module={this.props.module_doc.module} />
+              }
+              <Segment raised>
+                <Grid columns={2}>
+
+                  {this.state.parameters}
+                </Grid>
+              </Segment>
+          </Form>
+      </Segment>
+    );
+  }
+});
+
+var Categories = React.createClass({
+  componentDidMount: function(){
+    this.props.loadCategories();
+  },
+  componentWillReceiveProps: function(nextProps){
+    this.categories = nextProps.categories.map(function(category){
+      return {key: category, text: category, value: category}
+    });
+
+    this.setState({categories: this.categories})
+  },
+  getInitialState: function(){
+    return({categories: []});
+  },
+  render: function(){
+    return(
+      <Select placeholder='Select Category' search floating item
+              scrolling options={this.state.categories}
+              onChange={this.props.selectCategory}/>
+    );
+  }
+});
 
 var Task = React.createClass({
   getDefaultProps: function(){
@@ -11,56 +253,61 @@ var Task = React.createClass({
   },
   getInitialState: function(){
     return ({
-      messageMode: 10,
-      messageText: "",
-      moduleOptions: [
-        {key:"apt", value:"apt", text:"apt"},
-        {key:"docker", value:"docker", text:"docker"}
-      ]
+      modules: [],
     });
+  },
+  componentWillReceiveProps: function(nextProp){
+    if (nextProp.modules){
+      this.options = nextProp.modules.map(function(module){
+        return {key: module, value: module, text: module}
+      });
+      this.setState({modules: this.options});
+    }
   },
   render: function(){
     return(
-      <div>
-        <ShowMessage mode={this.state.messageMode}
-                     text={this.state.messageText}/>
-        <Grid centered>
-          <Grid.Column width={7}>
-            <Header content="Task Definition" />
-            A task is a special configuration of a module
-            <Segment.Group>
-              <Segment textAlign="left" raised attached>
-                <Input fluid transparent={this.props.transparent}
-                       type="text" name="name" value={this.props.taskName}
-                       label={{ribbon: true, color: "blue",
-                       content: "Task Name"}}
-                       placeholder="Write the name of the task"
-                       onChange={this.props.changeName} />
-              </Segment>
-              <Segment>
-                <Select search fluid placeholder="Select the module..."
-                        options={this.state.moduleOptions} />
-              </Segment>
-              <Segment padded="very">
-                Please select a module, and you will see the parameters
-              </Segment>
-              <Segment>
-                Parameter to the task
-              </Segment>
-            </Segment.Group>
-            <Button basic color="green" fluid icon="save"
-                    attached="bottom" content="Save" />
-
+      <Grid centered>
+        <Grid.Row>
+        <Grid.Column width={16}>
+          <Header content="Task Definition" />
+          A task is a special configuration of a module
           </Grid.Column>
-          <Grid.Column width={9}>
-            <Header content="Module Docs" />
-            Please select a module to see the documentation
-            <Segment basic>
-
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={10}>
+            <Segment textAlign="left" raised attached>
+              <Input fluid transparent={this.props.transparent}
+                     type="text" value={this.props.taskName}
+                     label={{ribbon: true, color: "blue",
+                     content: "Task Name"}}
+                     placeholder="Write the name of the task"
+                     onChange={this.props.changeName} />
             </Segment>
           </Grid.Column>
-        </Grid>
-      </div>
+          <Grid.Column width={6}>
+           Choose a category to see the modules available
+            <Categories categories={this.props.categories}
+                        loadCategories={this.props.loadCategories}
+                        selectCategory={this.props.selectCategory}
+                        />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            <Segment>
+              <Select search fluid placeholder="Select the module..."
+                      options={this.state.modules}
+                      onChange={this.props.selectModule} />
+            </Segment>
+            <Parameters module_doc={this.props.module_doc} />
+            <Segment>
+              Parameter to the task
+            </Segment>
+        <Button basic color="green" fluid icon="save"
+                  attached="bottom" content="Save" />
+        </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 });

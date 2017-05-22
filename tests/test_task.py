@@ -90,7 +90,8 @@ def test_categories(client):
 
     logout(client)
     assert without_login.status_code == 302
-    assert isinstance(categories, list)
+    assert isinstance(categories, dict)
+    assert isinstance(categories['categories'], list)
 
 
 def test_category(client):
@@ -102,5 +103,6 @@ def test_category(client):
     not_valid_form = client.post('/api/task/category').json
     logout(client)
     assert without_login.status_code == 302
-    assert isinstance(category['cloud'], list)
+    assert isinstance(category['modules'], list)
+    assert category['category_name'] == 'cloud'
     assert isinstance(not_valid_form, dict)

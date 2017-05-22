@@ -6,6 +6,7 @@ from DJBot.messages import msg_saved, msg_failed
 from DJBot.models.playbook import get_playbook, delete_parameter, delete_task
 from DJBot.modules import ansible_docs
 
+
 task_bp = Blueprint("task", __name__)
 
 
@@ -75,4 +76,21 @@ def get_category():
     form = SelectName(request.form)
     if form.validate():
         return jsonify(ansible_docs.get_category(form.name.data))
+    return jsonify({})
+
+
+@task_bp.route('/modules', methods=['GET'])
+@login_required
+@roles_required('user')
+def get_modules():
+    return jsonify({'modules': ansible_docs.get_modules()})
+
+
+@task_bp.route('/module', methods=['POST'])
+@login_required
+@roles_required('user')
+def get_module():
+    form = SelectName(request.form)
+    if form.validate():
+        return jsonify(ansible_docs.get_module(str(form.name.data)))
     return jsonify({})
