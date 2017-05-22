@@ -8,8 +8,8 @@ var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 
 
-var scriptsPath = 'static/scripts/src';
-var buildPath = 'static/scripts/build';
+var scriptsPath = 'ReactJS';
+var buildPath = 'static/scripts/';
 
 
 
@@ -65,6 +65,10 @@ gulp.task('webpack:build', function(callback) {
 
 
 gulp.task('watch', ['default'], function() {
-    livereload.listen();
-    gulp.watch(path.join(scriptsPath, '/*/*.js'), ['default']);
+  livereload.listen();
+  gulp.watch([path.join(scriptsPath, '/*.js'),
+              path.join(scriptsPath, '/*/*.js'),
+              path.join(scriptsPath, '/*/*/*.js')],
+             ['default']);
+
 });
