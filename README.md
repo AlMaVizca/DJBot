@@ -1,14 +1,25 @@
-Djbot
+DJBot
 ======
 
-¿Qué es?
--------
+**You are reading the development version **
+
+The goal of DJBot is to orquestrate computer room and servers, for that we are using ansible API to write a nice frontend that reduce the gap for those who want to initiate in the DevOps Culture.
 
 
+This is an ambitious proposal, so if you have any comment please write a [message](https://github.com/krahser/DJBot/issues/new)
 
-DJBot es una aplicación web especialmente diseñada para la orquestación de salas de computadoras. Su nombre viene de la contracción entre “DJ”, del inglés *disc jockey*, o persona que crea su propia composición musical a partir de la combinación artística de múltiples discos; y “Bot”, de robot, o máquina que realiza tareas automáticas en lugar de una persona. Nuestro DJ hace de director de orquesta, y administra los bots para crear su propia composición de sistemas.
+Try it
+------
 
-¿Cómo funciona?
----------------
+If you want to make it easy just use [Docker](https://docs.docker.com/engine/installation/)
 
-El funcionamiento de DJBot es posible gracias a la integración de las cuatro herramientas antes descriptas y otras secundarias. En la capa inferior, Ansible brinda el soporte para la ejecución de las tareas de administración. Para este fin, se alimenta de la base de datos gestionada por SQLAlchemy. En la capa superior, los usuarios interactúan con la aplicación a través de la interfaz web desarrollada con React. El intercambio que tiene lugar entre los dos extremos es controlado por Flask. Así, se establece un flujo de trabajo bidireccional entre Flask y las demás herramientas de DJBot.
+Get the image:
+
+    docker pull krahser/djbot:dev
+
+Run in localhost:
+
+    docker run -d -p8080:80 --name DJBot krahser/djbot:dev
+
+
+After this you can see the application using your web browser: [localhost:8080](http://localhost:8080)
