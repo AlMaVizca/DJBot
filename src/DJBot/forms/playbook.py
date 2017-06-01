@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, validators
+from wtforms import FieldList, FormField, IntegerField, StringField, validators
+from .generic import Configuration
 
 
 class Add(FlaskForm):
@@ -23,3 +24,5 @@ class ParameterAdd(FlaskForm):
 class TaskAdd(FlaskForm):
     playbook = IntegerField('playbook', [validators.DataRequired()])
     task = StringField('task', [validators.DataRequired()])
+    module = StringField('module', [validators.DataRequired()])
+    configuration = FieldList(FormField(Configuration))

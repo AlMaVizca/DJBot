@@ -9,3 +9,8 @@ class Select(FlaskForm):
 class SelectName(FlaskForm):
     name = StringField('name', [validators.DataRequired()])
     category = StringField('category')
+
+
+class Configuration(FlaskForm):
+    option = StringField('option', [validators.DataRequired()])
+    value = StringField('value', [validators.DataRequired()])
