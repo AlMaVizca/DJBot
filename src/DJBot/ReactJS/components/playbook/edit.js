@@ -5,7 +5,7 @@ var Link = ReactRouter.Link;
 
 var ShowMessage = require("../message");
 
-import {Button, Header, Grid, Icon, Input, Menu, Segment, Table} from "semantic-ui-react";
+import {Button, Confirm, Header, Grid, Icon, Input, Menu, Segment, Table} from "semantic-ui-react";
 
 
 var Task = React.createClass({
@@ -26,18 +26,26 @@ var Task = React.createClass({
   taskDelete: function(){
     this.setState({open: false});
     $.ajax({
-      url: '/api/playbook/delete',
+      url: '/api/task/delete',
       dataType: 'json',
       type: 'POST',
-      data: {key: this.props.playbook.key},
+      data: {key: this.props.task.key},
       success: function(data) {
+        this.props.load();
         this.props.updateMessage(data);
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error('/api/playbook/delete', status, err.toString());
+        console.error('/api/task/delete', status, err.toString());
       }.bind(this)
     });
-    this.props.load();
+  },
+  taskEdit: function(){
+    this.context.router.push({
+      pathname: "/task/edit",
+      query: {
+        key: this.props.task.key,
+      }
+    });
   },
   render: function(){
     var confirmationText = "Do you want to delete task " + this.props.task.name + "?";
@@ -48,7 +56,7 @@ var Task = React.createClass({
           </Table.Cell>
           <Table.Cell>
             <Button color="blue" icon="edit"
-                    onClick={this.editPlaybook} />
+                    onClick={this.taskEdit} />
           </Table.Cell>
 
           <Table.Cell>
@@ -71,21 +79,16 @@ var Task = React.createClass({
 });
 
 var TaskList = React.createClass({
-  componentDidMount: function(){
-  },
   componentWillReceiveProps: function(nextProps){
-    this.generateList(nextProps);
+    this.tasks = nextProps.tasks.map(function(task, i){
+      return <Task key={i} task={task}
+                   updateMessage={this.props.updateMessage}
+                   load={this.props.load} />;
+    }, this);
+    this.setState({tasksList: this.tasks});
   },
   getInitialState: function(){
     return ({taskList: []});
-  },
-  generateList: function(nextProps){
-    this.tasks = nextProps.tasks.map(function(task, i){
-      return <Task key={i} task={task}
-                       updateMessage={this.props.updateMessage}
-                       load={this.props.load}/>;
-    }, this);
-    this.setState({tasksList: this.tasks});
   },
   render: function(){
     return (
@@ -106,15 +109,35 @@ var PlaybookEdit = React.createClass({
     changeDescription: PropTypes.func.isRequired,
     saveAction: PropTypes.func.isRequired
   },
+  contextTypes: {
+    router: React.PropTypes.object.isRequired
+  },
   getDefaultProps: function(){
     return ({
       transparent: true,
       tasks: []
     });
   },
+  getInitialState: function(){
+    return({messageMode: 10,
+            messageText: ''
+           });
+  },
+  addTask: function(){
+    this.context.router.push({
+      pathname: "/task/new",
+      query: {
+        pbId: this.props.id,
+      }
+    });
+  },
+  updateMessage: function(data){
+    this.setState(data);
+  },
   render: function(){
     return (
       <div>
+        <ShowMessage mode={this.state.messageMode} text={this.state.messageText} />
         <Header>{this.props.header} Playbook </Header>
         <Input fluid transparent={this.props.transparent}
                type="text" name="name" value={this.props.name}
@@ -143,7 +166,8 @@ var PlaybookEdit = React.createClass({
             </Table.Row>
           </Table.Header>
 
-          <TaskList tasks={this.props.tasks} />
+          <TaskList tasks={this.props.tasks} load={this.props.load}
+                    updateMessage={this.updateMessage} />
 
           <Table.Footer>
             <Table.Row>
@@ -173,7 +197,7 @@ var PlaybookEdit = React.createClass({
           </Table>
           <Grid centered padded>
             <Button circular as={Link} color="green" icon="add circle"
-                    to="/task/new" />
+                    onClick={this.addTask} />
           </Grid>
         </Segment>
         <Grid padded>

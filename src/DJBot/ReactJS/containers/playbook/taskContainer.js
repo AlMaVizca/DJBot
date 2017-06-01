@@ -9,24 +9,32 @@ var TaskContainer = React.createClass({
   contextTypes: {
     router: React.PropTypes.object.isRequired
   },
+  changeConfiguration: function(e, configuration){
+    var updateConf = this.state.configuration
+    updateConf[configuration['name']] = configuration['value'];
+    this.setState({configuration: updateConf});
+  },
   changeName: function(e){
     this.setState({taskName: e.target.value});
   },
   componentDidMount: function(){
     this.getModules();
-  },
-  componentWillMount: function(){
     var query = this.props.location.query;
-    this.setState({id: query.id});
+    this.setState({id: query.pbId,
+                   key: query.key});
+    console.log(this.state.key);
+    if(this.state.key){
+      this.loadTask();
+    }
   },
   getInitialState: function(){
     return({
       messageMode: 10,
       messageText: "",
       taskName: "",
-      saveAction: this.taskNew,
+      saveAction: this.newTask,
       categories: [],
-      module_doc: "No module selected",
+      moduleDoc: "No module selected",
       modules: []
     });
   },
@@ -42,7 +50,7 @@ var TaskContainer = React.createClass({
       }.bind(this)
     });
   },
-    getModules: function(){
+  getModules: function(){
     $.ajax({
       url: 'api/task/modules',
       type: "GET",
@@ -54,34 +62,62 @@ var TaskContainer = React.createClass({
       }.bind(this)
     });
   },
-  taskNew: function(){
+  configurationAsList: function(){
+    var keys = Object.keys(this.state.configuration);
+    var aConfig = {};
+    var configuration = keys.map(function(key, i){
+      aConfig['configuration-'+i+'-option'] = key;
+      aConfig['configuration-'+i+'-value'] = this.state.configuration[key];
+    }, this);
+    return aConfig;
+  },
+  newTask: function(){
+    var confs = this.configurationAsList();
+    confs['playbook'] = this.state.id;
+    confs['task'] = this.state.taskName;
+    confs['module'] = this.state.moduleDoc.module;
     $.ajax({
-      url: "/api/task/new",
+      url: "/api/task/add",
+      dataType: "json",
+      type: "POST",
+      data: confs,
+      success: function(data) {
+        this.context.router.push({
+          pathname: "/playbook/edit",
+          query: {
+            id: this.state.id
+          }
+        });
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error("/api/task/add", status, err.toString());
+      }.bind(this)
+    });
+  },
+  loadTask: function(){
+    console.log('LoadTask');
+    $.ajax({
+      url: "/api/task/get",
       dataType: "json",
       type: "POST",
       data: {
-        playbookId: this.state.id,
-        name: this.state.taskName
+        key: this.state.key
       },
       success: function(data) {
-        this.setState(data);
+        console.log(data);
+        this.setState({
+
+        })
       }.bind(this),
       error: function(xhr, status, err) {
-        console.error("/api/task/new", status, err.toString());
+        console.error("/api/task/get", status, err.toString());
       }.bind(this)
     });
-    this.context.router.push({
-      pathname: "/playbook/edit",
-      query: {
-        id: this.state.id
-      }
-    });
-
   },
   selectCategory: function(e, category){
     if (category['value'] != "All" ) {
       $.ajax({
-        url: 'api/task/category',
+        url: '/api/task/category',
         type: "POST",
         dataType: 'json',
         data: {name: category['value']},
@@ -103,7 +139,7 @@ var TaskContainer = React.createClass({
       dataType: 'json',
       data: {name: module['value']},
       success: function(data) {
-        this.setState({module_doc: data});
+        this.setState({moduleDoc: data, configuration: {}});
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/task/module", status, err.toString());
@@ -123,10 +159,11 @@ var TaskContainer = React.createClass({
               saveAction={this.state.saveAction}
               modules={this.state.modules}
               selectModule={this.selectModule}
-              module_doc={this.state.module_doc}
+              moduleDoc={this.state.moduleDoc}
               categories={this.state.categories}
               loadCategories={this.getCategories}
               selectCategory={this.selectCategory}
+              changeConfiguration={this.changeConfiguration}
               />
       </div>
     );

@@ -5,21 +5,24 @@ import { Accordion, Button, Form, Grid, Header, Icon, Input, Item, Modal, Segmen
 
 var Parameter = React.createClass({
   componentDidMount: function(){
-    this.loadParams(this.props.param);
+    this.loadParams(this.props.param, this.props.name);
   },
   componentWillReceiveProps: function(nextProp){
-    this.loadParams(nextProp.param);
+    this.loadParams(nextProp.param, nextProp.name);
   },
-  loadParams: function(param){
-    this.newInput = <Input fluid name={param} placeholder='' />
+  loadParams: function(param, name){
+    this.newInput = <Input fluid name={name} placeholder=''
+                           onChange={this.props.changeConfiguration} />
     if(param['default']){
-      this.newInput = <Input fluid name={param} placeholder={param['default']} />
+      this.newInput = <Input fluid name={this.props.name} placeholder={param['default']}
+                             onChange={this.props.changeConfiguration} />
     }
     if(param['choices']){
       this.options = param['choices'].map(function(opt){
         return {key: opt, text: opt, value: opt}
       });
-      this.newInput =  <Select fluid name={param} options={this.options}
+      this.newInput =  <Select fluid name={this.props.name} options={this.options}
+                               onChange={this.props.changeConfiguration}
                                defaultValue={param['default']}  />
     }
     this.setState({input: this.newInput });
@@ -134,8 +137,9 @@ var Examples = React.createClass({
     return(
       <Accordion>
         <Accordion.Title>
-          <Header as="h3" textAlign="centered"><Icon name='dropdown' />
-Examples</Header>
+          <Header as="h3" textAlign="left" >
+            Examples
+            <Icon name='dropdown' /></Header>
         </Accordion.Title>
         <Accordion.Content>
           <Segment raised color='blue'>
@@ -150,23 +154,24 @@ Examples</Header>
 
 var Parameters = React.createClass({
   componentWillReceiveProps: function(nextProps){
-    if(nextProps.module_doc.options){
-      this.keys = Object.keys(nextProps.module_doc.options)
+    if(nextProps.moduleDoc.options){
+      this.keys = Object.keys(nextProps.moduleDoc.options)
       this.parameters = this.keys.map(function(param){
         return (
           <Grid.Row>
             <Grid.Column width={5}>
-              <Form.Field required={nextProps.module_doc.options[param]['required']}>
+              <Form.Field required={nextProps.moduleDoc.options[param]['required']}>
                 <label>{param}</label>
-                <Parameter param={nextProps.module_doc.options[param]} />
+                <Parameter param={nextProps.moduleDoc.options[param]}
+                           changeConfiguration={this.props.changeConfiguration} name={param} />
               </Form.Field>
             </Grid.Column>
             <Grid.Column width={11}>
-              {nextProps.module_doc.options[param]['description']}
+              {nextProps.moduleDoc.options[param]['description']}
             </Grid.Column>
           </Grid.Row>
         )
-      });
+      }, this);
       this.setState({parameters: this.parameters});
     }
   },
@@ -178,27 +183,27 @@ var Parameters = React.createClass({
   render: function(){
     return(
       <Segment padded>
-        {this.props.module_doc.module &&
+        {this.props.moduleDoc.module &&
           <Grid width={16}>
               <Grid.Row>
                   <Grid.Column>
                       <Header as="h2" textAlign="centered">
-                          {this.props.module_doc.module}
+                          {this.props.moduleDoc.module}
                         </Header>
                     </Grid.Column>
                 </Grid.Row>
                 <Grid.Row>
                     <Grid.Column width={14}>
-                        {this.props.module_doc.short_description}
+                        {this.props.moduleDoc.short_description}
                       </Grid.Column>
                       <Grid.Column width={1} textAlign="right">
                           <Modal trigger={<Button icon="info"
                                                     color="blue"
                                                     inverted
                                                     />} >
-                              <Modal.Header> {this.props.module_doc.module}</Modal.Header>
+                              <Modal.Header> {this.props.moduleDoc.module}</Modal.Header>
                                 <Modal.Content>
-                                    <ListOptions options={this.props.module_doc.description}/>
+                                    <ListOptions options={this.props.moduleDoc.description}/>
                                   </Modal.Content>
                             </Modal>
                         </Grid.Column>
@@ -206,11 +211,11 @@ var Parameters = React.createClass({
             </Grid>
           }
           <Form>
-            {this.props.module_doc.examples &&
-              <Examples examples={this.props.module_doc.examples}
-                        module={this.props.module_doc.module} />
+            {this.props.moduleDoc.examples &&
+              <Examples examples={this.props.moduleDoc.examples}
+                        module={this.props.moduleDoc.module} />
               }
-              <Segment raised>
+              <Segment padded raised>
                 <Grid columns={2}>
 
                   {this.state.parameters}
@@ -295,16 +300,20 @@ var Task = React.createClass({
         <Grid.Row>
           <Grid.Column width={16}>
             <Segment>
+              <label> Module </label>
               <Select search fluid placeholder="Select the module..."
                       options={this.state.modules}
                       onChange={this.props.selectModule} />
             </Segment>
-            <Parameters module_doc={this.props.module_doc} />
+            <Parameters moduleDoc={this.props.moduleDoc}
+                        changeConfiguration={this.props.changeConfiguration} />
             <Segment>
-              Parameter to the task
+              #TODO: Parameter to the task
+              when, ignore_errors, register
             </Segment>
         <Button basic color="green" fluid icon="save"
-                  attached="bottom" content="Save" />
+                attached="bottom" content="Save"
+                onClick={this.props.saveAction}/>
         </Grid.Column>
         </Grid.Row>
       </Grid>

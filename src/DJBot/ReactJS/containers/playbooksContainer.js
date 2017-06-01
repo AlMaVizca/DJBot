@@ -6,9 +6,6 @@ var Playbooks = require("../components/playbooks");
 var PlaybooksContainer = React.createClass({
   getInitialState: function(){
     return ({
-      taskName: "",
-      taskDescription: "",
-      taskId: "",
       playbooks: []
       });
   },

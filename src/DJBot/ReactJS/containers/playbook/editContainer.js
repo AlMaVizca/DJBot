@@ -54,6 +54,9 @@ var PlaybookEditContainer = React.createClass({
       }.bind(this)
     });
   },
+  load: function(){
+    this.loadPlaybook(this.state.playbookId);
+  },
   getInitialState: function(){
     return({
       playbookDescription: "",
@@ -102,13 +105,15 @@ var PlaybookEditContainer = React.createClass({
   },
   render: function(){
     return (
-        <PlaybookEdit header={this.props.route.header}
-                      name={this.state.playbookName}
-                      changeName={this.changeName}
-                      description={this.state.playbookDescription}
-                      changeDescription={this.changeDescription}
-                      saveAction={this.state.saveAction}
-                      tasks={this.state.tasks} />
+      <PlaybookEdit header={this.props.route.header}
+                    id={this.state.playbookId}
+                    name={this.state.playbookName}
+                    changeName={this.changeName}
+                    description={this.state.playbookDescription}
+                    changeDescription={this.changeDescription}
+                    saveAction={this.state.saveAction}
+                    tasks={this.state.tasks}
+                    load={this.load} />
     );
   }
 });
