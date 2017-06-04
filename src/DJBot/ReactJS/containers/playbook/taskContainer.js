@@ -1,13 +1,13 @@
 var React = require("react");
 
 var Task = require("../../components/playbook/task");
-var TaskDocs = require("../../components/playbook/taskDocs");
+
 var ShowMessage = require("../../components/message");
 import { Grid } from 'semantic-ui-react';
 
 var TaskContainer = React.createClass({
   contextTypes: {
-    router: React.PropTypes.object.isRequired
+    router: React.PropTypes.object.isRequired,
   },
   changeConfiguration: function(e, configuration){
     var updateConf = this.state.configuration
@@ -19,12 +19,14 @@ var TaskContainer = React.createClass({
   },
   componentDidMount: function(){
     this.getModules();
+    this.getCategories();
     var query = this.props.location.query;
-    this.setState({id: query.pbId,
-                   key: query.key});
-    console.log(this.state.key);
-    if(this.state.key){
-      this.loadTask();
+    if(query.pbId) this.setState({id: query.pbId});
+    if(query.key){
+      this.setState({loading: true,
+                     key: query.key,
+                     saveAction: this.saveTask});
+      this.loadTask(query.key);
     }
   },
   getInitialState: function(){
@@ -35,7 +37,8 @@ var TaskContainer = React.createClass({
       saveAction: this.newTask,
       categories: [],
       moduleDoc: "No module selected",
-      modules: []
+      modules: [],
+      loading: false,
     });
   },
   getCategories: function(){
@@ -50,9 +53,23 @@ var TaskContainer = React.createClass({
       }.bind(this)
     });
   },
+  getModule: function(module){
+    $.ajax({
+      url: 'api/task/module',
+      type: "POST",
+      dataType: 'json',
+      data: {name: module},
+      success: function(data) {
+        this.setState({moduleDoc: data});
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error("/api/task/module", status, err.toString());
+      }.bind(this)
+    });
+  },
   getModules: function(){
     $.ajax({
-      url: 'api/task/modules',
+      url: '/api/task/modules',
       type: "GET",
       success: function(data) {
         this.setState(data);
@@ -61,6 +78,9 @@ var TaskContainer = React.createClass({
         console.error("/api/task/modules", status, err.toString());
       }.bind(this)
     });
+  },
+  cleanConfiguration: function(){
+    this.setState({ configuration: {}});
   },
   configurationAsList: function(){
     var keys = Object.keys(this.state.configuration);
@@ -73,7 +93,7 @@ var TaskContainer = React.createClass({
   },
   newTask: function(){
     var confs = this.configurationAsList();
-    confs['playbook'] = this.state.id;
+    confs['key'] = this.state.id;
     confs['task'] = this.state.taskName;
     confs['module'] = this.state.moduleDoc.module;
     $.ajax({
@@ -82,31 +102,46 @@ var TaskContainer = React.createClass({
       type: "POST",
       data: confs,
       success: function(data) {
-        this.context.router.push({
-          pathname: "/playbook/edit",
-          query: {
-            id: this.state.id
-          }
-        });
+        this.context.router.goBack();
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/task/add", status, err.toString());
       }.bind(this)
     });
   },
-  loadTask: function(){
-    console.log('LoadTask');
+  saveTask: function(){
+    var confs = this.configurationAsList();
+    confs['key'] = this.state.key;
+    confs['task'] = this.state.taskName;
+    confs['module'] = this.state.moduleDoc.module;
+    $.ajax({
+      url: "/api/task/save",
+      dataType: "json",
+      type: "POST",
+      data: confs,
+      success: function(data) {
+        this.context.router.goBack();
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error("/api/task/save", status, err.toString());
+      }.bind(this)
+    });
+  },
+  loadTask: function(key){
     $.ajax({
       url: "/api/task/get",
       dataType: "json",
       type: "POST",
       data: {
-        key: this.state.key
+        key: key
       },
       success: function(data) {
-        console.log(data);
         this.setState({
-
+          taskName: data.name,
+          module: data.module,
+          configuration: data.options,
+          //TODO: Also receive the module and options
+          loading: false,
         })
       }.bind(this),
       error: function(xhr, status, err) {
@@ -132,20 +167,6 @@ var TaskContainer = React.createClass({
       this.getModules();
     };
   },
-  selectModule: function(e, module){
-    $.ajax({
-      url: 'api/task/module',
-      type: "POST",
-      dataType: 'json',
-      data: {name: module['value']},
-      success: function(data) {
-        this.setState({moduleDoc: data, configuration: {}});
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error("/api/task/module", status, err.toString());
-      }.bind(this)
-    });
-  },
   render: function(){
     return (
       <div>
@@ -157,13 +178,20 @@ var TaskContainer = React.createClass({
               description={this.state.playbookDescription}
               changeDescription={this.changeDescription}
               saveAction={this.state.saveAction}
+
               modules={this.state.modules}
-              selectModule={this.selectModule}
+              module={this.state.module}
+              getModule={this.getModule}
               moduleDoc={this.state.moduleDoc}
+
               categories={this.state.categories}
-              loadCategories={this.getCategories}
               selectCategory={this.selectCategory}
+
+              configuration={this.state.configuration}
               changeConfiguration={this.changeConfiguration}
+              cleanConfiguration={this.cleanConfiguration}
+
+              loading={this.state.loading}
               />
       </div>
     );

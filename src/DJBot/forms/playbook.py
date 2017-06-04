@@ -22,7 +22,7 @@ class ParameterAdd(FlaskForm):
 
 
 class TaskAdd(FlaskForm):
-    playbook = IntegerField('playbook', [validators.DataRequired()])
+    key = IntegerField('key', [validators.DataRequired()])
     task = StringField('task', [validators.DataRequired()])
     module = StringField('module', [validators.DataRequired()])
     configuration = FieldList(FormField(Configuration))

@@ -2,8 +2,9 @@ from flask import Blueprint, jsonify, request
 from flask_security import login_required, roles_required
 from DJBot.forms.playbook import TaskAdd, ParameterAdd
 from DJBot.forms.generic import Select, SelectName
-from DJBot.messages import msg_saved, msg_failed
-from DJBot.models.playbook import get_playbook, delete_parameter, delete_task
+from DJBot.messages import msg_deleted, msg_saved, msg_failed
+from DJBot.models.playbook import get_playbook, delete_parameter, \
+    delete_task, get_task
 from DJBot.modules import ansible_docs
 
 
@@ -16,8 +17,9 @@ task_bp = Blueprint("task", __name__)
 def task_add():
     form = TaskAdd(request.form)
     if form.validate():
-        playbook = get_playbook(form.playbook.data)
-        saved = playbook.task_add(form.task.data)
+        playbook = get_playbook(form.key.data)
+        saved = playbook.task_add(form.task.data, form.module.data,
+                                  form.configuration.data)
         if saved:
             return msg_saved()
     return msg_failed()
@@ -31,6 +33,35 @@ def task_delete():
     if form.validate():
         deleted = delete_task(form.key.data)
         if deleted:
+            return msg_deleted()
+    return msg_failed()
+
+
+@task_bp.route('/get', methods=['POST'])
+@login_required
+@roles_required('user')
+def task_get():
+    form = Select(request.form)
+    if form.validate():
+        task = get_task(form.key.data)
+        return jsonify(task.get_setup())
+    return msg_failed()
+
+
+@task_bp.route('/save', methods=['POST'])
+@login_required
+@roles_required('user')
+def task_save():
+    form = TaskAdd(request.form)
+    if form.validate():
+        task = get_task(form.key.data)
+        if task.name != form.task.data:
+            task.name = form.task.data
+        if task.module != form.module.data:
+            task.module = form.module.data
+
+        saved = task.change_parameter(form.configuration.data)
+        if saved:
             return msg_saved()
     return msg_failed()
 

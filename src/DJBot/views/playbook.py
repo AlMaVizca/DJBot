@@ -23,7 +23,7 @@ def get():
     if form.validate():
         try:
             playbook = Playbook.query.get(form.key.data)
-            return jsonify(playbook.get_setup())
+            return jsonify(playbook.get_setup(full=True))
         except:
             pass
     return jsonify({'messageMode': 1,

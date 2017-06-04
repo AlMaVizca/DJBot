@@ -5,25 +5,30 @@ import { Accordion, Button, Form, Grid, Header, Icon, Input, Item, Modal, Segmen
 
 var Parameter = React.createClass({
   componentDidMount: function(){
-    this.loadParams(this.props.param, this.props.name);
+    this.loadParams(this.props.param, this.props.name, this.props.value);
   },
   componentWillReceiveProps: function(nextProp){
-    this.loadParams(nextProp.param, nextProp.name);
+    this.loadParams(nextProp.param, nextProp.name, nextProp.value);
   },
-  loadParams: function(param, name){
+  loadParams: function(param, name, value){
     this.newInput = <Input fluid name={name} placeholder=''
-                           onChange={this.props.changeConfiguration} />
+                           onChange={this.props.changeConfiguration}
+                           value={value} />
     if(param['default']){
-      this.newInput = <Input fluid name={this.props.name} placeholder={param['default']}
-                             onChange={this.props.changeConfiguration} />
+      this.newInput = <Input fluid name={name} placeholder={param['default']}
+                             onChange={this.props.changeConfiguration}
+                             value={value} />
     }
     if(param['choices']){
       this.options = param['choices'].map(function(opt){
         return {key: opt, text: opt, value: opt}
       });
-      this.newInput =  <Select fluid name={this.props.name} options={this.options}
+      if(value == undefined){
+        value = param['default'];
+      }
+      this.newInput =  <Select fluid name={name} options={this.options}
                                onChange={this.props.changeConfiguration}
-                               defaultValue={param['default']}  />
+                               value={value} />
     }
     this.setState({input: this.newInput });
 
@@ -56,8 +61,8 @@ var ListOptions = React.createClass({
     else{
       this.options = Object.keys(options)
     }
-    this.options = this.options.map(function(option){
-      return <Item.Content>{option}</Item.Content>
+    this.options = this.options.map(function(option, i){
+      return <Item.Content key={i}>{option}</Item.Content>
     });
     this.setState({options: this.options})
   },
@@ -85,12 +90,12 @@ var AnExample = React.createClass({
   },
   update: function(parameters){
     this.keys = Object.keys(parameters);
-    this.exampleCode = this.keys.map(function(conf){
+    this.exampleCode = this.keys.map(function(conf, i){
       var value = parameters[conf];
       if (function(value){return value === false || value === true}){
         value = value.toString();
       }
-      return <p> <b>{conf}:</b> <i>{value}</i></p>
+      return <p key={i}> <b>{conf}:</b> <i>{value}</i></p>
     });
     this.setState({exampleCode: this.exampleCode});
   },
@@ -122,9 +127,10 @@ var Examples = React.createClass({
     this.update(nextProps);
   },
   update: function(props){
-    this.examples = props.examples.map(function(example){
-      return <AnExample name={example.name} module={props.module}
-      parameters={example[props.module]} />
+    this.examples = props.examples.map(function(example, i){
+      return <AnExample key={i} name={example.name}
+                        module={props.module}
+                        parameters={example[props.module]} />
     });
     this.setState({examples: this.examples});
   },
@@ -156,14 +162,14 @@ var Parameters = React.createClass({
   componentWillReceiveProps: function(nextProps){
     if(nextProps.moduleDoc.options){
       this.keys = Object.keys(nextProps.moduleDoc.options)
-      this.parameters = this.keys.map(function(param){
+      this.parameters = this.keys.map(function(param, i){
         return (
-          <Grid.Row>
+          <Grid.Row key={i} >
             <Grid.Column width={5}>
               <Form.Field required={nextProps.moduleDoc.options[param]['required']}>
                 <label>{param}</label>
                 <Parameter param={nextProps.moduleDoc.options[param]}
-                           changeConfiguration={this.props.changeConfiguration} name={param} />
+                           changeConfiguration={this.props.changeConfiguration} name={param} value={this.props.configuration[param]} />
               </Form.Field>
             </Grid.Column>
             <Grid.Column width={11}>
@@ -187,7 +193,7 @@ var Parameters = React.createClass({
           <Grid width={16}>
               <Grid.Row>
                   <Grid.Column>
-                      <Header as="h2" textAlign="centered">
+                      <Header as="h2" textAlign="center">
                           {this.props.moduleDoc.module}
                         </Header>
                     </Grid.Column>
@@ -228,9 +234,6 @@ var Parameters = React.createClass({
 });
 
 var Categories = React.createClass({
-  componentDidMount: function(){
-    this.props.loadCategories();
-  },
   componentWillReceiveProps: function(nextProps){
     this.categories = nextProps.categories.map(function(category){
       return {key: category, text: category, value: category}
@@ -268,21 +271,30 @@ var Task = React.createClass({
       });
       this.setState({modules: this.options});
     }
+    if (nextProp.module != this.props.module){
+      this.props.getModule(nextProp.module);
+    }
+  },
+  selectModule: function(e, module){
+    this.props.getModule(module['value']);
+    this.props.cleanConfiguration();
   },
   render: function(){
+    const header = this.props.header + ' Task';
     return(
       <Grid centered>
         <Grid.Row>
         <Grid.Column width={16}>
-          <Header content="Task Definition" />
+          <Header content={header} />
           A task is a special configuration of a module
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
           <Grid.Column width={10}>
-            <Segment textAlign="left" raised attached>
+            <Segment loading={this.props.loading}
+                     textAlign="left" raised attached>
               <Input fluid transparent={this.props.transparent}
-                     type="text" value={this.props.taskName}
+                     type="text" value={this.props.name}
                      label={{ribbon: true, color: "blue",
                      content: "Task Name"}}
                      placeholder="Write the name of the task"
@@ -292,20 +304,21 @@ var Task = React.createClass({
           <Grid.Column width={6}>
            Choose a category to see the modules available
             <Categories categories={this.props.categories}
-                        loadCategories={this.props.loadCategories}
                         selectCategory={this.props.selectCategory}
                         />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
           <Grid.Column width={16}>
-            <Segment>
+            <Segment loading={this.props.loading}>
               <label> Module </label>
               <Select search fluid placeholder="Select the module..."
                       options={this.state.modules}
-                      onChange={this.props.selectModule} />
+                      value={this.props.module}
+                      onChange={this.selectModule} />
             </Segment>
             <Parameters moduleDoc={this.props.moduleDoc}
+                        configuration={this.props.configuration}
                         changeConfiguration={this.props.changeConfiguration} />
             <Segment>
               #TODO: Parameter to the task
