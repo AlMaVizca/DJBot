@@ -246,7 +246,7 @@ var Categories = React.createClass({
   },
   render: function(){
     return(
-      <Select placeholder='Select Category' search floating item
+      <Select placeholder='All' search floating item
               scrolling options={this.state.categories}
               onChange={this.props.selectCategory}/>
     );
@@ -266,10 +266,10 @@ var Task = React.createClass({
   },
   componentWillReceiveProps: function(nextProp){
     if (nextProp.modules){
-      this.options = nextProp.modules.map(function(module){
+      const options = nextProp.modules.map(function(module){
         return {key: module, value: module, text: module}
       });
-      this.setState({modules: this.options});
+      this.setState({modules: options});
     }
     if (nextProp.module != this.props.module){
       this.props.getModule(nextProp.module);

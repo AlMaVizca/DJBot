@@ -14,7 +14,7 @@ var PlaybookEditContainer = React.createClass({
   changeName: function(e){
     this.setState({playbookName: e.target.value});
   },
-  componentWillMount: function(){
+  componentDidMount: function(){
     var query = this.props.location.query;
     if (query.id){
       this.loadPlaybook(query.id);
@@ -85,6 +85,10 @@ var PlaybookEditContainer = React.createClass({
     this.context.router.push("/playbooks");
   },
   playbookSave: function(){
+    this.save()
+    this.context.router.push("/playbooks");
+  },
+  save: function(){
     $.ajax({
       url: "/api/playbook/save",
       dataType: "json",
@@ -101,7 +105,6 @@ var PlaybookEditContainer = React.createClass({
         console.error("/api/playbook/save", status, err.toString());
       }.bind(this)
     });
-    this.context.router.push("/playbooks");
   },
   render: function(){
     return (
@@ -111,6 +114,7 @@ var PlaybookEditContainer = React.createClass({
                     changeName={this.changeName}
                     description={this.state.playbookDescription}
                     changeDescription={this.changeDescription}
+                    save={this.save}
                     saveAction={this.state.saveAction}
                     tasks={this.state.tasks}
                     load={this.load} />

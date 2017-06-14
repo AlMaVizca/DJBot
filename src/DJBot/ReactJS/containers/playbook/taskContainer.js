@@ -140,7 +140,6 @@ var TaskContainer = React.createClass({
           taskName: data.name,
           module: data.module,
           configuration: data.options,
-          //TODO: Also receive the module and options
           loading: false,
         })
       }.bind(this),

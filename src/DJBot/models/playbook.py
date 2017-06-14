@@ -97,7 +97,8 @@ class Playbook(db.Model):
             for argument in each.parameters:
                 arg.append(dict(key=argument.key, name=argument.name,
                                 value=argument.value))
-            tasks.append(dict(key=each.key, name=each.name, options=arg))
+            tasks.append(dict(key=each.key, name=each.name,
+                              module=each.module, parameters=arg))
         return tasks
 
     def task_add(self, name, module, options=None):
@@ -109,24 +110,19 @@ class Playbook(db.Model):
         return True
 
 
-def execution_tasks(tasks):
-    execution_tasks = []
-    names = []
-    for each in tasks:
-        a_task = Task.query.get(each).get_setup()
-        names.append(a_task['name'])
-        task = {'name': a_task['name'], 'modules': []}
-        parameters = {}
-        for module in a_task['modules']:
-            for arg in module['options']:
-                parameters[arg['name']] = arg['value']
-            task['modules'].append((dict(
-                action=dict(
-                    module=module['name'],
-                    args=parameters)
-            )))
-        execution_tasks.append(task)
-    return execution_tasks, names
+def execution_tasks(task_key):
+    pb = Playbook.query.get(task_key).get_setup(True)
+    playbook = {"name":  pb['name'], "modules": []}
+    for module in pb['tasks']:
+        args ={}
+        for parameters in module['parameters']:
+            args[parameters['name']] = parameters['value']
+        playbook['modules'].append((dict(
+            action=dict(
+                module=module['module'],
+                args=args)
+        )))
+    return playbook
 
 
 def get_result(filename):
