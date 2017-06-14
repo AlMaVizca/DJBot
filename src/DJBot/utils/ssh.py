@@ -5,9 +5,11 @@ from ipaddress import IPv4Address, IPv4Network
 from Crypto.PublicKey import RSA
 
 
-def generate_key():
+def generate_key(name="id_rsa"):
+    subprocess.call(['mkdir', '-p',
+                     os.getenv("HOME") + '/.ssh/keys'])
     key = RSA.generate(2048)
-    key_path = os.getenv("HOME")+"/.ssh/id_rsa"
+    key_path = os.getenv("HOME")+"/.ssh/keys/" + name
     with open(key_path, 'w') as content_file:
         os.chmod(key_path, 0600)
         content_file.write(key.exportKey('PEM'))
@@ -18,11 +20,14 @@ def generate_key():
         content_file.write(pubkey.exportKey('OpenSSH'))
         content_file.write("\n")
     this_path = os.path.split(os.path.abspath(__file__))[0]
-    subprocess.call(['cp', '/root/.ssh/id_rsa.pub',
-                     '/root/.ssh/pub_key/'])
     subprocess.call(['cp',
                      this_path + '/config',
-                     '/root/.ssh/'])
+                     os.getenv("HOME") + '/.ssh/'])
+
+
+def remove_key(name):
+    subprocess.call(['rm', '-f',
+                     os.getenv("HOME")+'/.ssh/keys/'+name])
 
 
 class SshConfig():
@@ -31,7 +36,8 @@ class SshConfig():
         self.hosts = {}
         self.defaults = {}
 
-    def set_defaults(self, user='root', key='~/.ssh/id_rsa',
+    def set_defaults(self, user='root',
+                     key=os.getenv('HOME') + '/.ssh/id_rsa',
                      fw_agent='yes'):
 
         self.defaults = {

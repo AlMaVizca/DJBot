@@ -1,7 +1,7 @@
 from DJBot.database import db
 from DJBot.models import first_data
 from DJBot.models.user import get_datastore, get_users
-from DJBot.utils import config_ssh
+from DJBot.utils import ssh
 from DJBot.views import register_api
 import os
 
@@ -38,8 +38,8 @@ def create_app(config='config.Production', instance=True):
             app.logger.error('Fail. We are gonna create the database')
             first_data(app, user_datastore)
 
-        if not os.path.isfile(os.getenv("HOME") + '/.ssh/id_rsa'):
-            config_ssh.generate_key()
+        if not os.path.isfile(os.getenv("HOME") + '/.ssh/keys/id_rsa'):
+            ssh.generate_key()
 
     @app.route('/', methods=['GET'])
     @login_required
