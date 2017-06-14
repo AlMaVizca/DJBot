@@ -1,6 +1,6 @@
 from DJBot.database import db
 from DJBot.utils import proxy
-from DJBot.ansibleapi import Runner
+from DJBot.utils.ansible_api import ansible_status
 
 
 class Room(db.Model):
@@ -9,12 +9,15 @@ class Room(db.Model):
     name = db.Column(db.String(50), nullable=False)
     machines = db.Column(db.Integer, nullable=False)
     network = db.Column(db.String, nullable=False)
+    gateway = db.Column(db.String, nullable=False)
+    user = db.Column(db.String, nullable=False, default="root")
+    private_key = db.Column(db.String, nullable=False, default="id_rsa")
     hosts = db.relationship("Computer", cascade="all, delete-orphan")
 
     def __repr__(self):
         return "<Room %r %r %r %r>" % (self.key,
                                        self.name, self.machines,
-                                       self.network)
+                                       self.network, self.gateway)
 
     def _set_network(self, network=None, netmask=None):
         if network and netmask:
@@ -29,11 +32,15 @@ class Room(db.Model):
 
     def get_setup(self):
         network, netmask = self._get_network()
-        return dict(name=self.name,
+        room = dict(name=self.name,
                     machines=self.machines,
                     network=network,
                     netmask=netmask,
-                    key=self.key)
+                    gateway=self.gateway,
+                    key=self.key,
+                    private_key=self.private_key,
+                    user=self.user)
+        return room
 
     def discover_hosts(self):
         hosts = proxy.check_network(unicode(self.network))
@@ -45,11 +52,12 @@ class Room(db.Model):
         hosts.update(self.get_setup())
         return hosts
 
-    def save(self, name, network, netmask, machines):
+    def save(self, name, network, netmask, machines, gateway):
         """save in database"""
         self.name = name
         self.machines = machines
         self.network = self._set_network(network, netmask)
+        self.gateway = gateway
         db.session.add(self)
         db.session.commit()
         return True
@@ -60,31 +68,7 @@ class Room(db.Model):
         db.session.commit()
 
     def get_hosts(self):
-        """run ansible setup on hosts"""
-        ansible_game = Runner(self.hosts, self.username)
-        ansible_game.add_setup(self.hosts)
-        ansible_game.run()
-        facts = ansible_game.callback.get_all()["ok"]
-        hosts = []
-        for host_data in facts.keys():
-            host = None
-            try:
-                host = {
-                    "hostname": facts[host_data]["ansible_hostname"],
-                    "memory": facts[host_data]
-                    ["ansible_memory_mb"]["real"]["free"],
-                    "lsb": facts[host_data]["ansible_lsb"]["description"],
-                    "key": host_data.split(".")[3]
-                }
-            except:
-                host = {
-                    "hostname": "Something wrong happen",
-                    "memory": "ansible_memory_mb",
-                    "lsb": "ansible_lsb",
-                    "key": 999
-                }
-            hosts.append(host)
-        return {"hosts": hosts}
+        ansible_status(self.hosts, self.user)
 
 
 class Computer(db.Model):
@@ -92,6 +76,7 @@ class Computer(db.Model):
     key = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
     mac = db.Column(db.String(50), nullable=False)
+    # ip = db.Column(db.String(50), nullable=False)
     location = db.Column(db.Integer, nullable=False)
     task_key = db.Column(db.Integer, db.ForeignKey("room.key"))
 
@@ -105,11 +90,12 @@ def get_rooms():
     return rooms_info
 
 
-def get_machines(rooms):
-    hosts = []
-    names = []
-    for each in rooms:
-        a_room = Room.query.get(each)
-        names.append(a_room.name)
-        hosts.extend(a_room.discover_hosts())
-    return hosts, names
+def get_room(id):
+    return Room.query.get(id)
+
+
+def get_machines(room_key):
+    room = Room.query.get(room_key)
+    hosts = room.discover_hosts()
+    hosts.remove(room.gateway)
+    return hosts, room.name
