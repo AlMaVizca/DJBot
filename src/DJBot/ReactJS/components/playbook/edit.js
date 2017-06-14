@@ -124,6 +124,7 @@ var PlaybookEdit = React.createClass({
            });
   },
   addTask: function(){
+    this.props.save()
     this.context.router.push({
       pathname: "/task/new",
       query: {
