@@ -1,23 +1,32 @@
 FROM python:2
-EXPOSE 80
-VOLUME /usr/src/app
+EXPOSE 8000
 
-#Logs
-RUN mkdir -p /var/log/djbot
-ENV LOGS '/var/log/djbot/'
+RUN groupadd -r djbot && useradd -u 1000 --no-log-init -r -m -g djbot djbot
 
-#SSH
-RUN mkdir -p /root/.ssh
-RUN touch /root/.ssh/.none
+RUN apt-get update -qq && apt-get install -yqq \
+    sshpass \
+ && rm -rf /var/lib/apt/lists/*
 
-VOLUME /root/.ssh/pub_key
+COPY pytest.ini setup.py setup.cfg gunicorn.py /home/djbot/app/
+COPY src /home/djbot/app/src
+WORKDIR /home/djbot/app
 
-WORKDIR /usr/src/app
-COPY pytest.ini setup.py setup.cfg /usr/src/app/
-COPY src /usr/src/app/src
-COPY tests /usr/src/app/tests
+RUN chown -R djbot /home/djbot/app
+
 RUN pip install -e .
 # python setup.py install
 RUN pip install --upgrade git+git://github.com/inveniosoftware/flask-security-fork.git
-COPY gunicorn.py /usr/src/app/
+
+USER djbot
+
+#Logs
+RUN mkdir -p /home/djbot/log
+ENV LOGS '/home/djbot/log/'
+
+#SSH
+RUN mkdir -p /home/djbot/.ssh && touch /home/djbot/.ssh/.none
+
+# Install application and requirements
+VOLUME /home/djbot/app
+
 CMD ["gunicorn", "--forwarded-allow-ips=*", "--config=gunicorn.py", "wsgi:app"]
