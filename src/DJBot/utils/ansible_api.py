@@ -6,6 +6,7 @@ from ansible.inventory import Inventory
 from ansible.playbook.play import Play
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.plugins.callback import CallbackBase
+from DJBot.config import Config
 import threading
 import json
 import os
@@ -49,6 +50,10 @@ class ResultsCollector(CallbackBase):
 
 
 class Runner(object):
+    """I wrote this to make a response with flask to avoid the timeout
+    But I neet to check if it's really usefull,
+    maybe the way of Runner is enought.
+    """
     def __init__(self, inventory, remote_user='root',
                  private_key_file=None, ssh_extra_args=None,
                  become=None):
@@ -68,7 +73,8 @@ class Runner(object):
                                private_key_file=private_key_file,
                                ssh_common_args=None,
                                ssh_extra_args=ssh_extra_args,
-                               sftp_extra_args=None, scp_extra_args=None,
+                               sftp_extra_args=None,
+                               scp_extra_args=None,
                                become=become, become_method=None,
                                become_user=None, verbosity=None,
                                check=False)
@@ -82,20 +88,14 @@ class Runner(object):
         self.play_source = dict(
             name='setup',
             hosts=', '.join(hosts),
-            tasks=[
-                dict(
-                    action=dict(
-                        module='setup',
-                        args=(dict(
-                            filter='ansible_[h,m,l,d][o,e,s]*')
-                        )
-                    )
-                ),
-            ]
+            tasks=[dict(action='setup')]
+            # args=(dict(filter='ansible_[a,d,h,l,m,p,][a,e,i,o,r,s]*'))
         )
+
         self.plays['setup'] = Play().load(self.play_source,
                                           variable_manager=self.vmanager,
                                           loader=self.loader)
+        self.plays['setup'].gather_facts = False
 
     def add_plays(self, name='undefined', hosts=[], tasks=[]):
         """ add tasks to play"""
@@ -107,6 +107,7 @@ class Runner(object):
         self.plays[name] = Play().load(self.play_source,
                                        variable_manager=self.vmanager,
                                        loader=self.loader)
+        self.plays[name].gather_facts = False
 
     def run(self):
         tqm = None
@@ -127,18 +128,17 @@ class Runner(object):
 
 
 class ThreadRunner(threading.Thread):
-    def __init__(self, rooms, tasks, user, execution_name):
+    def __init__(self, machines, playbook, user, execution_name):
         threading.Thread.__init__(self)
 
         self.execution_name = execution_name
-        self.rooms = rooms
+        self.machines = machines
         self.user = user
-        self.playbook = Runner(self.rooms, self.user)
-        self.playbook.add_setup(self.rooms)
-        self.tasks = tasks
-        self.tasks_count = len(tasks)
-        for each in tasks:
-            self.playbook.add_plays(each['name'], self.rooms, each['modules'])
+        self.playbook = Runner(self.machines, self.user)
+        self.playbook.add_setup(self.machines)
+        self.playbook.add_plays(playbook['name'], self.machines,
+                                playbook['modules'])
+        self.task = playbook
 
     def run(self):
         self.playbook.run()
@@ -147,23 +147,54 @@ class ThreadRunner(threading.Thread):
         with open(name, 'w') as record:
             json.dump(results, record)
         with open('/tmp/prueba.tareas', 'w') as tareas:
-            json.dump(self.tasks, tareas)
+            json.dump(self.task, tareas)
+
+
+def ansible_status(hosts, user="root", private_key_file=None):
+    """run ansible setup on hosts"""
+    key = Config().KEYS + private_key_file
+    ansible_game = Runner(hosts, remote_user=user,
+                          private_key_file=key)
+    ansible_game.add_setup(hosts)
+    ansible_game.run()
+    return ansible_game.callback.get_all()
+
+
+def copy_key(hosts, key, user, password):
+    key = Config().KEYS + key + ".pub"
+    key = "{{ lookup('file', '" + key + "' ) }}"
+    ansible_api = Runner(hosts, user)
+    ansible_api.passwords = {'conn_pass': password}
+    ansible_api.add_plays('Add ssh key', hosts, [
+        {'action': u'authorized_key',
+         'args':
+         {
+             u'user': unicode(user),
+             u'state': u'present',
+             u'key': unicode(key)
+                 },
+                }
+            ]
+            )
+    ansible_api.run()
+    return ansible_api.callback.get_all()
 
 
 if __name__ == '__main__':
-    inventory = ['172.18.0.3']
+    inventory = ['172.18.0.2']
     ansible_api = Runner(inventory, 'root')
     ansible_api.add_setup(inventory)
-
-    ansible_api.add_plays('shell ls', inventory, [
-        {'action':
-         {'args':
-          {
-            u'repo': u'deb http://httpredir.debian.org/debian jessie main',
-            u'state': u'present'
-          },
-          'module': u'apt_repository'}}
+    ansible_api.passwords = {'conn_pass': 'root'}
+    ansible_api.add_plays('Add ssh key', inventory, [
+        {'action': u'authorized_key',
+         'args':
+         {
+             u'user': u'root',
+             u'state': u'present',
+             u'key': u"{{ lookup('file', '/home/krahser/.ssh/id_rsa.pub') }}",
+         },
+        }
     ]
     )
     ansible_api.run()
-    ansible_api.callback.get_all()
+    print ansible_api.callback.get_all()
