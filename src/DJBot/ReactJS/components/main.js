@@ -37,11 +37,14 @@ var AppMenu = React.createClass({
             <Icon name="settings" />
             Settings
           </Menu.Item>
-          <Menu.Item name="playbooks" active={activeItem === 'playbooks'}
+          <Menu.Item name="playbooks"
+                     active={activeItem === 'playbooks'}
                      onClick={this.handleItemClick} as={Link}
                      to="/playbooks" />
-          <Menu.Item name="run" active={activeItem === 'run'}
-                     onClick={this.handleItemClick} as={Link} to="/run" />
+          <Menu.Item name="inventory"
+                     active={activeItem === 'inventory'}
+                     onClick={this.handleItemClick} as={Link}
+                     to="/inventory" />
           <Menu.Item name="results" active={activeItem === 'results'}
                      onClick={this.handleItemClick} as={Link}
                      to="/results" />
