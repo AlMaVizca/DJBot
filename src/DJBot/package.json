@@ -29,7 +29,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack -p",
-    "dev": "gulp watch"
+    "dev": "gulp dev",
+    "watch": "gulp watch"
   },
   "repository": {
     "type": "git",
