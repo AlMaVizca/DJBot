@@ -16,24 +16,29 @@ var Main = require('../containers/main');
 var Blackboard = require("../containers/blackboard");
 
 var Results = require("../containers/resultsContainer");
-var Run = require("../containers/run");
 
-var PlaybookEdit = require("../containers/playbook/editContainer");
+
 var Playbooks = require("../containers/playbooksContainer");
+var PlaybookEdit = require("../containers/playbook/editContainer");
+var TaskEdit = require("../containers/playbook/taskContainer");
 
+var Inventory = require("../containers/inventoryContainer");
+var Room = require("../containers/inventory/roomContainer");
+
+var Play = require("../containers/playContainer");
 
 var UserContainer = require("../containers/userContainer");
 var UsersContainer = require("../containers/usersContainer");
 var UserNew = require("../components/user/new");
 
-var TaskEdit = require("../containers/playbook/taskContainer");
+
 
 var routes = (
   <Router history={hashHistory}>
     <Route path='/' component={Main}>
       <IndexRoute component={Settings} />
       <Route path='/blackboard' component={Blackboard} />
-      <Route path='/run' component={Run} />
+
       <Route path='/results' component={Results} />
 
       <Route path='/settings' component={Settings} />
@@ -43,14 +48,19 @@ var routes = (
       <Route path='/settings/keys' component={Keys} />
       <Route path='/settings/rooms' component={Keys} />
 
+      <Route path='/playbooks' component={Playbooks} />
       <Route path='/playbook/edit'
              component={PlaybookEdit} header="Edit" />
-      <Route path='/playbook/new' component={PlaybookEdit} header="New" />
-      <Route path='/playbooks' component={Playbooks} />
-
-
+      <Route path='/playbook/new' component={PlaybookEdit}
+             header="New" />
       <Route path='/task/edit' component={TaskEdit} header="Edit" />
       <Route path='/task/new' component={TaskEdit} header="New" />
+
+      <Route path='/inventory' component={Inventory} />
+      <Route path='/inventory/room' component={Room} />
+      <Route path='/inventory/machine' component={Inventory} />
+
+      <Route path='/play' component={Play} />
 
     </Route>
   </Router>
