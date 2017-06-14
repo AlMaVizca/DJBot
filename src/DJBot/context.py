@@ -1,5 +1,5 @@
 #!/usr/bin/python2
-from ansibleapi import Runner
+from DJBot.utils.ansible_api import Runner
 
 
 class Host():

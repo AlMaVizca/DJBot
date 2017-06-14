@@ -1,10 +1,11 @@
-from DJBot.ansibleapi import ThreadRunner
+from DJBot.utils.ansible_api import ThreadRunner
 from flask import Blueprint, jsonify, request
 from flask_security import current_user, roles_required
-from DJBot.forms.action import ResultForm
+from DJBot.forms.action import Result, Run
 from DJBot.models.playbook import execution_tasks, get_result
 from DJBot.models.room import get_machines
 import os
+import logging
 
 action_bp = Blueprint('action', __name__)
 
@@ -12,18 +13,19 @@ action_bp = Blueprint('action', __name__)
 @action_bp.route('/run', methods=['POST'])
 @roles_required('user')
 def run():
-    rooms = [int(each) for each in request.form.getlist('rooms[]')]
-    tasks = [int(each) for each in request.form.getlist('tasks[]')]
+    form = Run(request.form)
+    logging.error(form.validate())
+    logging.error(request.form)
+    if form.validate():
+        machines, room_name = get_machines(form.room.data)
+        playbook = execution_tasks(form.playbook.data)
 
-    rooms, room_names = get_machines(rooms)
-    tasks, task_names = execution_tasks(tasks)
-
-    name_log = '-'.join(task_names) + '@' + '-'.join(room_names)
-    name_log += '@' + current_user.username
-    ansible_playbook = ThreadRunner(rooms, tasks, 'root', name_log)
-    ansible_playbook.start()
-    if True:
-        return jsonify({'message': 'Task is running!'})
+        name_log = '-'.join(playbook['name']) + '@' + '-'.join(room_name)
+        name_log += '@' + current_user.username
+        ansible_playbook = ThreadRunner(machines, playbook, 'root', name_log)
+        ansible_playbook.start()
+        if True:
+            return jsonify({'message': 'Task is running!'})
     return jsonify({'message': 'receive'})
 
 
@@ -40,7 +42,7 @@ def get_results():
 @action_bp.route('/result', methods=['POST'])
 @roles_required('user')
 def get_a_result():
-    form = ResultForm(request.form)
+    form = Result(request.form)
     if form.validate():
         filename = os.getenv('LOGS') + form.result.data
         result = get_result(filename)
