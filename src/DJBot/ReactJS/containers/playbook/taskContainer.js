@@ -36,6 +36,7 @@ var TaskContainer = React.createClass({
       taskName: "",
       saveAction: this.newTask,
       categories: [],
+      category: "All",
       moduleDoc: "No module selected",
       modules: [],
       loading: false,
@@ -156,6 +157,7 @@ var TaskContainer = React.createClass({
         dataType: 'json',
         data: {name: category['value']},
         success: function(data) {
+          data['category'] = category['value'];
           this.setState(data);
         }.bind(this),
         error: function(xhr, status, err) {
@@ -184,6 +186,7 @@ var TaskContainer = React.createClass({
               moduleDoc={this.state.moduleDoc}
 
               categories={this.state.categories}
+              category={this.state.category}
               selectCategory={this.selectCategory}
 
               configuration={this.state.configuration}
