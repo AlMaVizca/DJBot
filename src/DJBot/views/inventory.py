@@ -33,7 +33,6 @@ def room_get_machines():
     form = Select(request.form)
     if form.validate():
         try:
-            import logging
             room = get_room(form.key.data)
             hosts, name = get_machines(form.key.data)
             result = ansible_status(hosts, room.user, room.private_key)
