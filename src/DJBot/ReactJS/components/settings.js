@@ -16,14 +16,6 @@ function Settings(){
           </Segment>
         </Grid.Column>
         <Grid.Column>
-          <Segment textAlign="center" name="rooms"
-                   as={Link} to="/settings/rooms">
-            <Icon name="computer" size="huge" />
-            <Icon name="computer" size="huge" />
-            <p>Rooms</p>
-          </Segment>
-        </Grid.Column>
-        <Grid.Column>
           <Segment textAlign="center" name="keys"
                    as={Link} to="/settings/keys">
             <Icon name="qrcode" size="huge" />
