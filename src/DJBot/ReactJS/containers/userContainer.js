@@ -31,7 +31,7 @@ var UserContainer = React.createClass({
   userLoad: function(){
     $.ajax(
       {
-        url:'/api/user',
+        url:'/api/user/get',
         dataType: 'json',
         success: function(data){
           this.setState(data);
@@ -51,7 +51,7 @@ var UserContainer = React.createClass({
     };
     $.ajax(
       {
-        url: '/api/user/change',
+        url: '/api/user/modify',
         dataType: 'json',
         type: 'POST',
         data: user,
