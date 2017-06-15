@@ -63,7 +63,7 @@ var Play = React.createClass({
           <Grid.Column width={10}>
             <Segment basic loading={this.props.loading}>
               <p>This room was setup for {this.props.machines} machines.</p>
-              <p>There is {this.props.hosts.length} machines power on in this network {this.props.network}/{this.props.netmask}</p>
+              <p>There is {this.props.hosts.length} machines available on the network {this.props.network}/{this.props.netmask}.</p>
             </Segment>
           </Grid.Column>
           <Grid.Column>

@@ -20,17 +20,17 @@ var PlayContainer = React.createClass({
            });
   },
   machinesOn: function(id){
-        $.ajax({
-      url: "/api/inventory/get_alive",
+    $.ajax({
+      url: "/api/inventory/get_machines",
       dataType: "json",
       type: "POST",
       data: {
         key: id
       },
       success: function(data) {
-        if (data.hosts.length > 0)
+        if (Object.keys(data.hosts.ok).length > 0)
         this.setState({
-          hosts: data['hosts'],
+          hosts: Object.keys(data.hosts.ok),
           disabled: false,
           loading: false,
         })
