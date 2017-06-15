@@ -12,9 +12,6 @@ var Keys = require("../components/keys");
 
 var Main = require('../containers/main');
 
-
-var Blackboard = require("../containers/blackboard");
-
 var Results = require("../containers/resultsContainer");
 
 
@@ -24,6 +21,7 @@ var TaskEdit = require("../containers/playbook/taskContainer");
 
 var Inventory = require("../containers/inventoryContainer");
 var Room = require("../containers/inventory/roomContainer");
+var Host = require("../containers/inventory/hostContainer");
 
 var Play = require("../containers/playContainer");
 
@@ -36,8 +34,8 @@ var UserNew = require("../components/user/new");
 var routes = (
   <Router history={hashHistory}>
     <Route path='/' component={Main}>
-      <IndexRoute component={Settings} />
-      <Route path='/blackboard' component={Blackboard} />
+      <IndexRoute component={Dashboard} />
+      <Route path='/Dashboard' component={Dashboard} />
 
       <Route path='/results' component={Results} />
 
@@ -58,7 +56,7 @@ var routes = (
 
       <Route path='/inventory' component={Inventory} />
       <Route path='/inventory/room' component={Room} />
-      <Route path='/inventory/machine' component={Inventory} />
+      <Route path='/inventory/host' component={Host} />
 
       <Route path='/play' component={Play} />
 
