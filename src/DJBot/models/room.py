@@ -12,7 +12,6 @@ class Room(db.Model):
     gateway = db.Column(db.String, nullable=False)
     user = db.Column(db.String, nullable=False, default="root")
     private_key = db.Column(db.String, nullable=False, default="id_rsa")
-    hosts = db.relationship("Computer", cascade="all, delete-orphan")
 
     def __repr__(self):
         return "<Room %r %r %r %r>" % (self.key,
@@ -68,17 +67,15 @@ class Room(db.Model):
         db.session.commit()
 
     def get_hosts(self):
-        ansible_status(self.hosts, self.user)
+        return ansible_status(self.discover_hosts(), self.user)
 
 
-class Computer(db.Model):
-    __tablename__ = "computer"
+class Host(db.Model):
+    __tablename__ = "host"
     key = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
     mac = db.Column(db.String(50), nullable=False)
-    # ip = db.Column(db.String(50), nullable=False)
-    location = db.Column(db.Integer, nullable=False)
-    task_key = db.Column(db.Integer, db.ForeignKey("room.key"))
+    ip = db.Column(db.String(50), nullable=False)
 
 
 def get_rooms():
