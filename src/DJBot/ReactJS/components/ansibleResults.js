@@ -103,17 +103,22 @@ var ComputerList =  React.createClass({
       const computer = computers[ip];
       return <ComputerCard key={i} computer={computer} ip={ip} />
     });
-    this.setState({computers: computersList});
+    this.setState({computers: computersList,
+                   number: keys.length});
   },
   getInitialState: function(){
-    return({computers: []})
+    return({computers: [],
+            number: 0})
   },
   render: function(){
     return(
       <Segment color={this.props.color}>
+        <Header as="h3">
+          {this.state.number} hosts with status {this.props.status}.
+        </Header>
         <Card.Group>
           {this.state.computers}
-          </Card.Group>
+        </Card.Group>
       </Segment>
     );
   }
@@ -124,13 +129,13 @@ var AnsibleResults = React.createClass({
   componentWillReceiveProps: function(nextProps){
     var computers = []
     if (Object.keys(nextProps.failed).length > 0)
-      computers = [<ComputerList key={1} color="red" computers={nextProps.failed} />]
+      computers = [<ComputerList key={1} color="red" computers={nextProps.failed} status="failed" />]
 
     if(Object.keys(nextProps.unreachable).length > 0)
-      computers = computers.concat([<ComputerList key={2} color="yellow" computers={nextProps.unreachable} />]);
+      computers = computers.concat([<ComputerList key={2} color="yellow" computers={nextProps.unreachable} status="unreachable" />]);
 
     if(Object.keys(nextProps.ok).length > 0)
-      computers = computers.concat([<ComputerList key={3} color="green" computers={nextProps.ok} />]);
+      computers = computers.concat([<ComputerList key={3} color="green" computers={nextProps.ok} status="ok" />]);
 
     this.setState({computers: computers});
   },
