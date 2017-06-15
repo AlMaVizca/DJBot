@@ -128,14 +128,19 @@ class Runner(object):
 
 
 class ThreadRunner(threading.Thread):
-    def __init__(self, machines, playbook, user, execution_name):
+    def __init__(self, machines, playbook, user, execution_name,
+                 private_key="id_rsa",
+                 setup=False):
         threading.Thread.__init__(self)
 
         self.execution_name = execution_name
         self.machines = machines
         self.user = user
-        self.playbook = Runner(self.machines, self.user)
-        self.playbook.add_setup(self.machines)
+        self.private_key = Config.KEYS + private_key
+        self.playbook = Runner(self.machines, self.user,
+                               self.private_key)
+        if setup:
+            self.playbook.add_setup(self.machines)
         self.playbook.add_plays(playbook['name'], self.machines,
                                 playbook['modules'])
         self.task = playbook
@@ -143,16 +148,16 @@ class ThreadRunner(threading.Thread):
     def run(self):
         self.playbook.run()
         results = self.playbook.callback.get_all()
-        name = os.getenv('LOGS') + self.execution_name + '.json'
+        name = os.getenv("LOGS") + self.execution_name + '.json'
         with open(name, 'w') as record:
             json.dump(results, record)
-        with open('/tmp/prueba.tareas', 'w') as tareas:
+        with open(os.getenv("LOGS") + '/prueba.tareas', 'w') as tareas:
             json.dump(self.task, tareas)
 
 
 def ansible_status(hosts, user="root", private_key_file=None):
     """run ansible setup on hosts"""
-    key = Config().KEYS + private_key_file
+    key = Config.KEYS + private_key_file
     ansible_game = Runner(hosts, remote_user=user,
                           private_key_file=key)
     ansible_game.add_setup(hosts)
@@ -161,7 +166,7 @@ def ansible_status(hosts, user="root", private_key_file=None):
 
 
 def copy_key(hosts, key, user, password):
-    key = Config().KEYS + key + ".pub"
+    key = Config.KEYS + key + ".pub"
     key = "{{ lookup('file', '" + key + "' ) }}"
     ansible_api = Runner(hosts, user)
     ansible_api.passwords = {'conn_pass': password}

@@ -3,9 +3,8 @@ from flask import Blueprint, jsonify, request
 from flask_security import current_user, roles_required
 from DJBot.forms.action import Result, Run
 from DJBot.models.playbook import execution_tasks, get_result
-from DJBot.models.room import get_machines
+from DJBot.models.room import get_machines, get_room
 import os
-import logging
 
 action_bp = Blueprint('action', __name__)
 
@@ -14,15 +13,17 @@ action_bp = Blueprint('action', __name__)
 @roles_required('user')
 def run():
     form = Run(request.form)
-    logging.error(form.validate())
-    logging.error(request.form)
     if form.validate():
+        room = get_room(form.room.data)
         machines, room_name = get_machines(form.room.data)
         playbook = execution_tasks(form.playbook.data)
 
-        name_log = '-'.join(playbook['name']) + '@' + '-'.join(room_name)
+        name_log = '-'.join(playbook['name'].split(' ')) + '@' + '-'.join(room_name.split(' '))
         name_log += '@' + current_user.username
-        ansible_playbook = ThreadRunner(machines, playbook, 'root', name_log)
+        ansible_playbook = ThreadRunner(machines, playbook, 'root',
+                                        name_log,
+                                        room.private_key,
+                                        )
         ansible_playbook.start()
         if True:
             return jsonify({'message': 'Task is running!'})

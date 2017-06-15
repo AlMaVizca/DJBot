@@ -22,6 +22,7 @@ USER djbot
 #Logs
 RUN mkdir -p /home/djbot/log
 ENV LOGS '/home/djbot/log/'
+VOLUME /home/djbot/log
 
 #SSH
 RUN mkdir -p /home/djbot/.ssh && touch /home/djbot/.ssh/.none
