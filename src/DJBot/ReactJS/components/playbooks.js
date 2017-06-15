@@ -5,7 +5,7 @@ var Link = ReactRouter.Link;
 
 var ShowMessage = require("./message");
 
-import {Button, Confirm, Grid, Header, Icon, Input, Menu, Segment, Table} from "semantic-ui-react";
+import {Button, Confirm, Grid, Header, Icon, Input, Menu, Popup, Segment, Table} from "semantic-ui-react";
 
 var Playbook = React.createClass({
   contextTypes: {
@@ -149,8 +149,10 @@ function Playbooks(props){
 	</Table>
       </Segment>
       <Grid centered>
-        <Button circular as={Link} color="green" icon="add circle"
-                to="/playbook/new" />
+        <Popup
+          trigger={<Button circular as={Link} color="green" icon="add circle" to="/playbook/new" />}
+          content="Add playbook"
+          />
       </Grid>
     </div>
   );
