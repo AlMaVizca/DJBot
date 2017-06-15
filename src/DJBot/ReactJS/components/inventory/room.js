@@ -120,7 +120,8 @@ var Room = React.createClass({
             </Form>
           </Grid.Column>
           <Grid.Column width={2}>
-            <Button inverted color="green" onClick={this.props.save}>
+            <Button inverted color="green" floated="right"
+                    onClick={this.props.save}>
               Save
             </Button>
           </Grid.Column>

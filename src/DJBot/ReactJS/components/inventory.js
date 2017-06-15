@@ -230,10 +230,13 @@ var Inventory = React.createClass({
       pathname: "/inventory/room",
     });
   },
-  machineAdd: function(){
+  hostAdd: function(){
     this.context.router.push({
-      pathname: "/inventory/machine",
+      pathname: "/inventory/host",
     });
+    //   <Button color="green" basic floated="right" as={Link} onClick={this.hostAdd}>
+    //   <Icon name="add" /> Host
+    // </Button>
   },
   render: function(){
     return(
@@ -245,9 +248,6 @@ var Inventory = React.createClass({
           <Grid.Column  width={16}>
               <Button color="green" basic floated="right" as={Link} onClick={this.roomAdd}>
                 <Icon name="add" /> Room
-              </Button>
-              <Button color="green" basic floated="right" as={Link} onClick={this.machineAdd}>
-                <Icon name="add" /> Machine
               </Button>
           </Grid.Column>
         </Grid.Row>
