@@ -20,7 +20,9 @@ var Room = React.createClass({
     }
   },
   getInitialState: function(){
-    return({hosts:[], keys: [], modal: false})
+    return({hosts:[],
+            keys: [],
+            modal: false})
   },
   open: function(){
     this.setState({modal: true});
@@ -126,19 +128,24 @@ var Room = React.createClass({
         <Grid.Row>
           <Grid.Column>
             <Header as="h1">Computers</Header>
+            <Divider />
             <Modal closeIcon='close' open={this.state.modal}
-                   trigger={<Button loading={this.props.loading}
+                   trigger={<Button basic color="olive"
+                                      floated="right" loading={this.props.loading}
                                       onClick={this.open}>
                             Copy SSH key
                    </Button>}
             onClose={this.close} >
 
-              <Header icon='archive' content='Password' />
+              <Header>
+                <Icon name='exclamation' color="yellow" />
+                Connection password
+              </Header>
               <Modal.Content>
                 <p>DJBot needs the password of the user {this.props.user} to add the public key. It will be in ram just for a second. </p>
-                <Label>
+                <Label basic color="black">
                   Password:
-              </Label>
+                </Label>
                 <Input type="password"
                        onChange={this.props.changeOption}
                        name="password" value={this.props.password} />
@@ -149,7 +156,6 @@ var Room = React.createClass({
                 </Button>
               </Modal.Actions>
             </Modal>
-            <Divider />
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
