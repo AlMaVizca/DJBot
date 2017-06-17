@@ -5,14 +5,15 @@ var Route = ReactRouter.Route;
 var hashHistory = ReactRouter.hashHistory;
 var IndexRoute = ReactRouter.IndexRoute;
 
-var Dashboard = require("../components/dashboard");
-var Settings = require("../components/settings");
-var Keys = require("../components/keys");
-
-
 var Main = require('../containers/main');
 
-var Results = require("../containers/resultsContainer");
+var Dashboard = require("../containers/dashboardContainer");
+
+var Settings = require("../components/settings");
+var Keys = require("../components/keys");
+var UserContainer = require("../containers/userContainer");
+var UsersContainer = require("../containers/usersContainer");
+var UserNew = require("../components/user/new");
 
 
 var Playbooks = require("../containers/playbooksContainer");
@@ -25,11 +26,8 @@ var Host = require("../containers/inventory/hostContainer");
 
 var Play = require("../containers/playContainer");
 
-var UserContainer = require("../containers/userContainer");
-var UsersContainer = require("../containers/usersContainer");
-var UserNew = require("../components/user/new");
 
-
+var Results = require("../containers/resultsContainer");
 
 var routes = (
   <Router history={hashHistory}>

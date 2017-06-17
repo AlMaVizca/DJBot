@@ -1,8 +1,8 @@
 var React = require('react');
 var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
-var UsersContainer = require('../containers/usersContainer');
-import { Button, Grid, Icon, Segment } from 'semantic-ui-react';
+
+import { Grid, Icon, Segment } from 'semantic-ui-react';
 
 function Settings(){
   return(

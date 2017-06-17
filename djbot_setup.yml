@@ -32,7 +32,8 @@
         env:
           MODE: "dev"
           VIRTUAL_HOST: "dev.djbot.local"
-          TZ: Asia/Shanghia[]
+          TZ: Asia/Shanghai
+          LOGS: '/home/djbot/log'
 
     # This is for my specific service
     # - name: restart service

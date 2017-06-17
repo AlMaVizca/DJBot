@@ -73,6 +73,7 @@ var TaskContainer = React.createClass({
       url: '/api/task/modules',
       type: "GET",
       success: function(data) {
+        data['category'] = "All";
         this.setState(data);
       }.bind(this),
       error: function(xhr, status, err) {
