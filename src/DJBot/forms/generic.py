@@ -3,7 +3,7 @@ from wtforms import IntegerField, StringField, validators
 
 
 class Select(FlaskForm):
-    key = IntegerField('key', [validators.DataRequired()])
+    key = IntegerField('key', [validators.InputRequired()])
 
 
 class SelectName(FlaskForm):
