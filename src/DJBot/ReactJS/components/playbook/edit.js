@@ -2,7 +2,7 @@ var React = require("react");
 var PropTypes = React.PropTypes;
 var ReactRouter = require("react-router");
 var Link = ReactRouter.Link;
-
+var GenericTable = require("../genericTable");
 var ShowMessage = require("../message");
 
 import {Button, Confirm, Header, Grid, Icon, Input, Menu, Segment, Table} from "semantic-ui-react";
@@ -78,28 +78,6 @@ var Task = React.createClass({
   }
 });
 
-var TaskList = React.createClass({
-  componentWillReceiveProps: function(nextProps){
-    this.tasks = nextProps.tasks.map(function(task, i){
-      return <Task key={i} task={task}
-                   updateMessage={this.props.updateMessage}
-                   load={this.props.load} />;
-    }, this);
-    this.setState({tasksList: this.tasks});
-  },
-  getInitialState: function(){
-    return ({taskList: []});
-  },
-  render: function(){
-    return (
-      <Table.Body>
-        {this.state.tasksList}
-      </Table.Body>
-    );
-  }
-
-});
-
 var PlaybookEdit = React.createClass({
   propTypes: {
     name: PropTypes.string,
@@ -118,9 +96,18 @@ var PlaybookEdit = React.createClass({
       tasks: []
     });
   },
+  componentWillReceiveProps: function(nextProps){
+    var tasks = nextProps.tasks.map(function(task, i){
+      return <Task key={i} task={task}
+      updateMessage={this.props.updateMessage}
+      load={this.props.load} />;
+    }, this);
+    this.setState({tasksList: tasks});
+  },
   getInitialState: function(){
     return({messageMode: 10,
-            messageText: ''
+            messageText: '',
+            taskList: [],
            });
   },
   addTask: function(){
@@ -136,6 +123,12 @@ var PlaybookEdit = React.createClass({
     this.setState(data);
   },
   render: function(){
+    const tableHeader = [
+        <Table.HeaderCell key={1} width={7}>Task Name</Table.HeaderCell>,
+      <Table.HeaderCell key={2} width={1}>Edit</Table.HeaderCell>,
+      <Table.HeaderCell key={3} width={1}>Order</Table.HeaderCell>,
+      <Table.HeaderCell key={4} width={1}>Remove</Table.HeaderCell>,
+    ];
     return (
       <div>
         <ShowMessage mode={this.state.messageMode} text={this.state.messageText} />
@@ -155,52 +148,15 @@ var PlaybookEdit = React.createClass({
                placeholder="Please write a short functional description"
                onChange={this.props.changeDescription}
                />
+        <GenericTable header={tableHeader}
+                      data={this.state.tasksList}
+                      length={this.props.tasks.length}
+                      description="Tasks" />
 
-        <Segment>
-          <Table color="blue" striped>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell width={7}>Task Name</Table.HeaderCell>
-              <Table.HeaderCell width={1}>Edit</Table.HeaderCell>
-              <Table.HeaderCell width={1}>Order</Table.HeaderCell>
-              <Table.HeaderCell width={1}>Remove</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <TaskList tasks={this.props.tasks} load={this.props.load}
-                    updateMessage={this.updateMessage} />
-
-          <Table.Footer>
-            <Table.Row>
-              <Table.HeaderCell>
-                <Input fluid icon="search"
-                       placeholder="Search by name..."  />
-              </Table.HeaderCell>
-              <Table.HeaderCell>
-                {this.props.tasks.length} Tasks
-              </Table.HeaderCell>
-              <Table.HeaderCell />
-              <Table.HeaderCell width={2}>
-                <Menu floated="right" pagination>
-                  <Menu.Item as="a" icon>
-                    <Icon name="left chevron" />
-                  </Menu.Item>
-
-                  <Menu.Item as="a">1</Menu.Item>
-
-                  <Menu.Item as="a" icon>
-                    <Icon name="right chevron" />
-                  </Menu.Item>
-                </Menu>
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Footer>
-          </Table>
-          <Grid centered padded>
-            <Button circular as={Link} color="green" icon="add circle"
-                    onClick={this.addTask} />
-          </Grid>
-        </Segment>
+        <Grid centered padded>
+          <Button circular as={Link} color="green" icon="add circle"
+                  onClick={this.addTask} />
+        </Grid>
         <Grid padded>
           <Button basic color="green" icon="save"
                   content="Save" onClick={this.props.saveAction} />
