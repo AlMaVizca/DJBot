@@ -7,6 +7,7 @@ from ansible.playbook.play import Play
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.plugins.callback import CallbackBase
 from DJBot.config import Config
+from datetime import datetime
 import threading
 import json
 import os
@@ -128,12 +129,13 @@ class Runner(object):
 
 
 class ThreadRunner(threading.Thread):
-    def __init__(self, machines, playbook, user, execution_name,
+    def __init__(self, machines, playbook, user, room, username,
                  private_key="id_rsa",
                  setup=False):
         threading.Thread.__init__(self)
 
-        self.execution_name = execution_name
+        self.room = room
+        self.username = username
         self.machines = machines
         self.user = user
         self.private_key = Config.KEYS + private_key
@@ -148,11 +150,21 @@ class ThreadRunner(threading.Thread):
     def run(self):
         self.playbook.run()
         results = self.playbook.callback.get_all()
-        name = os.getenv("LOGS") + self.execution_name + '.json'
+        results['datetime'] = datetime.now().isoformat(' ')[:-7]
+        results['playbook'] = self.task['name']
+        results['room'] = self.room
+        results['tasks'] = self.task
+        results['username'] = self.username
+
+        name_log = '-'.join(self.task['name'].split(' ')) + \
+                   '@' + '-'.join(self.room.split(' '))
+        name_log += '@' + self.username
+        name_log += '@' + '-'.join(results['datetime'].split(' '))
+
+        name = os.getenv("LOGS") + '/' + name_log + '.json'
+
         with open(name, 'w') as record:
             json.dump(results, record)
-        with open(os.getenv("LOGS") + '/prueba.tareas', 'w') as tareas:
-            json.dump(self.task, tareas)
 
 
 def ansible_status(hosts, user="root", private_key_file=None):
