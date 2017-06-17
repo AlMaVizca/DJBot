@@ -10,7 +10,7 @@ var Main = require('../containers/main');
 var Dashboard = require("../containers/dashboardContainer");
 
 var Settings = require("../components/settings");
-var Keys = require("../components/keys");
+var Keys = require("../containers/keysContainer");
 var UserContainer = require("../containers/userContainer");
 var UsersContainer = require("../containers/usersContainer");
 var UserNew = require("../components/user/new");
@@ -42,7 +42,6 @@ var routes = (
       <Route path='/settings/user' component={UserContainer} />
       <Route path='/settings/users' component={UsersContainer} />
       <Route path='/settings/keys' component={Keys} />
-      <Route path='/settings/rooms' component={Keys} />
 
       <Route path='/playbooks' component={Playbooks} />
       <Route path='/playbook/edit'
