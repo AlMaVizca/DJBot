@@ -16,9 +16,9 @@ var Dashboard = React.createClass({
               <Icon name="book" size="big" />
               <Header>Playbooks</Header>
               {this.props.playbooks > 1 ? (
-                There are {this.props.playbooks} available.
+                <p>There are {this.props.playbooks} available.</p>
               ) : (
-                There is {this.props.playbooks} available.
+                <p>There is {this.props.playbooks} available.</p>
               )}
             </Segment>
           </Grid.Column>
@@ -28,9 +28,9 @@ var Dashboard = React.createClass({
               <Icon name="sitemap" size="big" />
               <Header>Inventory</Header>
               {this.props.inventory > 1 ? (
-                There are {this.props.inventory} units.
+                <p>There are {this.props.inventory} units.</p>
               ) : (
-                There is {this.props.inventory} unit.
+                <p>There is {this.props.inventory} unit.</p>
               )}
 
             </Segment>
@@ -41,9 +41,9 @@ var Dashboard = React.createClass({
               <Icon name="wordpress forms" size="big" />
               <Header>Results</Header>
               {this.props.results > 1 ? (
-                There were {this.props.results} executions.
+                <p>There were {this.props.results} executions.</p>
               ) : (
-                There was {this.props.results} execution.
+                <p>There was {this.props.results} execution.</p>
               )}
             </Segment>
           </Grid.Column>
