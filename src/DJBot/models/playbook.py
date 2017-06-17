@@ -1,7 +1,4 @@
 from DJBot.database import db
-import json
-import os
-import time
 
 
 class Task(db.Model):
@@ -114,25 +111,23 @@ def execution_tasks(task_key):
     pb = Playbook.query.get(task_key).get_setup(True)
     playbook = {"name":  pb['name'], "modules": []}
     for module in pb['tasks']:
-        args ={}
+        args = {}
         for parameters in module['parameters']:
             args[parameters['name']] = parameters['value']
+
+        import logging
+        logging.error(args)
+        if 'free_form' in args:
+            args['_raw_params'] = args['free_form']
+            args.pop('free_form')
+        logging.error(args)
+
         playbook['modules'].append((dict(
             action=dict(
                 module=module['module'],
                 args=args)
         )))
     return playbook
-
-
-def get_result(filename):
-    result = {'data': 'Not Found!'}
-    with open(filename, 'r') as fp:
-        result = json.load(fp)
-    result['datetime'] = time.strftime("%m/%d/%Y %I:%M:%S %p",
-                                       time.localtime(
-                                           os.path.getmtime(filename)))
-    return result
 
 
 def get_playbook(id):

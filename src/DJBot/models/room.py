@@ -14,7 +14,7 @@ class Room(db.Model):
     private_key = db.Column(db.String, nullable=False, default="id_rsa")
 
     def __repr__(self):
-        return "<Room %r %r %r %r>" % (self.key,
+        return "<Room %r %r %r %r %r>" % (self.key,
                                        self.name, self.machines,
                                        self.network, self.gateway)
 
