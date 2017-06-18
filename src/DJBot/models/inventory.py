@@ -77,13 +77,41 @@ class Host(db.Model):
     ip = db.Column(db.String(50), nullable=False)
     note = db.Column(db.String(200), nullable=True)
 
+    def __repr__(self):
+        return "<Room %r %r %r %r %r>" % (self.key,
+                                          self.name, self.machines,
+                                          self.network, self.gateway)
+
+    def get_setup(self):
+        host = dict(name=self.name,
+                    ip=self.ip,
+                    key=self.key,
+                    note=self.note)
+        return host
+
+    def save(self, name, ip, note=None):
+        """save in database"""
+        self.name = name
+        self.ip = ip
+        self.note = note
+        db.session.add(self)
+        db.session.commit()
+        return True
+
+
+def get_hosts():
+    hosts = Host().query.all()
+    hosts_info = {'hosts': []}
+    for each in hosts:
+        hosts_info['hosts'].append(each.get_setup())
+    return hosts_info
+
 
 def get_rooms():
     rooms = Room().query.all()
     rooms_info = {'rooms': []}
     for each in rooms:
-        each_room = Room.query.get(each.key)
-        rooms_info['rooms'].append(each_room.get_setup())
+        rooms_info['rooms'].append(each.get_setup())
     return rooms_info
 
 
@@ -96,3 +124,7 @@ def get_machines(room_key):
     hosts = room.discover_hosts()
     hosts.remove(room.gateway)
     return hosts, room.name
+
+
+def get_host(id):
+    return Host.query.get(id)

@@ -1,6 +1,7 @@
-from DJBot.forms.room import Add, KeyCopy
+from DJBot.forms.inventory import Add, HostAdd, KeyCopy
 from DJBot.forms.generic import Select
-from DJBot.models.inventory import Room, get_machines, get_room, get_rooms
+from DJBot.models.inventory import Host, Room, get_host, get_hosts,\
+    get_machines, get_room, get_rooms
 from DJBot.utils.ansible_api import copy_key, ansible_status
 from flask import Blueprint, jsonify, request
 from flask_security import login_required, roles_required
@@ -11,8 +12,10 @@ inventory_bp = Blueprint('inventory', __name__)
 @inventory_bp.route('/all', methods=['GET'])
 @login_required
 @roles_required('user')
-def api_rooms():
-    return jsonify(get_rooms())
+def inventory():
+    records = get_rooms()
+    records.update(get_hosts())
+    return jsonify()
 
 
 @inventory_bp.route('/get', methods=['POST'])
@@ -81,22 +84,32 @@ def room_delete():
                     'message': 'failed'})
 
 
+@inventory_bp.route('/host/get', methods=['POST'])
+@login_required
+@roles_required('user')
+def host_get():
+    form = Select(request.form)
+    if form.validate():
+        try:
+            return jsonify(get_host(form.key.data).get_setup())
+        except:
+            pass
+    return jsonify({'messageMode': 1,
+                    'message': 'failed'})
+
+
 @inventory_bp.route('/host/new', methods=['POST'])
 @login_required
 @roles_required('user')
 def host_add():
-    form = Add(request.form)
+    form = HostAdd(request.form)
     if form.validate():
-        room = Room()
+        host = Host()
         if(form.key.data):
-            room = get_room(form.key.data)
-        saved = room.save(form.name.data, form.network.data,
-                          form.netmask.data, form.machines.data,
-                          form.gateway.data)
+            host = get_host(form.key.data)
+        saved = host.save(form.name.data, form.ip.data, form.note.data)
         if saved:
-            return jsonify({'messageMode': 0,
-                            'message': 'saved',
-                            'key': room.key})
+            return jsonify({'status': 'good'})
     return jsonify({'messageMode': 1,
                     'message': 'failed'})
 
@@ -108,8 +121,8 @@ def host_delete():
     form = Select(request.form)
     if form.validate():
         try:
-            room = get_room(form.key.data)
-            room.delete()
+            host = get_host(form.key.data)
+            host.delete()
             return jsonify({'messageMode': 0,
                             'message': 'saved'})
         except:

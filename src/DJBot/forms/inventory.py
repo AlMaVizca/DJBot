@@ -18,3 +18,11 @@ class Add(FlaskForm):
 class KeyCopy(FlaskForm):
     key = IntegerField('key', [validators.DataRequired()])
     password = PasswordField('password', [validators.DataRequired()])
+
+
+class HostAdd(FlaskForm):
+    key = IntegerField('key')
+    name = StringField('name', [validators.DataRequired()])
+    ip = StringField('ip', [validators.DataRequired(),
+                            validators.IPAddress()])
+    note = StringField('note', [validators.DataRequired()])
