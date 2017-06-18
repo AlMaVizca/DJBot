@@ -15,8 +15,8 @@ class Room(db.Model):
 
     def __repr__(self):
         return "<Room %r %r %r %r %r>" % (self.key,
-                                       self.name, self.machines,
-                                       self.network, self.gateway)
+                                          self.name, self.machines,
+                                          self.network, self.gateway)
 
     def _set_network(self, network=None, netmask=None):
         if network and netmask:
@@ -74,8 +74,8 @@ class Host(db.Model):
     __tablename__ = "host"
     key = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
-    mac = db.Column(db.String(50), nullable=False)
     ip = db.Column(db.String(50), nullable=False)
+    note = db.Column(db.String(200), nullable=True)
 
 
 def get_rooms():
