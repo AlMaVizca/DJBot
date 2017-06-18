@@ -59,7 +59,7 @@ var RoomContainer = React.createClass({
       }.bind(this)
     });
   },
-  goBack: function(id){
+  goBack: function(){
     this.context.router.goBack();
   },
   load: function(id){
