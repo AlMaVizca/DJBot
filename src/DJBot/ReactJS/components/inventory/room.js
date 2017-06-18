@@ -10,8 +10,10 @@ var Room = React.createClass({
     });
     if(Object.keys(nextProps.hosts).length > 0){
     const hosts = <AnsibleResults ok={nextProps.hosts.ok}
-    failed={nextProps.hosts.failed}
-    unreachable={nextProps.hosts.unreachable} />;
+      failed={nextProps.hosts.failed}
+      unreachable={nextProps.hosts.unreachable}
+      tasks={nextProps.hosts.tasks}
+        />;
 
     this.setState({hosts: hosts,
                    keys: keys});

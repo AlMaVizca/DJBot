@@ -92,12 +92,10 @@ var RoomContainer = React.createClass({
         key: id
       },
       success: function(data) {
-        if (data.hosts)
-          this.setState({
-            hosts: data['hosts'],
-            loading: false,
-          })
-        else
+        if (data.hosts){
+          data['loading']= false;
+          this.setState(data);
+        } else
           this.setState({loading: false});
       }.bind(this),
       error: function(xhr, status, err) {
