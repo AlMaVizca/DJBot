@@ -133,14 +133,3 @@ def key_copy():
         return jsonify({'hosts': result})
     return jsonify({'messageMode': 1,
                     'message': 'failed'})
-
-# TODO: Auto discover machines
-# @inventory_bp.route('/discover', methods=['POST'])
-# @login_required
-# @roles_required('user')
-# def room_ssh():
-#     room = Select(request.form)
-#     if room.validate():
-#         room.discover_hosts()
-#         hosts = room.get_hosts()
-#         return jsonify(hosts)
