@@ -66,7 +66,7 @@ var KeysManagement = React.createClass({
   },
   render: function(){
     const tableHeader = [
-        <Table.HeaderCell key={1} width={14} >Name</Table.HeaderCell>,
+        <Table.HeaderCell key={1} width={12} >Name</Table.HeaderCell>,
       <Table.HeaderCell key={2} >Delete</Table.HeaderCell>,
     ];
 
@@ -77,7 +77,9 @@ var KeysManagement = React.createClass({
         <GenericTable header={tableHeader}
                       data={this.state.keys}
                       length={this.state.keys.length}
-                      description="Keys" />
+                      description="Keys"
+                      footer={1}
+                      />
         <Grid centered>
           <Modal closeIcon='close' open={this.state.modal}
                  trigger={<Button basic color="green"
