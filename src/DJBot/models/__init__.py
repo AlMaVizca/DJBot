@@ -1,4 +1,4 @@
-__all__ = ["user", "room", "playbook"]
+__all__ = ["user", "inventory", "playbook"]
 
 
 from DJBot.database import db

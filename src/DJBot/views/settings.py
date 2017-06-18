@@ -3,7 +3,7 @@ from flask_security import login_required, roles_required
 from DJBot.forms.generic import SelectName
 from DJBot.utils.ssh import generate_key, remove_key
 from DJBot.models.playbook import Playbook
-from DJBot.models.room import Room
+from DJBot.models.inventory import Room
 import os
 import re
 

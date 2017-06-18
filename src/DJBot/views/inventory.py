@@ -1,6 +1,6 @@
 from DJBot.forms.room import Add, KeyCopy
 from DJBot.forms.generic import Select
-from DJBot.models.room import Room, get_machines, get_room, get_rooms
+from DJBot.models.inventory import Room, get_machines, get_room, get_rooms
 from DJBot.utils.ansible_api import copy_key, ansible_status
 from flask import Blueprint, jsonify, request
 from flask_security import login_required, roles_required
@@ -68,6 +68,43 @@ def room_add():
 @login_required
 @roles_required('user')
 def room_delete():
+    form = Select(request.form)
+    if form.validate():
+        try:
+            room = get_room(form.key.data)
+            room.delete()
+            return jsonify({'messageMode': 0,
+                            'message': 'saved'})
+        except:
+            pass
+    return jsonify({'messageMode': 1,
+                    'message': 'failed'})
+
+
+@inventory_bp.route('/host/new', methods=['POST'])
+@login_required
+@roles_required('user')
+def host_add():
+    form = Add(request.form)
+    if form.validate():
+        room = Room()
+        if(form.key.data):
+            room = get_room(form.key.data)
+        saved = room.save(form.name.data, form.network.data,
+                          form.netmask.data, form.machines.data,
+                          form.gateway.data)
+        if saved:
+            return jsonify({'messageMode': 0,
+                            'message': 'saved',
+                            'key': room.key})
+    return jsonify({'messageMode': 1,
+                    'message': 'failed'})
+
+
+@inventory_bp.route('/host/delete', methods=['POST'])
+@login_required
+@roles_required('user')
+def host_delete():
     form = Select(request.form)
     if form.validate():
         try:

@@ -4,7 +4,7 @@ from flask_security import current_user, roles_required
 from DJBot.forms.action import Run
 from DJBot.forms.generic import Select
 from DJBot.models.playbook import execution_tasks
-from DJBot.models.room import get_machines, get_room
+from DJBot.models.inventory import get_machines, get_room
 import os
 import json
 
