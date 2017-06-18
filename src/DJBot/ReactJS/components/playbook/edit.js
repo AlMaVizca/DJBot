@@ -151,7 +151,9 @@ var PlaybookEdit = React.createClass({
         <GenericTable header={tableHeader}
                       data={this.state.tasksList}
                       length={this.props.tasks.length}
-                      description="Tasks" />
+                      description="Tasks"
+                      footer={2}
+                      />
 
         <Grid centered padded>
           <Button circular as={Link} color="green" icon="add circle"

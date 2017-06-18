@@ -8,21 +8,6 @@ var GenericTable = React.createClass({
       singleLine: false,
       selectable: false,
     });
-    // <Input fluid icon="search" placeholder="Search..."  />
-      // <Table.HeaderCell colSpan="2">
-      // <Menu floated="right" pagination>
-      // <Menu.Item as="a" icon>
-      // <Icon name="left chevron" />
-      // </Menu.Item>
-
-      // <Menu.Item as="a">1</Menu.Item>
-
-      // <Menu.Item as="a" icon>
-      // <Icon name="right chevron" />
-      // </Menu.Item>
-      // </Menu>
-      // </Table.HeaderCell>
-
   },
   render: function(){
     return(
@@ -39,10 +24,23 @@ var GenericTable = React.createClass({
           </Table.Body>
           <Table.Footer>
             <Table.Row>
-              <Table.HeaderCell colSpan="2">
+              <Table.HeaderCell colSpan={this.props.footer}>
                 {this.props.length} {this.props.description}
-
+                <Input fluid icon="search" placeholder="Search..."  />
               </Table.HeaderCell>
+              <Table.HeaderCell colSpan={this.props.footer}>
+                <Menu floated="right" pagination>
+                  <Menu.Item as="a" icon>
+                    <Icon name="left chevron" />
+                    </Menu.Item>
+
+                  <Menu.Item as="a">1</Menu.Item>
+
+                  <Menu.Item as="a" icon>
+                    <Icon name="right chevron" />
+                    </Menu.Item>
+                  </Menu>
+                </Table.HeaderCell>
             </Table.Row>
           </Table.Footer>
         </Table>

@@ -108,7 +108,9 @@ var Results = React.createClass({
                             length={this.state.length}
                             showResult={this.showResult}
                             description="Executions"
-                            singleLine={true} selectable={true}/>
+                            singleLine={true} selectable={true}
+                            footer={2}
+                            />
             ):(
               <Result result={this.props.result}
                       goBack={this.showTable}/>

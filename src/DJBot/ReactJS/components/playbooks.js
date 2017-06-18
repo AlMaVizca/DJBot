@@ -32,20 +32,7 @@ var Playbook = React.createClass({
     this.setState({open: true});
   },
   playbookDelete: function(){
-    this.setState({open: false});
-    $.ajax({
-      url: '/api/playbook/delete',
-      dataType: 'json',
-      type: 'POST',
-      data: {key: this.props.playbook.key},
-      success: function(data) {
-        this.props.updateMessage(data);
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error('/api/playbook/delete', status, err.toString());
-      }.bind(this)
-    });
-    this.props.load();
+    this.props.playbookDelete(this.props.playbook.key);
   },
   render: function(){
     var confirmationText = "Do you want to delete playbook " + this.props.playbook.name + "?";
@@ -82,7 +69,8 @@ var Playbooks = React.createClass({
     var plays = nextProps.playbooks.map(function(playbook, i){
       return <Playbook key={i} playbook={playbook}
       updateMessage={this.props.updateMessage}
-      load={this.props.load}/>;
+      playbookDelete={this.props.playbookDelete}
+        />;
     }, this);
     this.setState({playbookList: plays});
   },
@@ -103,7 +91,8 @@ var Playbooks = React.createClass({
         <GenericTable header={tableHeader}
                       data={this.state.playbookList}
                       length={this.props.playbooks.length}
-                      description="Playbooks" />
+                      description="Playbooks"
+                      footer={2}/>
         <Grid centered>
           <Popup
             trigger={<Button circular as={Link} color="green" icon="add circle" to="/playbook/new" />}
