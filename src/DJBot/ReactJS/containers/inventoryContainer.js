@@ -5,21 +5,20 @@ var InventoryContainer = React.createClass({
     getInitialState: function(){
 	return {rooms:[], tasks:[]}
     },
-    runAdd: function(){
-      $.ajax({
-	url: "/api/run",
-	dataType: 'json',
-	type: 'POST',
-	data: {tasks: this.state.tasks, rooms: this.state.rooms },
+  runAdd: function(){
+    $.ajax({
+      url: "/api/run",
+      dataType: 'json',
+      type: 'POST',
+      data: {tasks: this.state.tasks, rooms: this.state.rooms },
 	success: function(data) {
 	  this.setState({message: data["message"]});
 	}.bind(this),
-	    error: function(xhr, status, err) {
-	      console.error(this.props.url, status, err.toString());
-	    }.bind(this)
-      });
-	this.setState({rooms: []});
-    },
+      error: function(xhr, status, err) {
+	console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    });
+  },
   roomLoad: function(){
     $.ajax({
       url: "/api/inventory/all",
