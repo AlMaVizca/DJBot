@@ -174,7 +174,19 @@ def ansible_status(hosts, user="root", private_key_file=None):
                           private_key_file=key)
     ansible_game.add_setup(hosts)
     ansible_game.run()
-    return ansible_game.callback.get_all()
+    response = ansible_game.callback.get_all()
+    response['tasks'] = {
+        'modules': [{
+            'action': {
+                'module': 'setup',
+                'args': {
+                    'filter': 'ansible_[a,d,h,l,m,p,][a,e,i,o,r,s]*',
+                }
+            }
+        }],
+        'name': 'Add ssh key',
+    }
+    return response
 
 
 def copy_key(hosts, key, user, password):
@@ -182,19 +194,18 @@ def copy_key(hosts, key, user, password):
     key = "{{ lookup('file', '" + key + "' ) }}"
     ansible_api = Runner(hosts, user)
     ansible_api.passwords = {'conn_pass': password}
-    ansible_api.add_plays('Add ssh key', hosts, [
-        {'action': u'authorized_key',
-         'args':
-         {
-             u'user': unicode(user),
-             u'state': u'present',
-             u'key': unicode(key)
-                 },
-                }
-            ]
-            )
+    authorized_key = [{'action': u'authorized_key',
+                      'args': {
+                          u'user': unicode(user),
+                          u'state': u'present',
+                          u'key': unicode(key)
+                      },
+    }]
+    ansible_api.add_plays('Add ssh key', hosts, authorized_key)
     ansible_api.run()
-    return ansible_api.callback.get_all()
+    response = ansible_api.callback.get_all()
+    response['tasks'] = authorized_key.update({'name': 'Add ssh key'})
+    return response
 
 
 if __name__ == '__main__':
