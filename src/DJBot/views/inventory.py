@@ -36,7 +36,6 @@ def room_get_machines():
             room = get_room(form.key.data)
             hosts, name = get_machines(form.key.data)
             result = ansible_status(hosts, room.user, room.private_key)
-
             return jsonify({"hosts": result})
         except:
             pass
