@@ -27,7 +27,8 @@ def generate_key(name="id_rsa"):
 
 def remove_key(name):
     subprocess.call(['rm', '-f',
-                     os.getenv("HOME")+'/.ssh/keys/'+name])
+                     os.getenv("HOME") +
+                     '/.ssh/keys/{' + name + ',' + name + '.pub}'])
 
 
 class SshConfig():

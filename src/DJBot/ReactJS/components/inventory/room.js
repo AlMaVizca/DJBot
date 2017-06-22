@@ -1,7 +1,7 @@
 var React = require("react");
-import {Button, Card, Divider, Form, Grid, Header, Icon, Input, Label, Modal, Segment, Select} from 'semantic-ui-react';
+import {Button, Card, Form, Grid, Header, Icon, Input, Label, Segment, Select} from 'semantic-ui-react';
 var AnsibleResults = require("../ansibleResults");
-
+var AskPass = require("../askPass");
 
 var Room = React.createClass({
   componentWillReceiveProps: function(nextProps){
@@ -10,8 +10,10 @@ var Room = React.createClass({
     });
     if(Object.keys(nextProps.hosts).length > 0){
     const hosts = <AnsibleResults ok={nextProps.hosts.ok}
-    failed={nextProps.hosts.failed}
-    unreachable={nextProps.hosts.unreachable} />;
+      failed={nextProps.hosts.failed}
+      unreachable={nextProps.hosts.unreachable}
+      tasks={nextProps.hosts.tasks}
+        />;
 
     this.setState({hosts: hosts,
                    keys: keys});
@@ -20,13 +22,9 @@ var Room = React.createClass({
     }
   },
   getInitialState: function(){
-    return({hosts:[], keys: [], modal: false})
-  },
-  open: function(){
-    this.setState({modal: true});
-  },
-  close: function(){
-    this.setState({modal: false})
+    return({hosts:[],
+            keys: [],
+            modal: false})
   },
   sshCopy: function(){
     this.props.sshCopy();
@@ -118,39 +116,21 @@ var Room = React.createClass({
             </Form>
           </Grid.Column>
           <Grid.Column width={2}>
-            <Button inverted color="green" onClick={this.props.save}>
+            <Button inverted color="green" floated="right"
+                    onClick={this.props.save}>
               Save
             </Button>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
-          <Grid.Column>
-            <Header as="h1">Computers</Header>
-            <Modal closeIcon='close' open={this.state.modal}
-                   trigger={<Button loading={this.props.loading}
-                                      onClick={this.open}>
-                            Copy SSH key
-                   </Button>}
-            onClose={this.close} >
-
-              <Header icon='archive' content='Password' />
-              <Modal.Content>
-                <p>DJBot needs the password of the user {this.props.user} to add the public key. It will be in ram just for a second. </p>
-                <Label>
-                  Password:
-              </Label>
-                <Input type="password"
-                       onChange={this.props.changeOption}
-                       name="password" value={this.props.password} />
-            </Modal.Content>
-              <Modal.Actions>
-                <Button onClick={this.sshCopy} color='green'>
-                  <Icon name='checkmark' /> Done
-                </Button>
-              </Modal.Actions>
-            </Modal>
-            <Divider />
-          </Grid.Column>
+          <AskPass
+            name="Computers"
+            user={this.props.user}
+            password={this.props.password}
+            changeOption={this.props.changeOption}
+            sshCopy={this.props.sshCopy}
+            loading={this.props.loading}
+            />
         </Grid.Row>
         <Grid.Row>
             <Segment basic loading={this.props.loading}>

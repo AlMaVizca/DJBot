@@ -4,34 +4,37 @@ var Play = require("../components/play");
 var PlayContainer = React.createClass({
   componentWillMount: function(){
     var query = this.props.location.query;
+    this.playbooksLoad();
+
     if (query.room){
       this.roomLoad(query.room);
       this.machinesOn(query.room);
     }
-    this.playbooksLoad();
+    if (query.host){
+      this.hostLoad(query.host);
+    }
   },
   getInitialState: function(){
-    return({room: -1,
+    return({key: -1,
             name:'',
             playbooks:[],
             hosts: [],
-            disabled: true,
-            loading: true
+            loading: true,
+            isRoom: true,
            });
   },
   machinesOn: function(id){
-        $.ajax({
-      url: "/api/inventory/get_alive",
+    $.ajax({
+      url: "/api/inventory/get_machines",
       dataType: "json",
       type: "POST",
       data: {
         key: id
       },
       success: function(data) {
-        if (data.hosts.length > 0)
+        if (Object.keys(data.hosts.ok).length > 0)
         this.setState({
-          hosts: data['hosts'],
-          disabled: false,
+          hosts: Object.keys(data.hosts.ok),
           loading: false,
         })
         else
@@ -39,6 +42,26 @@ var PlayContainer = React.createClass({
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/task/get", status, err.toString());
+      }.bind(this)
+    });
+  },
+  hostLoad: function(id){
+    $.ajax({
+      url: "/api/inventory/host/info",
+      dataType: 'json',
+      type: 'POST',
+      data: {key: id},
+      success: function(data) {
+        data['loading'] = false;
+        // Change the data for compatibility
+        data['info'] = data['hosts'];
+        data['hosts'] = Object.keys(data.hosts.ok);
+        data['isRoom'] = false;
+        this.setState(data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error("/api/inventory/host/info", status,
+                      err.toString());
       }.bind(this)
     });
   },
@@ -62,7 +85,7 @@ var PlayContainer = React.createClass({
     $.ajax({
       url: "/api/playbook/all",
       dataType: 'json',
-      cache: false,
+      cache: true,
       success: function(data) {
         this.setState(data);
       }.bind(this),
@@ -77,8 +100,9 @@ var PlayContainer = React.createClass({
       dataType: 'json',
       type: "POST",
       data: {
-        room: room,
+        key: room,
         playbook: playbook,
+        isRoom: this.state.isRoom
       },
       success: function(data) {
         this.setState(data);
@@ -96,11 +120,11 @@ var PlayContainer = React.createClass({
             netmask={this.state.netmask}
             machines={this.state.machines}
             hosts={this.state.hosts}
+            isRoom={this.state.isRoom}
             playbooks={this.state.playbooks}
             messageMode={this.state.messageMode}
             messageText={this.state.messageText}
             play={this.play}
-            disabled={this.state.disabled}
             loading={this.state.loading}
             />
     );

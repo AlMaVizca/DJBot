@@ -28,8 +28,7 @@ class Config():
     USER_APP_NAME = "DJBot"
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    LOGS = "/tmp/"
-    KEYS = "/home/djbot/.ssh/keys/"
+    KEYS = os.getenv("HOME") + "/.ssh/keys/"
 
 
 class Production(Config):

@@ -4,8 +4,9 @@ var ReactRouter = require('react-router');
 var Link = ReactRouter.Link;
 
 var ShowMessage = require("./message");
+var GenericTable = require("./genericTable");
 
-import {Button, Confirm, Grid, Header, Icon, Input, Menu, Segment, Table} from "semantic-ui-react";
+import {Button, Confirm, Grid, Header, Popup, Table} from "semantic-ui-react";
 
 var Playbook = React.createClass({
   contextTypes: {
@@ -31,20 +32,8 @@ var Playbook = React.createClass({
     this.setState({open: true});
   },
   playbookDelete: function(){
+    this.props.playbookDelete(this.props.playbook.key);
     this.setState({open: false});
-    $.ajax({
-      url: '/api/playbook/delete',
-      dataType: 'json',
-      type: 'POST',
-      data: {key: this.props.playbook.key},
-      success: function(data) {
-        this.props.updateMessage(data);
-      }.bind(this),
-      error: function(xhr, status, err) {
-        console.error('/api/playbook/delete', status, err.toString());
-      }.bind(this)
-    });
-    this.props.load();
   },
   render: function(){
     var confirmationText = "Do you want to delete playbook " + this.props.playbook.name + "?";
@@ -76,84 +65,44 @@ var Playbook = React.createClass({
   }
 });
 
-var PlaybookList = React.createClass({
-  componentDidMount: function(){
-    this.props.load();
-  },
+var Playbooks = React.createClass({
   componentWillReceiveProps: function(nextProps){
-    this.generateList(nextProps);
+    var plays = nextProps.playbooks.map(function(playbook, i){
+      return <Playbook key={i} playbook={playbook}
+      updateMessage={this.props.updateMessage}
+      playbookDelete={this.props.playbookDelete}
+        />;
+    }, this);
+    this.setState({playbookList: plays});
   },
   getInitialState: function(){
     return ({playbookList: []});
   },
-  generateList: function(nextProps){
-    this.plays = nextProps.playbooks.map(function(playbook, i){
-      return <Playbook key={i} playbook={playbook}
-                       updateMessage={this.props.updateMessage}
-                       load={this.props.load}/>;
-    }, this);
-    this.setState({playbookList: this.plays});
-  },
   render: function(){
+    const tableHeader = [
+      <Table.HeaderCell key={1} width={5}>Name</Table.HeaderCell>,
+    <Table.HeaderCell key={2}>Description</Table.HeaderCell>,
+    <Table.HeaderCell key={3} width={2}>Edit</Table.HeaderCell>,
+    <Table.HeaderCell key={4} width={2}>Delete</Table.HeaderCell>,
+  ];
     return (
-      <Table.Body>
-        {this.state.playbookList}
-      </Table.Body>
+      <div>
+        <Header>Playbooks</Header>
+        <ShowMessage mode={this.props.messageMode} text={this.props.messageText}/>
+        <GenericTable header={tableHeader}
+                      data={this.state.playbookList}
+                      length={this.props.playbooks.length}
+                      description="Playbooks"
+                      footer={2}/>
+        <Grid centered>
+          <Popup
+            trigger={<Button circular as={Link} color="green" icon="add circle" to="/playbook/new" />}
+            content="Add playbook"
+            />
+        </Grid>
+      </div>
     );
   }
-
 });
-
-function Playbooks(props){
-  return (
-    <div>
-      <Header>Playbooks</Header>
-      <ShowMessage mode={props.messageMode} text={props.messageText}/>
-      <Segment raised>
-	<Table color="blue" striped>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell width={5}>Name</Table.HeaderCell>
-              <Table.HeaderCell>Description</Table.HeaderCell>
-              <Table.HeaderCell width={2}>Edit</Table.HeaderCell>
-              <Table.HeaderCell width={2}>Delete</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <PlaybookList playbooks={props.playbooks} load={props.load}
-                        updateMessage={props.updateMessage}/>
-
-          <Table.Footer>
-            <Table.Row>
-              <Table.HeaderCell>
-                {props.playbooks.length} Playbooks
-              </Table.HeaderCell>
-              <Table.HeaderCell>
-                <Input fluid icon="search" placeholder="Search by name or description..."  />
-              </Table.HeaderCell>
-              <Table.HeaderCell colSpan="2">
-                <Menu floated="right" pagination>
-                  <Menu.Item as="a" icon>
-                    <Icon name="left chevron" />
-                  </Menu.Item>
-
-                  <Menu.Item as="a">1</Menu.Item>
-
-                  <Menu.Item as="a" icon>
-                    <Icon name="right chevron" />
-                  </Menu.Item>
-                </Menu>
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Footer>
-	</Table>
-      </Segment>
-      <Grid centered>
-        <Button circular as={Link} color="green" icon="add circle"
-                to="/playbook/new" />
-      </Grid>
-    </div>
-  );
-};
 
 module.exports = Playbooks;

@@ -31,7 +31,7 @@ var User = React.createClass({
         <ShowMessage mode={this.props.messageMode} text={this.props.messageText} />
         <Grid centered>
           <Grid.Column width={5}>
-            <Segment textAlign="left" reised attached>
+            <Segment textAlign="left" raised attached>
               <Form>
                 <Form.Field disabled control={Input} label="Username"
                             name="Username" value={this.props.username}

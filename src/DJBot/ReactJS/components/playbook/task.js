@@ -2,6 +2,16 @@ var React = require("react");
 
 import { Accordion, Button, Form, Grid, Header, Icon, Input, Item, Modal, Segment, Select} from 'semantic-ui-react';
 
+function getString(value){
+  if (value == false)
+    return "no";
+  if (value == true)
+    return "yes";
+  if (value == null)
+    return "none";
+  return value;
+};
+
 
 var Parameter = React.createClass({
   componentDidMount: function(){
@@ -20,13 +30,14 @@ var Parameter = React.createClass({
                              value={value} />
     }
     if(param['choices']){
-      this.options = param['choices'].map(function(opt){
+      var options = param['choices'].map(function(opt){
         return {key: opt, text: opt, value: opt}
       });
       if(value == undefined){
-        value = param['default'];
-      }
-      this.newInput =  <Select fluid name={name} options={this.options}
+        // Check if we already define a value
+        value = getString(param['default']);
+        }
+      this.newInput =  <Select fluid name={name} options={options}
                                onChange={this.props.changeConfiguration}
                                value={value} />
     }
@@ -91,10 +102,7 @@ var AnExample = React.createClass({
   update: function(parameters){
     this.keys = Object.keys(parameters);
     this.exampleCode = this.keys.map(function(conf, i){
-      var value = parameters[conf];
-      if (function(value){return value === false || value === true}){
-        value = value.toString();
-      }
+      var value = getString(parameters[conf]);
       return <p key={i}> <b>{conf}:</b> <i>{value}</i></p>
     });
     this.setState({exampleCode: this.exampleCode});
@@ -246,7 +254,7 @@ var Categories = React.createClass({
   },
   render: function(){
     return(
-      <Select placeholder='All' search floating item
+      <Select value={this.props.category} search floating item
               scrolling options={this.state.categories}
               onChange={this.props.selectCategory}/>
     );
@@ -284,9 +292,13 @@ var Task = React.createClass({
     return(
       <Grid centered>
         <Grid.Row>
-        <Grid.Column width={16}>
-          <Header content={header} />
-          A task is a special configuration of a module
+          <Grid.Column width={16}>
+            <Button floated="right" basic
+                    onClick={this.props.back}>
+              Go Back
+            </Button>
+            <Header content={header} />
+            A task is a special configuration of a module
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
@@ -305,6 +317,7 @@ var Task = React.createClass({
            Choose a category to see the modules available
             <Categories categories={this.props.categories}
                         selectCategory={this.props.selectCategory}
+                        category={this.props.category}
                         />
           </Grid.Column>
         </Grid.Row>

@@ -40,8 +40,10 @@ def add():
                         description=form.description.data)
         db.session.add(play)
         db.session.commit()
-        return jsonify({'messageMode': 0,
+        response = play.get_setup()
+        response.update({'messageMode': 0,
                         'messageText': 'Playbook saved'})
+        return jsonify(response)
     return jsonify({'messageMode': 1,
                     'messageText': 'There was an error saving the playbook'})
 
@@ -55,8 +57,11 @@ def delete():
         playbook = Playbook.query.get(form.key.data)
         db.session.delete(playbook)
         db.session.commit()
-        return jsonify({'messageMode': 0,
-                        'messageText': 'Playbook deleted'})
+        response = get_playbooks()
+        response.update({'messageMode': 0,
+                    'messageText': 'Playbook deleted'})
+
+        return jsonify(response)
     return jsonify({'messageMode': 1,
                     'messageText': 'There was an error deleting the playbook'})
 

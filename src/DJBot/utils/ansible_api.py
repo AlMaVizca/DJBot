@@ -7,6 +7,7 @@ from ansible.playbook.play import Play
 from ansible.executor.task_queue_manager import TaskQueueManager
 from ansible.plugins.callback import CallbackBase
 from DJBot.config import Config
+from datetime import datetime
 import threading
 import json
 import os
@@ -128,14 +129,20 @@ class Runner(object):
 
 
 class ThreadRunner(threading.Thread):
-    def __init__(self, machines, playbook, user, execution_name):
+    def __init__(self, machines, playbook, user, room, username,
+                 private_key="id_rsa",
+                 setup=False):
         threading.Thread.__init__(self)
 
-        self.execution_name = execution_name
+        self.room = room
+        self.username = username
         self.machines = machines
         self.user = user
-        self.playbook = Runner(self.machines, self.user)
-        self.playbook.add_setup(self.machines)
+        self.private_key = Config.KEYS + private_key
+        self.playbook = Runner(self.machines, self.user,
+                               self.private_key)
+        if setup:
+            self.playbook.add_setup(self.machines)
         self.playbook.add_plays(playbook['name'], self.machines,
                                 playbook['modules'])
         self.task = playbook
@@ -143,46 +150,68 @@ class ThreadRunner(threading.Thread):
     def run(self):
         self.playbook.run()
         results = self.playbook.callback.get_all()
-        name = os.getenv('LOGS') + self.execution_name + '.json'
+        results['datetime'] = datetime.now().isoformat(' ')[:-7]
+        results['playbook'] = self.task['name']
+        results['room'] = self.room
+        results['tasks'] = self.task
+        results['username'] = self.username
+
+        name_log = '-'.join(self.task['name'].split(' ')) + \
+                   '@' + '-'.join(self.room.split(' '))
+        name_log += '@' + self.username
+        name_log += '@' + '-'.join(results['datetime'].split(' '))
+
+        name = os.getenv("LOGS") + '/' + name_log + '.json'
+
         with open(name, 'w') as record:
             json.dump(results, record)
-        with open('/tmp/prueba.tareas', 'w') as tareas:
-            json.dump(self.task, tareas)
 
 
 def ansible_status(hosts, user="root", private_key_file=None):
     """run ansible setup on hosts"""
-    key = Config().KEYS + private_key_file
+    key = Config.KEYS + private_key_file
     ansible_game = Runner(hosts, remote_user=user,
                           private_key_file=key)
     ansible_game.add_setup(hosts)
     ansible_game.run()
-    return ansible_game.callback.get_all()
+    response = ansible_game.callback.get_all()
+    response['tasks'] = {
+        'modules': [{
+            'action': {
+                'module': 'setup',
+                'args': {
+                    'filter': 'ansible_[a,d,h,l,m,p,][a,e,i,o,r,s]*',
+                }
+            }
+        }],
+        'name': 'Get host info',
+    }
+    return response
 
 
 def copy_key(hosts, key, user, password):
-    key = Config().KEYS + key + ".pub"
+    key = Config.KEYS + key + ".pub"
     key = "{{ lookup('file', '" + key + "' ) }}"
     ansible_api = Runner(hosts, user)
     ansible_api.passwords = {'conn_pass': password}
-    ansible_api.add_plays('Add ssh key', hosts, [
-        {'action': u'authorized_key',
-         'args':
-         {
-             u'user': unicode(user),
-             u'state': u'present',
-             u'key': unicode(key)
-                 },
-                }
-            ]
-            )
+    authorized_key = [{'action': u'authorized_key',
+                      'args': {
+                          u'user': unicode(user),
+                          u'state': u'present',
+                          u'key': unicode(key)
+                      },
+    }]
+    ansible_api.add_plays('Add ssh key', hosts, authorized_key)
     ansible_api.run()
-    return ansible_api.callback.get_all()
+    response = ansible_api.callback.get_all()
+    response['tasks'] = {'name': 'Add ssh key'}
+    response['tasks'].update(authorized_key[0])
+    return response
 
 
 if __name__ == '__main__':
     inventory = ['172.18.0.2']
-    ansible_api = Runner(inventory, 'root')
+    ansible_api = Runner(inventory, 'krahser')
     ansible_api.add_setup(inventory)
     ansible_api.passwords = {'conn_pass': 'root'}
     ansible_api.add_plays('Add ssh key', inventory, [

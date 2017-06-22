@@ -6,7 +6,9 @@ var Playbooks = require("../components/playbooks");
 var PlaybooksContainer = React.createClass({
   getInitialState: function(){
     return ({
-      playbooks: []
+      playbooks: [],
+      messageMode: -1,
+      messageText: '',
       });
   },
   componentDidMount: function(){
@@ -25,6 +27,22 @@ var PlaybooksContainer = React.createClass({
       }.bind(this)
     });
   },
+  playbookDelete: function(key){
+    this.setState({open: false});
+    $.ajax({
+      url: '/api/playbook/delete',
+      dataType: 'json',
+      type: 'POST',
+      data: {key: key},
+      success: function(data) {
+        this.setState(data);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error('/api/playbook/delete', status, err.toString());
+      }.bind(this)
+    });
+  },
+
   updateMessage: function(data){
     this.setState(data);
   },
@@ -35,6 +53,7 @@ var PlaybooksContainer = React.createClass({
                  messageMode={this.state.messageMode}
                  messageText={this.state.messageText}
                  updateMessage={this.updateMessage}
+                 playbookDelete={this.playbookDelete}
                  />
     );
   }
