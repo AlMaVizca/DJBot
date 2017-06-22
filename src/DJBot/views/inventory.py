@@ -15,7 +15,7 @@ inventory_bp = Blueprint('inventory', __name__)
 def inventory():
     records = get_rooms()
     records.update(get_hosts())
-    return jsonify()
+    return jsonify(records)
 
 
 @inventory_bp.route('/get', methods=['POST'])
@@ -58,7 +58,8 @@ def room_add():
             room = get_room(form.key.data)
         saved = room.save(form.name.data, form.network.data,
                           form.netmask.data, form.machines.data,
-                          form.gateway.data)
+                          form.gateway.data, form.user.data,
+                          form.private_key.data)
         if saved:
             return jsonify({'messageMode': 0,
                             'message': 'saved',
@@ -91,7 +92,29 @@ def host_get():
     form = Select(request.form)
     if form.validate():
         try:
-            return jsonify(get_host(form.key.data).get_setup())
+            response = get_host(form.key.data).get_setup()
+            return jsonify(response)
+        except:
+            pass
+    return jsonify({'messageMode': 1,
+                    'message': 'failed'})
+
+
+@inventory_bp.route('/host/info', methods=['POST'])
+@login_required
+@roles_required('user')
+def host_info():
+    form = Select(request.form)
+    if form.validate():
+        try:
+            host = get_host(form.key.data).get_setup()
+            response = {}
+            response['hosts'] = ansible_status([host['ip']],
+                                               host['user'],
+                                               host['private_key'])
+            response['name'] = host['name']
+            response['key'] = host['key']
+            return jsonify(response)
         except:
             pass
     return jsonify({'messageMode': 1,
@@ -104,10 +127,10 @@ def host_get():
 def host_add():
     form = HostAdd(request.form)
     if form.validate():
-        host = Host()
-        if(form.key.data):
-            host = get_host(form.key.data)
-        saved = host.save(form.name.data, form.ip.data, form.note.data)
+        host = get_host(form.key.data)
+        saved = host.save(form.name.data, form.ip.data,
+                          form.user.data, form.private_key.data,
+                          form.note.data)
         if saved:
             return jsonify({'status': 'good'})
     return jsonify({'messageMode': 1,
@@ -137,12 +160,16 @@ def host_delete():
 def key_copy():
     form = KeyCopy(request.form)
     if form.validate():
-        room = get_room(form.key.data)
-        hosts, name = get_machines(form.key.data)
+        if form.room.data != 'false':
+            room = get_room(form.key.data)
+            hosts, name = get_machines(form.key.data)
 
-        result = copy_key(hosts, room.private_key, room.user,
-                          form.password.data)
-
+            result = copy_key(hosts, room.private_key, room.user,
+                              form.password.data)
+        else:
+            host = get_host(form.key.data)
+            result = copy_key([host.ip], host.private_key, host.user,
+                              form.password.data)
         return jsonify({'hosts': result})
     return jsonify({'messageMode': 1,
                     'message': 'failed'})

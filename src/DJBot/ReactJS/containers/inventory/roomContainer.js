@@ -18,6 +18,7 @@ var RoomContainer = React.createClass({
             rows: 5,
             columns: 3,
             loading: true,
+            key: 0,
             hosts: {ok: {}, failed: {}, unreachable: {}},
            }
   },
@@ -43,8 +44,7 @@ var RoomContainer = React.createClass({
       return;
     }
     var room = {name: name, machines: machines, network: network, netmask: netmask, gateway: gateway, user: user, private_key: private_key};
-    if(this.state.key)
-      room['key'] = this.state.key;
+    room['key'] = this.state.key;
     $.ajax({
       url: "/api/inventory/new",
       dataType: 'json',
@@ -124,6 +124,7 @@ var RoomContainer = React.createClass({
       data: {
         key: this.state.key,
         password: this.state.password,
+        room: true,
       },
       success: function(data) {
         data['password'] = '';

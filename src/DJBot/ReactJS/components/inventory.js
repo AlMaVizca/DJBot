@@ -2,6 +2,55 @@ var React = require("react");
 
 import {Button, Card, Grid, Header, Icon, Link, Segment, Steps, Step} from "semantic-ui-react";
 
+var Host = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.object.isRequired,
+  },
+  edit: function(){
+    this.context.router.push({
+      pathname: "/inventory/host",
+      query: {
+        id: this.props.id,
+      }
+    });
+  },
+  play: function(){
+    this.context.router.push({
+      pathname: "/play",
+      query: {
+        host: this.props.id,
+      }
+    });
+  },
+  render: function(){
+    return(
+      <Card>
+        <Card.Content>
+          <Button basic floated="right" icon="play"
+                  onClick={this.play} color="green" />
+          <Button basic floated="right" icon="edit"
+                  onClick={this.edit} color="blue" />
+          <Icon name="cube" />
+          <Card.Header>
+            {this.props.name}
+          </Card.Header>
+        </Card.Content>
+        <Card.Content extra>
+          <div>
+            Ip:
+            {this.props.ip}
+          </div>
+          <div>
+            Note:
+            {this.props.note}
+          </div>
+        </Card.Content>
+      </Card>
+    );
+  }
+});
+
+
 var Room = React.createClass({
   contextTypes: {
     router: React.PropTypes.object.isRequired,
@@ -55,7 +104,9 @@ var Inventory = React.createClass({
     router: React.PropTypes.object.isRequired,
   },
   getInitialState: function(){
-    return({rooms: []})
+    return({rooms: [],
+            hosts: [],
+           })
   },
   componentWillReceiveProps: function(nextProps){
     const rooms = nextProps.roomList.map(function(room){
@@ -63,7 +114,14 @@ var Inventory = React.createClass({
               network={room.network} netmask={room.netmask}
               machines={room.machines} />);
     });
-    this.setState({rooms: rooms});
+    const hosts = nextProps.hostList.map(function(host){
+      return (<Host name={host.name} key={host.key} id={host.key}
+              ip={host.ip} note={host.note} />);
+    });
+
+    this.setState({rooms: rooms,
+                   hosts: hosts
+                  });
   },
   roomAdd: function(){
     this.context.router.push({
@@ -91,9 +149,18 @@ var Inventory = React.createClass({
             </Button>
           </Grid.Column>
         </Grid.Row>
-        <Card.Group>
-          {this.state.rooms}
-        </Card.Group>
+        <Grid.Row>
+          <Grid.Column>
+            <Header as="h3">Hosts</Header>
+            <Card.Group>
+              {this.state.hosts}
+            </Card.Group>
+            <Header as="h3">Rooms</Header>
+            <Card.Group>
+              {this.state.rooms}
+            </Card.Group>
+          </Grid.Column>
+        </Grid.Row>
       </Grid>
 
     );

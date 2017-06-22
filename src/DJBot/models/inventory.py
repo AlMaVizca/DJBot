@@ -1,6 +1,7 @@
 from DJBot.database import db
 from DJBot.utils import proxy
 from DJBot.utils.ansible_api import ansible_status
+import ipaddress
 
 
 class Room(db.Model):
@@ -8,10 +9,11 @@ class Room(db.Model):
     key = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
     machines = db.Column(db.Integer, nullable=False)
-    network = db.Column(db.String, nullable=False)
+    network = db.Column(db.String, unique=True, nullable=False)
     gateway = db.Column(db.String, nullable=False)
     user = db.Column(db.String, nullable=False, default="root")
-    private_key = db.Column(db.String, nullable=False, default="id_rsa")
+    private_key = db.Column(db.String, nullable=False,
+                            default="id_rsa")
 
     def __repr__(self):
         return "<Room %r %r %r %r %r>" % (self.key,
@@ -20,7 +22,10 @@ class Room(db.Model):
 
     def _set_network(self, network=None, netmask=None):
         if network and netmask:
-            return network + "/" + str(netmask)
+            network_address = unicode(network + '/' + str(netmask))
+            network_address = ipaddress.ip_network(network_address,
+                                                   strict=False)
+            return str(network_address)
 
     def _get_network(self):
         try:
@@ -51,12 +56,15 @@ class Room(db.Model):
         hosts.update(self.get_setup())
         return hosts
 
-    def save(self, name, network, netmask, machines, gateway):
+    def save(self, name, network, netmask, machines, gateway, user,
+             private_key):
         """save in database"""
         self.name = name
         self.machines = machines
         self.network = self._set_network(network, netmask)
         self.gateway = gateway
+        self.user = user
+        self.private_key = private_key
         db.session.add(self)
         db.session.commit()
         return True
@@ -74,26 +82,34 @@ class Host(db.Model):
     __tablename__ = "host"
     key = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), nullable=False)
-    ip = db.Column(db.String(50), nullable=False)
+    ip = db.Column(db.String(50), unique=True, nullable=False)
     note = db.Column(db.String(200), nullable=True)
+    user = db.Column(db.String, nullable=False, default="root")
+    private_key = db.Column(db.String, nullable=False,
+                            default="id_rsa")
 
     def __repr__(self):
-        return "<Room %r %r %r %r %r>" % (self.key,
-                                          self.name, self.machines,
-                                          self.network, self.gateway)
+        return "<Host %r %r %r %r %r %r>" % (self.key,
+                                             self.name, self.ip,
+                                             self.note, self.user,
+                                             self.private_key)
 
     def get_setup(self):
         host = dict(name=self.name,
                     ip=self.ip,
                     key=self.key,
-                    note=self.note)
+                    note=self.note,
+                    user=self.user,
+                    private_key=self.private_key)
         return host
 
-    def save(self, name, ip, note=None):
+    def save(self, name, ip, user, private_key, note=None):
         """save in database"""
         self.name = name
         self.ip = ip
         self.note = note
+        self.user = user
+        self.private_key = private_key
         db.session.add(self)
         db.session.commit()
         return True
@@ -116,6 +132,8 @@ def get_rooms():
 
 
 def get_room(id):
+    if id == 0:
+        return Room()
     return Room.query.get(id)
 
 
@@ -127,4 +145,6 @@ def get_machines(room_key):
 
 
 def get_host(id):
+    if id == 0:
+        return Host()
     return Host.query.get(id)

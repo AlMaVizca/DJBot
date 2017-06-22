@@ -8,14 +8,13 @@ var Playbook = React.createClass({
     router: React.PropTypes.object.isRequired,
   },
   play: function(){
-    this.props.play(this.props.room, this.props.id);
+    this.props.play(this.props.id, this.props.playbook);
   },
   render: function(){
     return(
       <Card>
         <Card.Content>
           <Button basic floated="right" icon="play"
-                  disabled={this.props.disabled}
                   onClick={this.play} color="green" />
           <Icon name="play" />
           <Icon name="book" />
@@ -35,11 +34,11 @@ var Playbook = React.createClass({
 var Play = React.createClass({
   componentWillReceiveProps: function(nextProps){
     const playbooks = nextProps.playbooks.map(function(playbook, i){
-      return (<Playbook name={playbook.name} key={i} id={playbook.key}
-              room={nextProps.id} play={nextProps.play}
-              description={playbook.description}
-              disabled={this.props.disabled} />);
+      return (<Playbook name={playbook.name} key={i} id={nextProps.id}
+              playbook={playbook.key} play={nextProps.play}
+              description={playbook.description} />);
     }, this);
+    console.log(nextProps.hosts);
     const hosts = nextProps.hosts.map(function(host, i){
       return (<div key={i}>{host}</div>);
     }, this);
@@ -59,20 +58,28 @@ var Play = React.createClass({
         <ShowMessage mode={this.props.messageMode} text={this.props.messageText} />
         <Header as="h1">Working with {this.props.name}</Header>
         </Grid.Row>
-        <Grid.Row>
-          <Grid.Column width={10}>
+        {this.props.isRoom ?
+          <Grid.Row>
+              <Grid.Column width={10}>
+                  <Segment basic loading={this.props.loading}>
+                      <p>This room was setup for {this.props.machines} machines.</p>
+                        <p>There is {this.props.hosts.length} machines available on the network {this.props.network}/{this.props.netmask}.</p>
+                    </Segment>
+                </Grid.Column>
+                <Grid.Column>
+                    {this.state.hosts}
+                  </Grid.Column>
+            </Grid.Row>
+            :
+            <Grid.Row>
+                The machine is ready to play.
+              </Grid.Row>
+            }
             <Segment basic loading={this.props.loading}>
-              <p>This room was setup for {this.props.machines} machines.</p>
-              <p>There is {this.props.hosts.length} machines available on the network {this.props.network}/{this.props.netmask}.</p>
+              <Card.Group>
+                {this.state.playbooks}
+              </Card.Group>
             </Segment>
-          </Grid.Column>
-          <Grid.Column>
-            {this.state.hosts}
-          </Grid.Column>
-        </Grid.Row>
-        <Card.Group>
-          {this.state.playbooks}
-        </Card.Group>
       </Grid>
     );
   }

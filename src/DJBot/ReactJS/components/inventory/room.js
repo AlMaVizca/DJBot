@@ -1,7 +1,7 @@
 var React = require("react");
-import {Button, Card, Divider, Form, Grid, Header, Icon, Input, Label, Modal, Segment, Select} from 'semantic-ui-react';
+import {Button, Card, Form, Grid, Header, Icon, Input, Label, Segment, Select} from 'semantic-ui-react';
 var AnsibleResults = require("../ansibleResults");
-
+var AskPass = require("../askPass");
 
 var Room = React.createClass({
   componentWillReceiveProps: function(nextProps){
@@ -25,12 +25,6 @@ var Room = React.createClass({
     return({hosts:[],
             keys: [],
             modal: false})
-  },
-  open: function(){
-    this.setState({modal: true});
-  },
-  close: function(){
-    this.setState({modal: false})
   },
   sshCopy: function(){
     this.props.sshCopy();
@@ -129,37 +123,14 @@ var Room = React.createClass({
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
-          <Grid.Column>
-            <Header as="h1">Computers</Header>
-            <Divider />
-            <Modal closeIcon='close' open={this.state.modal}
-                   trigger={<Button basic color="olive"
-                                      floated="right" loading={this.props.loading}
-                                      onClick={this.open}>
-                            Copy SSH key
-                   </Button>}
-            onClose={this.close} >
-
-              <Header>
-                <Icon name='exclamation' color="yellow" />
-                Connection password
-              </Header>
-              <Modal.Content>
-                <p>DJBot needs the password of the user {this.props.user} to add the public key. It will be in ram just for a second. </p>
-                <Label basic color="black">
-                  Password:
-                </Label>
-                <Input type="password"
-                       onChange={this.props.changeOption}
-                       name="password" value={this.props.password} />
-            </Modal.Content>
-              <Modal.Actions>
-                <Button onClick={this.sshCopy} color='green'>
-                  <Icon name='checkmark' /> Done
-                </Button>
-              </Modal.Actions>
-            </Modal>
-          </Grid.Column>
+          <AskPass
+            name="Computers"
+            user={this.props.user}
+            password={this.props.password}
+            changeOption={this.props.changeOption}
+            sshCopy={this.props.sshCopy}
+            loading={this.props.loading}
+            />
         </Grid.Row>
         <Grid.Row>
             <Segment basic loading={this.props.loading}>

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import IntegerField, PasswordField, StringField,\
-    validators
+from wtforms import BooleanField, IntegerField, PasswordField,\
+    StringField, validators
 
 
 class Add(FlaskForm):
@@ -13,11 +13,15 @@ class Add(FlaskForm):
     machines = IntegerField('machines')
     gateway = StringField('gateway', [validators.DataRequired(),
                                       validators.IPAddress()])
+    user = StringField('user', [validators.DataRequired()])
+    private_key = StringField('private_key', [validators.DataRequired()])
 
 
 class KeyCopy(FlaskForm):
     key = IntegerField('key', [validators.DataRequired()])
     password = PasswordField('password', [validators.DataRequired()])
+    room = StringField('room', [validators.DataRequired()])
+    # TODO: see how to do this as a Boolan
 
 
 class HostAdd(FlaskForm):
@@ -25,4 +29,6 @@ class HostAdd(FlaskForm):
     name = StringField('name', [validators.DataRequired()])
     ip = StringField('ip', [validators.DataRequired(),
                             validators.IPAddress()])
-    note = StringField('note', [validators.DataRequired()])
+    note = StringField('note')
+    user = StringField('user', [validators.DataRequired()])
+    private_key = StringField('private_key', [validators.DataRequired()])
