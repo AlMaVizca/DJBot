@@ -4,7 +4,7 @@ from flask_security import current_user, roles_required
 from DJBot.forms.action import Run
 from DJBot.forms.generic import Select
 from DJBot.models.playbook import execution_tasks
-from DJBot.models.inventory import get_machines, get_room
+from DJBot.models.inventory import get_host, get_machines, get_room
 import os
 import json
 
@@ -21,18 +21,25 @@ def get_log_by_date():
 def run():
     form = Run(request.form)
     if form.validate():
-        room = get_room(form.room.data)
-        machines, room_name = get_machines(form.room.data)
+        inventory = ''
+        machines = []
+        if(form.isRoom.data == 'true'):
+            inventory = get_room(form.key.data)
+            machines, name = get_machines(form.key.data)
+        else:
+            inventory = get_host(form.key.data)
+            machines = [inventory.ip]
+
         playbook = execution_tasks(form.playbook.data)
 
-        ansible_playbook = ThreadRunner(machines, playbook, room.user,
-                                        room_name,
+        ansible_playbook = ThreadRunner(machines, playbook,
+                                        inventory.user,
+                                        inventory.name,
                                         current_user.username,
-                                        room.private_key,
+                                        inventory.private_key,
                                         )
         ansible_playbook.start()
-        if True:
-            return jsonify({'message': 'Task is running!'})
+        return jsonify({'message': 'Task is running!'})
     return jsonify({'message': 'receive'})
 
 

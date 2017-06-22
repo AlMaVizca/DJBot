@@ -21,7 +21,7 @@ var TaskContainer = React.createClass({
     this.getModules();
     this.getCategories();
     var query = this.props.location.query;
-    if(query.pbId) this.setState({id: query.pbId});
+    if(query.id) this.setState({id: query.pbId});
     if(query.key){
       this.setState({loading: true,
                      key: query.key,
@@ -40,6 +40,7 @@ var TaskContainer = React.createClass({
       moduleDoc: "No module selected",
       modules: [],
       loading: false,
+      configuration: {},
     });
   },
   getCategories: function(){
@@ -93,6 +94,14 @@ var TaskContainer = React.createClass({
     }, this);
     return aConfig;
   },
+  goBack: function(){
+    this.context.router.push({
+      pathname: "/playbook/edit",
+      query: {
+        id: this.state.id,
+      }
+    });
+  },
   newTask: function(){
     var confs = this.configurationAsList();
     confs['key'] = this.state.id;
@@ -104,7 +113,7 @@ var TaskContainer = React.createClass({
       type: "POST",
       data: confs,
       success: function(data) {
-        this.context.router.goBack();
+        this.goBack();
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/task/add", status, err.toString());
@@ -122,7 +131,7 @@ var TaskContainer = React.createClass({
       type: "POST",
       data: confs,
       success: function(data) {
-        this.context.router.goBack();
+        this.goBack();
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/task/save", status, err.toString());
@@ -142,6 +151,7 @@ var TaskContainer = React.createClass({
           taskName: data.name,
           module: data.module,
           configuration: data.options,
+          id: data.playbook,
           loading: false,
         })
       }.bind(this),
@@ -194,6 +204,7 @@ var TaskContainer = React.createClass({
               changeConfiguration={this.changeConfiguration}
               cleanConfiguration={this.cleanConfiguration}
 
+              back={this.goBack}
               loading={this.state.loading}
               />
       </div>
