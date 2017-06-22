@@ -184,7 +184,7 @@ def ansible_status(hosts, user="root", private_key_file=None):
                 }
             }
         }],
-        'name': 'Add ssh key',
+        'name': 'Get host info',
     }
     return response
 
@@ -204,13 +204,14 @@ def copy_key(hosts, key, user, password):
     ansible_api.add_plays('Add ssh key', hosts, authorized_key)
     ansible_api.run()
     response = ansible_api.callback.get_all()
-    response['tasks'] = authorized_key.update({'name': 'Add ssh key'})
+    response['tasks'] = {'name': 'Add ssh key'}
+    response['tasks'].update(authorized_key[0])
     return response
 
 
 if __name__ == '__main__':
     inventory = ['172.18.0.2']
-    ansible_api = Runner(inventory, 'root')
+    ansible_api = Runner(inventory, 'krahser')
     ansible_api.add_setup(inventory)
     ansible_api.passwords = {'conn_pass': 'root'}
     ansible_api.add_plays('Add ssh key', inventory, [

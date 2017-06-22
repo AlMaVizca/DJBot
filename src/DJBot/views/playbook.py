@@ -40,8 +40,10 @@ def add():
                         description=form.description.data)
         db.session.add(play)
         db.session.commit()
-        return jsonify({'messageMode': 0,
+        response = play.get_setup()
+        response.update({'messageMode': 0,
                         'messageText': 'Playbook saved'})
+        return jsonify(response)
     return jsonify({'messageMode': 1,
                     'messageText': 'There was an error saving the playbook'})
 
@@ -74,10 +76,7 @@ def save():
         playbook.name = form.name.data
         playbook.description = form.description.data
         db.session.commit()
-        response = get_playbooks()
-        response.update({'messageMode': 0,
+        return jsonify({'messageMode': 0,
                         'messageText': 'Playbook saved'})
-
-        return jsonify(response)
     return jsonify({'messageMode': 1,
                     'messageText': 'There was an error saving the playbook'})

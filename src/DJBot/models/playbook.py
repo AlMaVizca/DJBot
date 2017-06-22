@@ -10,13 +10,15 @@ class Task(db.Model):
     playbook = db.Column(db.Integer, db.ForeignKey("playbook.key"))
 
     def __repr__(self):
-        return "<Task %r %r %r %r >" % (self.key,
-                                        self.name,
-                                        self.module,
-                                        self.parameters)
+        return "<Task %r %r %r %r %r>" % (self.key,
+                                          self.name,
+                                          self.module,
+                                          self.parameters,
+                                          self.playbook)
 
     def get_setup(self):
-        setup = dict(key=self.key, name=self.name, module=self.module)
+        setup = dict(key=self.key, name=self.name, module=self.module,
+                     playbook=self.playbook)
         setup['options'] = {}
         for each in self.parameters:
             setup['options'][each.name] = each.value
@@ -115,12 +117,9 @@ def execution_tasks(task_key):
         for parameters in module['parameters']:
             args[parameters['name']] = parameters['value']
 
-        import logging
-        logging.error(args)
         if 'free_form' in args:
             args['_raw_params'] = args['free_form']
             args.pop('free_form')
-        logging.error(args)
 
         playbook['modules'].append((dict(
             action=dict(
