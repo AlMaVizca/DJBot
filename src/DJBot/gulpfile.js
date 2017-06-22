@@ -74,12 +74,6 @@ gulp.task('webpack:dev', function(callback) {
         'NODE_ENV': JSON.stringify('development')
       }
     }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        warnings: false
-      }
-    })
   );
 
   // Run webpack

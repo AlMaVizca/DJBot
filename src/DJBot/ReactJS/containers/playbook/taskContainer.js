@@ -31,6 +31,7 @@ var TaskContainer = React.createClass({
   },
   getInitialState: function(){
     return({
+      id: 0,
       messageMode: 10,
       messageText: "",
       taskName: "",
