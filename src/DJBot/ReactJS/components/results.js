@@ -92,7 +92,7 @@ var Results = React.createClass({
     const tableHeader = [
         <Table.HeaderCell key={1} width={4}>User</Table.HeaderCell>,
       <Table.HeaderCell key={2} width={4}>ran playbook</Table.HeaderCell>,
-      <Table.HeaderCell key={3} width={4}>at room</Table.HeaderCell>,
+      <Table.HeaderCell key={3} width={4}>at</Table.HeaderCell>,
       <Table.HeaderCell key={4} width={4}>on date</Table.HeaderCell>,
     ];
     return(
