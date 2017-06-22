@@ -46,7 +46,7 @@ var PlaybookEditContainer = React.createClass({
           playbookName: data.name,
           playbookDescription: data.description,
           tasks: data.tasks,
-          saveAction: this.playbookSave
+          saveAction: this.save
         });
       }.bind(this),
       error: function(xhr, status, err) {
@@ -66,7 +66,19 @@ var PlaybookEditContainer = React.createClass({
       saveAction: this.playbookNew
     });
   },
-  playbookNew: function(){
+  redirect: function(key){
+    if(key){
+      this.context.router.push({
+        pathname: "/task/new",
+        query: {
+          pbId: key,
+            }
+      });
+    }else{
+      this.context.router.push("/playbooks");
+    }
+  },
+  playbookNew: function(addTask){
     $.ajax({
       url: "/api/playbook/new",
       dataType: "json",
@@ -76,19 +88,17 @@ var PlaybookEditContainer = React.createClass({
         description: this.state.playbookDescription
       },
       success: function(data) {
-        this.setState(data);
+        if(addTask)
+          this.redirect(data['key']);
+        else
+          this.redirect();
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/playbook/new", status, err.toString());
       }.bind(this)
     });
-    this.context.router.push("/playbooks");
   },
-  playbookSave: function(){
-    this.save()
-    this.context.router.push("/playbooks");
-  },
-  save: function(){
+  save: function(addTask){
     $.ajax({
       url: "/api/playbook/save",
       dataType: "json",
@@ -99,7 +109,10 @@ var PlaybookEditContainer = React.createClass({
         description: this.state.playbookDescription
       },
       success: function(data) {
-        this.setState(data);
+        if(addTask)
+          this.redirect(this.state.playbookId);
+        else
+          this.redirect();
       }.bind(this),
       error: function(xhr, status, err) {
         console.error("/api/playbook/save", status, err.toString());
