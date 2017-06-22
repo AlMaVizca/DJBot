@@ -1,16 +1,28 @@
 var React = require('react')
-import {Accordion, Card, Header, Message, Label, Segment} from 'semantic-ui-react'
+import {Accordion, Card, Header, Message, Progress, Label, Segment} from 'semantic-ui-react'
 
 var Facts = React.createClass({
   render: function(){
+    var memory_avg = this.props.ansible_facts.ansible_memfree_mb * 100;
+    memory_avg /= this.props.ansible_facts.ansible_memtotal_mb;
+    memory_avg = 100 - memory_avg;
+    memory_avg = memory_avg.toFixed(0)
+    var color = "green"
+    if (memory_avg < 75 & memory_avg > 50 )
+      color = "yellow"
+    if (memory_avg > 75)
+      color = "red"
     return(
       <Segment color="blue">
         <p><label>Hostname:</label>={this.props.ansible_facts.ansible_hostname} </p>
         <p><label>Distribution:</label>={this.props.ansible_facts.ansible_distribution} </p>
         <p><label>Arch:</label>={this.props.ansible_facts.ansible_machine} </p>
         <p><label>Cores:</label>={this.props.ansible_facts.ansible_processor_cores} </p>
-        <p><label>Memory:</label>={this.props.ansible_facts.ansible_memtotal_mb.toString()} </p>
-        <p><label>Memory Free:</label>={this.props.ansible_facts.ansible_memfree_mb.toString()} </p>
+        <Progress color={color}
+                  percent={memory_avg}
+                  size='small' progress>
+          Memory:{Math.round(this.props.ansible_facts.ansible_memtotal_mb/1024).toString()} Gb
+        </Progress>
       </Segment>
     );
   }
@@ -84,7 +96,9 @@ var ComputerCard = React.createClass({
       this.setState({msg: msg});
     }
     if (this.props.computer.failed)
-      this.setState({msg: <TaskCard failed={true} stdout={this.props.computer.stdout_lines} module={{name: '', action: {args: {}, module: "Error message retrieved"}}} />});
+      this.setState({msg: <TaskCard failed={true} stdout={this.props.computer.msg} module={this.props.tasks.modules[0]} />});
+    if (this.props.computer.unreachable)
+      this.setState({msg: this.props.computer.msg})
   },
   getInitialState: function(){
     return({msg: ''});
@@ -127,7 +141,7 @@ var ComputerList =  React.createClass({
   },
   render: function(){
     return(
-      <Segment inverted color={this.props.color}>
+      <Segment color={this.props.color}>
         <Header as="h3">
           {this.state.number} hosts with status {this.props.status}.
         </Header>
@@ -141,16 +155,22 @@ var ComputerList =  React.createClass({
 
 
 var AnsibleResults = React.createClass({
+  componentDidMount: function(){
+    this.update(this.props);
+  },
   componentWillReceiveProps: function(nextProps){
+    this.update(nextProps);
+  },
+  update: function(nextProps){
     var computers = []
     if (Object.keys(nextProps.failed).length > 0)
-      computers = [<ComputerList key={1} color="red" computers={nextProps.failed} status="failed" tasks={nextProps.tasks} />]
+      computers.push(<ComputerList key={1} color="red" computers={nextProps.failed} status="failed" tasks={nextProps.tasks} />);
 
     if(Object.keys(nextProps.unreachable).length > 0)
-      computers = computers.concat([<ComputerList key={2} color="yellow" computers={nextProps.unreachable} status="unreachable" tasks={nextProps.tasks} />]);
+      computers.push(<ComputerList key={2} color="yellow" computers={nextProps.unreachable} status="unreachable" tasks={nextProps.tasks} />);
 
     if(Object.keys(nextProps.ok).length > 0)
-      computers = computers.concat([<ComputerList key={3} color="green" computers={nextProps.ok} status="ok" tasks={nextProps.tasks} />]);
+      computers.push(<ComputerList key={3} color="green" computers={nextProps.ok} status="ok" tasks={nextProps.tasks} />);
 
     this.setState({computers: computers});
   },
