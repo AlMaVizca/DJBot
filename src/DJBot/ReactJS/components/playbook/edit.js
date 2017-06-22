@@ -111,13 +111,10 @@ var PlaybookEdit = React.createClass({
            });
   },
   addTask: function(){
-    this.props.save()
-    this.context.router.push({
-      pathname: "/task/new",
-      query: {
-        pbId: this.props.id,
-      }
-    });
+    this.props.saveAction(true);
+  },
+  save: function(){
+    this.props.saveAction();
   },
   updateMessage: function(data){
     this.setState(data);
@@ -161,7 +158,7 @@ var PlaybookEdit = React.createClass({
         </Grid>
         <Grid padded>
           <Button basic color="green" icon="save"
-                  content="Save" onClick={this.props.saveAction} />
+                  content="Save" onClick={this.save} />
         </Grid>
 
       </div>

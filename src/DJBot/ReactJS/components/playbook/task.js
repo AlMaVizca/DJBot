@@ -292,9 +292,13 @@ var Task = React.createClass({
     return(
       <Grid centered>
         <Grid.Row>
-        <Grid.Column width={16}>
-          <Header content={header} />
-          A task is a special configuration of a module
+          <Grid.Column width={16}>
+            <Button floated="right" basic
+                    onClick={this.props.back}>
+              Go Back
+            </Button>
+            <Header content={header} />
+            A task is a special configuration of a module
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
