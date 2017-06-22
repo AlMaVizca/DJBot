@@ -33,6 +33,7 @@ var Playbook = React.createClass({
   },
   playbookDelete: function(){
     this.props.playbookDelete(this.props.playbook.key);
+    this.setState({open: false});
   },
   render: function(){
     var confirmationText = "Do you want to delete playbook " + this.props.playbook.name + "?";
