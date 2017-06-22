@@ -15,13 +15,12 @@ RUN chown -R djbot /home/djbot/app
 
 RUN pip install -e .
 # python setup.py install
-RUN pip install --upgrade git+git://github.com/inveniosoftware/flask-security-fork.git
 
 USER djbot
 
 #Logs
 RUN mkdir -p /home/djbot/log
-ENV LOGS '/home/djbot/log/'
+ENV LOGS '/home/djbot/log'
 VOLUME /home/djbot/log
 
 #SSH

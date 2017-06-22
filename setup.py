@@ -8,8 +8,8 @@ readme = 'DJBot is a frontend for develop and run ansible playbooks'
 # open('README.rst').read()
 
 install_requires = [
-    "ansible>=2.3",
-    "Flask-Security-fork",
+    "ansible==2.3.1.0",
+    "Flask-Security",
     "Flask-WTF",
     "Flask-SQLAlchemy",
     "Flask",
