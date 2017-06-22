@@ -11,6 +11,9 @@ var ResultsContainer = React.createClass({
               room: 'c',
               datetime: 'd',
               loading: true,
+              ok: {},
+              failed: {},
+              unreachable: {},
             }
            });
   },
