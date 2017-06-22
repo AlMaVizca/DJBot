@@ -21,7 +21,7 @@ var TaskContainer = React.createClass({
     this.getModules();
     this.getCategories();
     var query = this.props.location.query;
-    if(query.id) this.setState({id: query.pbId});
+    if(query.pbId) this.setState({id: query.pbId});
     if(query.key){
       this.setState({loading: true,
                      key: query.key,
@@ -122,7 +122,7 @@ var TaskContainer = React.createClass({
   },
   saveTask: function(){
     var confs = this.configurationAsList();
-    confs['key'] = this.state.key;
+    confs['key'] = this.state.id;
     confs['task'] = this.state.taskName;
     confs['module'] = this.state.moduleDoc.module;
     $.ajax({
