@@ -36,7 +36,7 @@ var Playbook = React.createClass({
     this.setState({open: false});
   },
   render: function(){
-    var confirmationText = "Do you want to delete playbook " + this.props.playbook.name + "?";
+    const confirmationText = "Do you want to delete playbook " + this.props.playbook.name + "?";
     return(
         <Table.Row>
           <Table.Cell>
