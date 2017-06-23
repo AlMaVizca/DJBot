@@ -27,6 +27,12 @@ var Host = React.createClass({
     this.setState({keys: keys,
                    host: host})
   },
+  getInitialState: function(){
+    return ({
+      keys: [],
+      host: '',
+    });
+  },
   render: function(){
     return(
       <div>
@@ -52,8 +58,9 @@ var Host = React.createClass({
                        changeOption={this.props.changeOption}
                        />
             </Segment>
-            <Button basic color="green" fluid icon="save"
-                    attached="bottom" content="Save"
+            <Button basic color="green"
+                    attached="bottom" fluid
+                    content="Save" icon="save"
                     onClick={this.props.save} />
           </Grid.Column>
           <AskPass

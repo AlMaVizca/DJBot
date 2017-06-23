@@ -92,7 +92,7 @@ var HostContainer = React.createClass({
       }.bind(this)
     });
   },
-  delete: function(){
+  remove: function(){
     $.ajax({
       url: '/api/inventory/host/delete',
       dataType: 'json',
@@ -162,7 +162,7 @@ var HostContainer = React.createClass({
         note={this.state.note}
         host={this.state.hosts}
         password={this.state.password}
-        delete={this.delete}
+        remove={this.remove}
         save={this.save}
         back={this.goBack}
         sshCopy={this.sshCopy}
