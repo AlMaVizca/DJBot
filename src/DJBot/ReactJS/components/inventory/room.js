@@ -1,7 +1,7 @@
 var React = require("react");
 import {Button, Card, Form, Grid, Header, Icon, Input, Label, Segment, Select} from 'semantic-ui-react';
 var AnsibleResults = require("../ansibleResults");
-var AskPass = require("../askPass");
+var AskPass = require("../utils/askPass");
 
 var Room = React.createClass({
   componentWillReceiveProps: function(nextProps){

@@ -2,8 +2,8 @@ var React = require("react");
 var PropTypes = React.PropTypes;
 var ReactRouter = require("react-router");
 var Link = ReactRouter.Link;
-var GenericTable = require("../genericTable");
-var ShowMessage = require("../message");
+var GenericTable = require("../utils/genericTable");
+var ShowMessage = require("../utils/message");
 
 import {Button, Confirm, Header, Grid, Icon, Input, Menu, Segment, Table} from "semantic-ui-react";
 

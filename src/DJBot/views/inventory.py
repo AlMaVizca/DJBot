@@ -132,7 +132,9 @@ def host_add():
                           form.user.data, form.private_key.data,
                           form.note.data)
         if saved:
-            return jsonify({'status': 'good'})
+            response = host.get_setup()
+            response.update({'status': 'good'})
+            return jsonify(response)
     return jsonify({'messageMode': 1,
                     'message': 'failed'})
 

@@ -2,7 +2,7 @@ var React = require("react");
 
 var Task = require("../../components/playbook/task");
 
-var ShowMessage = require("../../components/message");
+var ShowMessage = require("../../components/utils/message");
 import { Grid } from 'semantic-ui-react';
 
 var TaskContainer = React.createClass({

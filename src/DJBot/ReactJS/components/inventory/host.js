@@ -1,8 +1,8 @@
 var React = require('react');
-var ShowMessage = require("../message");
+var ShowMessage = require("../utils/message");
 var Machine = require("../forms/machine");
 
-var AskPass = require("../askPass");
+var AskPass = require("../utils/askPass");
 var AnsibleResults = require("../ansibleResults");
 
 import { Button, Form, Grid, Header, Input, Segment} from 'semantic-ui-react';
@@ -27,6 +27,12 @@ var Host = React.createClass({
     this.setState({keys: keys,
                    host: host})
   },
+  getInitialState: function(){
+    return ({
+      keys: [],
+      host: '',
+    });
+  },
   render: function(){
     return(
       <div>
@@ -34,13 +40,15 @@ var Host = React.createClass({
                 onClick={this.props.back}>
           Go Back
         </Button>
-        <Header icon="user" content="Add new host" />
+        <Header icon="user" content={this.props.header} />
+        <p>Save the host and you will get info about it </p>
         <ShowMessage mode={this.props.messageMode}
                      text={this.props.messageText}/>
         <Grid>
           <Grid.Row>
           <Grid.Column width={6}>
-            <Segment textAlign="left" raised attached>
+            <Segment textAlign="left" raised attached
+                     loading={this.props.loading}>
               <Machine name={this.props.name}
                        user={this.props.user}
                        private_key={this.props.private_key}
@@ -50,8 +58,9 @@ var Host = React.createClass({
                        changeOption={this.props.changeOption}
                        />
             </Segment>
-            <Button basic color="green" fluid icon="save"
-                    attached="bottom" content="Save"
+            <Button basic color="green"
+                    attached="bottom" fluid
+                    content="Save" icon="save"
                     onClick={this.props.save} />
           </Grid.Column>
           <AskPass
@@ -62,6 +71,7 @@ var Host = React.createClass({
             changeOption={this.props.changeOption}
             sshCopy={this.props.sshCopy}
             content={this.state.host}
+            loading={this.props.loadingInfo}
             />
           </Grid.Row>
         </Grid>

@@ -1,6 +1,6 @@
 var React = require("react");
 var PropTypes = React.PropTypes;
-var ShowMessage = require("../message");
+var ShowMessage = require("../utils/message");
 
 import { Button, Form, Grid, Input, Header, Segment } from "semantic-ui-react";
 
