@@ -4,7 +4,7 @@ var Link = ReactRouter.Link;
 var PropTypes = React.PropTypes;
 
 var FormUserNew = require("../forms/userNew");
-var ShowMessage = require("../message");
+var ShowMessage = require("../utils/message");
 
 import { Button, Form, Grid, Header, Input, Segment} from 'semantic-ui-react';
 

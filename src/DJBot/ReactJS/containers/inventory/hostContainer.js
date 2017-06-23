@@ -18,7 +18,10 @@ var HostContainer = React.createClass({
       password: '',
       messageMode: -1,
       messageText: '',
-      hosts: {}
+      hosts: {},
+      loading: true,
+      loadingInfo: true,
+      header: "Add new host",
     });
   },
   keysGet: function(){
@@ -40,6 +43,8 @@ var HostContainer = React.createClass({
     if(query.id){
       this.load(query.id);
       this.status(query.id);
+    }else{
+      this.setState({loading: false})
     }
   },
   changeOption: function(e) {
@@ -54,6 +59,8 @@ var HostContainer = React.createClass({
       type: 'POST',
       data: {key: id},
       success: function(data) {
+        data['header'] = "Edit host";
+        data['loading'] = false;
         this.setState(data);
       }.bind(this),
       error: function(xhr, status, err) {
@@ -110,6 +117,7 @@ var HostContainer = React.createClass({
       type: 'POST',
       data: {key: id},
       success: function(data) {
+        data['loadingInfo'] = false;
         this.setState(data);
       }.bind(this),
       error: function(xhr, status, err) {
@@ -143,23 +151,27 @@ var HostContainer = React.createClass({
   },
   render: function(){
     return(
-      <Host id={this.state.key}
-            user={this.state.user}
-            private_key={this.state.private_key}
-            name={this.state.name}
-            keys={this.state.keys}
-            ip={this.state.ip}
-            note={this.state.note}
-            host={this.state.hosts}
-            password={this.state.password}
-            delete={this.delete}
-            save={this.save}
-            back={this.goBack}
-            sshCopy={this.sshCopy}
-            changeOption={this.changeOption}
-            messageMode={this.state.messageMode}
-            messageText={this.state.messageText}
-            />
+      <Host
+        header={this.state.header}
+        id={this.state.key}
+        user={this.state.user}
+        private_key={this.state.private_key}
+        name={this.state.name}
+        keys={this.state.keys}
+        ip={this.state.ip}
+        note={this.state.note}
+        host={this.state.hosts}
+        password={this.state.password}
+        delete={this.delete}
+        save={this.save}
+        back={this.goBack}
+        sshCopy={this.sshCopy}
+        loading={this.state.loading}
+        loadingInfo={this.state.loadingInfo}
+        changeOption={this.changeOption}
+        messageMode={this.state.messageMode}
+        messageText={this.state.messageText}
+        />
     );
   }
 });

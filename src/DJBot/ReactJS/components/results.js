@@ -1,6 +1,6 @@
 var React = require("react");
 var PropTypes = React.PropTypes;
-var GenericTable = require("./genericTable");
+var GenericTable = require("./utils/genericTable");
 import { Button, Grid, Header, Icon, Segment, Table } from 'semantic-ui-react';
 
 var AnsibleResults = require("./ansibleResults");

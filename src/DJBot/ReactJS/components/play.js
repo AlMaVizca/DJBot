@@ -1,5 +1,5 @@
 var React = require("react");
-var ShowMessage = require("./message");
+var ShowMessage = require("./utils/message");
 
 import {Button, Card, Grid, Header, Icon, Segment} from 'semantic-ui-react';
 
