@@ -53,13 +53,13 @@ def add():
 @roles_required('user')
 def delete():
     form = Select(request.form)
-    if form.validate():
+    if form.validate() and form.key.data != 0:
         playbook = Playbook.query.get(form.key.data)
         db.session.delete(playbook)
         db.session.commit()
         response = get_playbooks()
         response.update({'messageMode': 0,
-                    'messageText': 'Playbook deleted'})
+                         'messageText': 'Playbook deleted'})
 
         return jsonify(response)
     return jsonify({'messageMode': 1,

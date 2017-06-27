@@ -1,6 +1,6 @@
 from DJBot.forms.inventory import Add, HostAdd, KeyCopy
 from DJBot.forms.generic import Select
-from DJBot.models.inventory import Host, Room, get_host, get_hosts,\
+from DJBot.models.inventory import get_host, get_hosts,\
     get_machines, get_room, get_rooms
 from DJBot.utils.ansible_api import copy_key, ansible_status
 from flask import Blueprint, jsonify, request
@@ -53,9 +53,7 @@ def room_get_machines():
 def room_add():
     form = Add(request.form)
     if form.validate():
-        room = Room()
-        if(form.key.data):
-            room = get_room(form.key.data)
+        room = get_room(form.key.data)
         saved = room.save(form.name.data, form.network.data,
                           form.netmask.data, form.machines.data,
                           form.gateway.data, form.user.data,

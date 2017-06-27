@@ -15,8 +15,13 @@ def test_add_task(client):
     add_playbook(client)
     # Review playooks key
     save = client.post('/api/task/add', data={
-        'playbook': 2,
+        'key': 2,
         'task': 'Update package list',
+        'module': 'apt',
+        'configuration-0-option': 'update_cache',
+        'configuration-0-value': 'yes',
+        'configuration-1-option': 'upgrade',
+        'configuration-1-value': 'yes',
     }).json
     form_incomplete = client.post('/api/task/add', data={
         'task': 'Update package list',
@@ -25,44 +30,6 @@ def test_add_task(client):
     assert without_login.status_code == 302
     assert save['messageMode'] == 0
     assert form_incomplete['messageMode'] == 1
-
-
-def test_add_parameter(client):
-    without_login = client.post('/api/task/parameter/add')
-    authenticate(client)
-
-    save = client.post('/api/task/parameter/add', data={
-        'playbook': 2,
-        'task': 1,
-        'parameter': 'update_cache',
-        'value': 'yes'
-    }).json
-    form_incomplete = client.post('/api/task/parameter/add', data={
-        'playbook': 2,
-        'parameter': 'update_cache',
-        'value': 'yes'
-    }).json
-
-    logout(client)
-    assert without_login.status_code == 302
-    assert save['messageMode'] == 0
-    assert form_incomplete['messageMode'] == 1
-
-
-def test_delete_parameter(client):
-    without_login = client.post('/api/task/parameter/delete')
-    authenticate(client)
-
-    delete = client.post('/api/task/parameter/delete', data={
-        'key': 1
-    }).json
-    wrong_id = client.post('/api/task/parameter/delete', data={
-        'key': 0
-    }).json
-    logout(client)
-    assert without_login.status_code == 302
-    assert delete['messageMode'] == 0
-    assert wrong_id['messageMode'] == 1
 
 
 def test_delete_task(client):

@@ -65,9 +65,12 @@ def change_admin():
     form = Select(request.form)
     if form.validate():
         user = get_user_id(form.key.data)
-        user.change_admin()
-        db.session.commit()
-        return jsonify({'message': 'saved'})
+        try:
+            user.change_admin()
+            db.session.commit()
+            return jsonify({'message': 'saved'})
+        except:
+            return jsonify({'message': 'user not found'})
     return jsonify({'message': 'failed'})
 
 
@@ -78,7 +81,10 @@ def delete():
     form = Select(request.form)
     if form.validate():
         user = get_user_id(form.key.data)
-        db.session.delete(user)
-        db.session.commit()
+        try:
+            db.session.delete(user)
+            db.session.commit()
+        except:
+            return jsonify({'message': 'user not found'})
         return jsonify({'message': 'deleted'})
     return jsonify({'message': 'failed'})

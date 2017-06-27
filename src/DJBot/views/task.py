@@ -18,6 +18,8 @@ def task_add():
     form = TaskAdd(request.form)
     if form.validate():
         playbook = get_playbook(form.key.data)
+        import logging
+        logging.error(form.configuration.data)
         saved = playbook.task_add(form.task.data, form.module.data,
                                   form.configuration.data)
         if saved:

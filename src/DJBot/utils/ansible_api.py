@@ -222,7 +222,7 @@ if __name__ == '__main__':
              u'state': u'present',
              u'key': u"{{ lookup('file', '/home/krahser/.ssh/id_rsa.pub') }}",
          },
-        }
+         }
     ]
     )
     ansible_api.run()

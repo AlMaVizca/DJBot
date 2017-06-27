@@ -120,12 +120,15 @@ def test_change_admin(client):
     to_admin = client.post('/api/user/admin', data={'key': user_id})
     to_user = client.post('/api/user/admin', data={'key': user_id})
     mistake = client.post('/api/user/admin', data={'key': 0})
+    invalid = client.post('/api/user/admin', data={'akey': 0})
     logout(client)
     assert without_login.status_code == 302
     assert wrong_method.status_code == 405
+    assert invalid.status_code == 200
     assert {'message': 'saved'} == to_admin.json
     assert {'message': 'saved'} == to_user.json
-    assert {'message': 'failed'} == mistake.json
+    assert {'message': 'user not found'} == mistake.json
+    assert {'message': 'failed'} == invalid.json
 
 
 def test_delete_user(client):
@@ -140,11 +143,14 @@ def test_delete_user(client):
             break
 
     delete = client.post('/api/user/delete', data={'key': user_id})
+    invalid = client.post('/api/user/delete', data={'keyx': user_id})
     mistake = client.post('/api/user/delete', data={'key': 0})
     logout(client)
     assert without_login.status_code == 302
     assert wrong_method.status_code == 405
     assert delete.status_code == 200
     assert mistake.status_code == 200
+    assert invalid.status_code == 200
     assert {'message': 'deleted'} == delete.json
-    assert {'message': 'failed'} == mistake.json
+    assert {'message': 'user not found'} == mistake.json
+    assert {'message': 'failed'} == invalid.json
