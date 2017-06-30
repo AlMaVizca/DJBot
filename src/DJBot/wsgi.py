@@ -15,10 +15,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os
+from factory import create_app
 
-if os.environ.get('MODE') == 'dev':
-        reload = True
+app = create_app()
 
-bind = '0.0.0.0:8000'
-chdir = './src/DJBot/'
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')

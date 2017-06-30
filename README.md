@@ -1,14 +1,59 @@
-Djbot
+DJBot
 ======
 
-¿Qué es?
--------
+[![Build Status](https://travis-ci.org/krahser/DJBot.svg?branch=master)](https://travis-ci.org/krahser/DJBot)
+
+The goal is make ansible a very easy tool for anybody. You are able to write playbooks without need visit the docs of ansible,
+and run them on your inventory.
+
+Disclaimer
+----------
+
+The use of this tool could damage the systems that are on the inventory.
+That it's on your responsability and not of any developer of DJBot.
+
+If you have some question or something looks wrong for you, please [let us know](https://github.com/krahser/DJBot/issues/new)
+
+Install
+--------
+
+If you want to make it easy just use [Docker](https://docs.docker.com/engine/installation/)
+
+Get the image:
+
+    docker pull krahser/djbot
+
+Run in localhost:
+
+    docker run -d -p127.0.0.1:8080:80 --name DJBot krahser/djbot
 
 
+Take in mind that this is only for local usage, If you want to make the interface public you should add some security settings.
 
-DJBot es una aplicación web especialmente diseñada para la orquestación de salas de computadoras. Su nombre viene de la contracción entre “DJ”, del inglés *disc jockey*, o persona que crea su propia composición musical a partir de la combinación artística de múltiples discos; y “Bot”, de robot, o máquina que realiza tareas automáticas en lugar de una persona. Nuestro DJ hace de director de orquesta, y administra los bots para crear su propia composición de sistemas.
+How to use it
+-------------
 
-¿Cómo funciona?
----------------
+After this you can see the application using your web browser: [localhost:8080](http://localhost:8080)
+The default user is *admin* with password *password*
 
-El funcionamiento de DJBot es posible gracias a la integración de las cuatro herramientas antes descriptas y otras secundarias. En la capa inferior, Ansible brinda el soporte para la ejecución de las tareas de administración. Para este fin, se alimenta de la base de datos gestionada por SQLAlchemy. En la capa superior, los usuarios interactúan con la aplicación a través de la interfaz web desarrollada con React. El intercambio que tiene lugar entre los dos extremos es controlado por Flask. Así, se establece un flujo de trabajo bidireccional entre Flask y las demás herramientas de DJBot.
+1. In Playbooks tab you are going to manage all the playbooks. So lets start to create an easy one.
+For example make an update of a Debian system.
+
+2. The inventory is the place where you are going to setup the rooms and servers, and run some playbooks.
+
+3. In the Results you are going to see all the executions.
+You need to choose one and you are going to see the tasks executed with his own standard output.
+
+
+Contributions
+-------------
+
+Everything is welcome :)
+
+Right now, I'm trying to get feedback and improve the UX. But I also need to improve the docs and make some gifs.
+
+
+Questions or Suggestions
+------------------------
+
+Please write a [message](https://github.com/krahser/DJBot/issues/new)

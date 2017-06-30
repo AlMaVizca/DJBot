@@ -1,103 +1,43 @@
 ---
 - hosts: localhost
   gather_facts: yes
+  vars:
+    path_repositories: "{{ ansible_user_dir }}/Repositories"
   tasks:
-    - setup:
-        filter: "ansible_*"
-      tags:
-        - build
-        - restart
-        
     - name: requirements
       pip:
         name: docker-py
         state: present
       become: yes
-      when: ansible_distribution == "Debian"
-      tags:
-        - build
-
-        
-    - name: requirements
-      pacman:
-        name: python2-docker-py
-        state: present
-      become: yes
-      when: ansible_distribution == "Archlinux"      
-      tags:
-        - build
-
 
     - name: Remove old container
-      docker:
-        name: djbot
-        image: "{{ ansible_user_id }}/djbot"
-        state: absent
-      ignore_errors: yes        
-      tags:
-        - build
-        - restart
-        - dev
-
-    - name: Remove prod container
-      docker:
-        name: djbot_prod
-        image: "{{ ansible_user_id }}/djbot"
-        state: absent
-      ignore_errors: yes        
-      tags:
-        - build
-        - restart
-        - prod
-
-        
-    - name: delete old image
-      docker_image:
-        path: "{{ ansible_user_dir}}/Repositories/djbot"
-        name: "{{ ansible_user_id }}/djbot"
+      docker_container:
+        name: DJBot
+        image: "krahser/djbot"
         state: absent
       ignore_errors: yes
-      tags:
-        - build
 
-    - name: create new image
-      docker_image:
-        path: "{{ ansible_user_dir}}/Repositories/djbot"
-        name: "{{ ansible_user_id }}/djbot"
-        state: present
-      tags:
-        - build
 
     - name: create containers
-      docker:
-        name: djbot
-        hostname: djbot
-        image: "{{ ansible_user_id }}/djbot"
+      docker_container:
+        name: DJBot
+        hostname: DJBot
+        image: "krahser/djbot"
         state: started
         restart_policy: always
+        ports:
+          - "8027:8000"
         volumes:
-          - "{{ ansible_user_dir }}/Repositories/djbot/:/usr/src/app"
+          - "{{ path_repositories }}/DJBot/:/home/djbot/app"
         env:
           MODE: "dev"
           VIRTUAL_HOST: "dev.djbot.local"
-          TZ: America/Argentina/Buenos_Aires
-      tags:
-        - build
-        - restart
-        - dev
+          TZ: Asia/Shanghai
+          LOGS: '/home/djbot/log'
 
-
-    - name: create containers
-      docker:
-        name: djbot_prod
-        image: "{{ ansible_user_id }}/djbot"
-        state: absent
-        restart_policy: always
-        env:
-          VIRTUAL_HOST: "prod.djbot.local"
-          TZ: America/Argentina/Buenos_Aires
-      tags:
-        - build
-        - restart
-        - prod
-        
+    # This is for my specific service
+    # - name: restart service
+    #   service:
+    #     name: DJBot-docker
+    #     state: restarted
+    #   become: true

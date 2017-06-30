@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% from "security/_macros.html" import render_field_with_errors, render_field %}
+{% block content %}
+<div class="ui grid middle aligned center aligned login">
+  <div class="five wide column">
+    <div class="ui teal image header">
+      <h1>DJBot</h1>
+    </div>
+    <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form" class="ui large form">
+
+      {% include "security/_messages.html" %}
+      <div class="ui stacked teal segment">
+        {{ login_user_form.hidden_tag() }}
+        {{ render_field_with_errors(login_user_form.email) }}
+        {{ render_field_with_errors(login_user_form.password) }}
+        {{ render_field_with_errors(login_user_form.remember) }}
+        {{ render_field(login_user_form.next) }}
+        <div class="ui input">
+          {{ render_field(login_user_form.submit) }}
+        </div>
+      </div>
+    </form>
+    {% include "security/_menu.html" %}
+  </div>
+</div>
+{% endblock %}

@@ -3,8 +3,10 @@
 *.pyc
 *.sql
 *.retry
+*.db
 env
 */__pycache__/*
-djbot/static/bower_components
-*/node_modules/*
-
+src/DJBot/node_modules/*
+src/DJBot/instance/*
+src/DJBot/.ipynb_checkpoints/*
+src/DJBot/static/scripts/build/index_bundle.js
