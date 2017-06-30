@@ -31,7 +31,7 @@ tests_require = [
     'check-manifest>=0.25',
     'coverage>=4.0',
     'isort>=4.2.2',
-    'mock>=1.3.0',
+    'mock==1.0.1',
     'pony>=0.7.1',
     'pydocstyle>=1.0.0',
     'pytest-cache>=1.0',
@@ -39,7 +39,7 @@ tests_require = [
     'pytest-flakes>=1.0.1',
     'pytest-flask>=0.10.0',
     'pytest-pep8>=1.0.6',
-    'pytest>=3.0.5',
+    'pytest>=2.6.4',
     'Flask-SQLAlchemy>=2.2',
 ]
 
