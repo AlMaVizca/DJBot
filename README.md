@@ -2,6 +2,7 @@ DJBot
 ======
 
 [![Build Status](https://travis-ci.org/krahser/DJBot.svg?branch=master)](https://travis-ci.org/krahser/DJBot)
+[![Coverage Status](https://coveralls.io/repos/github/krahser/DJBot/badge.svg?branch=master)](https://coveralls.io/github/krahser/DJBot?branch=master)
 
 The goal is make ansible a very easy tool for anybody. You are able to write playbooks without need visit the docs of ansible,
 and run them on your inventory.

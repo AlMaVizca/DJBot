@@ -30,6 +30,7 @@ tests_require = [
     'bcrypt>=1.0.2',
     'check-manifest>=0.25',
     'coverage>=4.0',
+    'coveralls>=1.1',
     'isort>=4.2.2',
     'mock==1.0.1',
     'pony>=0.7.1',
