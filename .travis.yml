@@ -7,7 +7,7 @@ install:
   - python setup.py install
   - pip install coverage
 # command to run tests
-script: coverage run setup.py test
+script: coverage run source=DJBot setup.py test
 
 after_success:
   - coveralls
