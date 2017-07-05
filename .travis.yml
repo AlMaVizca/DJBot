@@ -5,9 +5,10 @@ python:
 # command to install dependencies
 install:
   - python setup.py install
-  - pip install coverage
+  - pip install coveralls
+
 # command to run tests
-script: coverage run setup.py test
+script: python setup.py test
 
 after_success:
   - coveralls
